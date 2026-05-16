@@ -1,0 +1,51 @@
+# Logs and diagnostics
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+
+# Production builds and generated web assets
+dist
+dist-ssr
+asset-lab/output
+android/app/src/main/assets/public
+android/app/src/main/assets/cordova*.js
+
+# Native build output
+android/.gradle
+android/**/.gradle
+android/**/build
+android/local.properties
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# Test and tool caches
+coverage
+.svelte-kit
+.vite
+.cache
+
+# OS and editor files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

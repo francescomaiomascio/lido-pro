@@ -1,0 +1,308 @@
+.settings-ui-page {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 1120px);
+}
+
+.settings-ui-page .settings-modern-header {
+  padding-bottom: 11px;
+}
+
+.settings-ui-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
+  gap: 18px;
+  align-items: start;
+}
+
+.settings-ui-split--surface {
+  grid-template-columns: minmax(0, 650px) minmax(240px, 310px);
+}
+
+.settings-control-panel {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.settings-control-panel--wide {
+  max-width: 760px;
+}
+
+.settings-control-panel__title {
+  display: grid;
+  gap: 3px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 58%, transparent 42%);
+}
+
+.settings-control-panel__title h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.92rem;
+  font-weight: 920;
+  line-height: 1.18;
+}
+
+.settings-control-panel__title p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  line-height: 1.34;
+}
+
+.settings-control-list {
+  display: grid;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 36%, transparent 64%);
+}
+
+.settings-control-list .settings-field-row,
+.settings-row-toggle {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.46fr) minmax(180px, 0.54fr);
+  gap: 16px;
+  align-items: center;
+  min-height: 46px;
+  padding: 7px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 38%, transparent 62%);
+}
+
+.settings-control-list--wide .settings-field-row,
+.settings-control-list--wide .settings-row-toggle {
+  grid-template-columns: minmax(180px, 260px) minmax(260px, 420px);
+}
+
+.settings-control-list .settings-field-row > span,
+.settings-row-toggle > span {
+  display: grid;
+  gap: 2px;
+  justify-content: stretch;
+  color: var(--color-text-secondary);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.settings-control-list .settings-field-row small {
+  font-size: 0.66rem;
+  font-weight: 750;
+}
+
+.settings-control-list .settings-field-row input,
+.settings-control-list .settings-field-row select {
+  width: min(100%, 280px);
+  min-height: 34px;
+  justify-self: start;
+  border-radius: 7px;
+}
+
+.settings-control-list .settings-field-row input[type='range'] {
+  width: min(100%, 360px);
+  min-height: 24px;
+}
+
+.settings-row-toggle {
+  color: var(--color-text-secondary);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.settings-row-toggle input {
+  width: 18px;
+  min-height: 18px;
+  justify-self: start;
+  accent-color: var(--color-primary);
+}
+
+.settings-summary-panel,
+.surface-preview-panel {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 2px 0 0 18px;
+  border-left: 1px solid color-mix(in srgb, var(--color-line) 58%, transparent 42%);
+}
+
+.settings-summary-panel > span,
+.surface-preview-panel > span {
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.settings-summary-panel > strong,
+.surface-preview-panel > strong {
+  color: var(--color-text);
+  font-size: 1.18rem;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.settings-metric-strip {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 48%, transparent 52%);
+}
+
+.settings-metric-strip div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  min-height: 34px;
+  padding: 7px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 34%, transparent 66%);
+}
+
+.settings-metric-strip dt {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.settings-metric-strip dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.84rem;
+  font-weight: 950;
+}
+
+.surface-preview-strip {
+  height: 34px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-line) 52%, transparent 48%);
+  border-radius: 7px;
+}
+
+.surface-preview-strip--warm_sand {
+  background: linear-gradient(90deg, #79ccd7 0 18%, #cfeee8 27%, #f0e2b3 42%, #caa15f 100%);
+}
+
+.surface-preview-strip--soft_aqua {
+  background: linear-gradient(90deg, #83d3dc 0 22%, #e2f4ef 34%, #eadfbd 50%, #c5b27b 100%);
+}
+
+.surface-preview-strip--neutral {
+  background: linear-gradient(90deg, #9ac4c4 0 20%, #e3e5d9 34%, #ddd1ad 52%, #b7a275 100%);
+}
+
+.surface-preview-strip--clean_light {
+  background: linear-gradient(90deg, #b4dfe4 0 22%, #eff7ee 36%, #efe7cc 54%, #d8c798 100%);
+}
+
+.surface-preview-strip--muted_dark {
+  background: linear-gradient(90deg, #426f75 0 20%, #80968b 34%, #9b8b63 54%, #66583e 100%);
+}
+
+.surface-preview-panel p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  line-height: 1.36;
+}
+
+@media (max-width: 980px) {
+  .settings-ui-page {
+    width: 100%;
+  }
+
+  .settings-ui-split,
+  .settings-ui-split--surface {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-summary-panel,
+  .surface-preview-panel {
+    padding: 12px 0 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-line) 58%, transparent 42%);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-control-list .settings-field-row,
+  .settings-control-list--wide .settings-field-row,
+  .settings-row-toggle,
+  .settings-control-list--wide .settings-row-toggle {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 9px 0;
+  }
+
+  .settings-control-list .settings-field-row input,
+  .settings-control-list .settings-field-row select,
+  .settings-control-list .settings-field-row input[type='range'] {
+    width: 100%;
+  }
+
+  .settings-metric-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+  }
+}
+
+.parametric-edit-table {
+  display: grid;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.parametric-edit-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.3fr) minmax(110px, 1fr) repeat(4, minmax(86px, 0.72fr)) minmax(84px, 0.55fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 860px;
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 50%, transparent 50%);
+}
+
+.parametric-edit-table--rows .parametric-edit-row {
+  grid-template-columns: minmax(88px, 0.7fr) minmax(130px, 1fr) minmax(150px, 1.2fr) minmax(88px, 0.7fr) minmax(140px, 1fr) minmax(86px, 0.55fr) auto;
+}
+
+.parametric-edit-table--assets .parametric-edit-row {
+  grid-template-columns: minmax(180px, 1.6fr) minmax(104px, 0.8fr) repeat(3, minmax(96px, 0.7fr)) minmax(92px, 0.7fr);
+}
+
+.parametric-edit-row input,
+.parametric-edit-row select {
+  min-width: 0;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent 38%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-surface) 84%, white 16%);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.parametric-edit-row label,
+.parametric-edit-row span {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.parametric-edit-row strong {
+  color: var(--color-text);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.parametric-edit-row button,
+.parametric-setup-page > button,
+.settings-section-card button {
+  white-space: nowrap;
+}
+
+.settings-library-callout--stacked {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}

@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-app-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.app-toast-host {
+  position: fixed;
+  right: 16px;
+  bottom: 18px;
+  z-index: 80;
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.app-toast {
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 9px 12px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-panel);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+@media (min-width: 720px) {
+  .app-toast-host {
+    top: 72px;
+    bottom: auto;
+  }
+}
+
+input,
+textarea {
+  color: var(--color-text);
+}
+
+a {
+  color: inherit;
+}
+
+jeep-sqlite {
+  position: fixed !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: -1 !important;
+  display: block !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin-block-start: 0;
+}
+
+h1,
+h2,
+p {
+  letter-spacing: 0;
+}
+
+h3,
+h4,
+small,
+span,
+label,
+dt,
+dd,
+button,
+input,
+textarea,
+select {
+  letter-spacing: 0;
+}

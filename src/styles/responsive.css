@@ -1,0 +1,210 @@
+@media (max-width: 1280px) {
+  .operational-bottom-panel.expanded {
+    height: clamp(320px, 50dvh, 560px);
+  }
+
+  .date-fields,
+  .readonly-context,
+  .extra-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .extra-catalog-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .extra-catalog-row input {
+    width: 100%;
+  }
+
+  .floating-focus-card {
+    top: 66px;
+    right: 12px;
+    width: clamp(220px, 25vw, 272px);
+    max-height: min(30dvh, 260px);
+  }
+}
+
+@media (max-width: 899px) {
+  body {
+    overflow: hidden;
+  }
+
+  .primary-workspace {
+    --map-control-inset: 10px;
+    --map-control-top: 10px;
+    --map-control-stack-top: 62px;
+    --map-control-size: 40px;
+  }
+
+  .app-topbar {
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 6px 12px;
+  }
+
+  .brand {
+    align-self: center;
+    min-width: 0;
+  }
+
+  .brand span {
+    display: none;
+  }
+
+  .brand strong {
+    font-size: 0.88rem;
+  }
+
+  .topbar-nav {
+    min-width: 0;
+  }
+
+  .topbar-actions {
+    min-width: 0;
+    justify-self: end;
+    gap: 12px;
+  }
+
+  .view-switcher button {
+    width: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .expandable-search.expanded {
+    width: min(300px, calc(100vw - 180px));
+  }
+
+  .workspace-view-switcher {
+    padding: 3px;
+  }
+
+  .workspace-filter-trigger {
+    width: var(--map-filter-size);
+    min-width: var(--map-filter-size);
+    min-height: var(--map-filter-size);
+  }
+
+  .filter-sheet {
+    top: calc(var(--map-control-stack-top) - 46px);
+    right: calc(var(--map-control-inset) + var(--map-filter-size) + 4px);
+    bottom: auto;
+    width: max-content;
+    min-width: 0;
+    max-width: min(390px, calc(100% - 18px));
+    max-height: min(72dvh, calc(100% - 104px));
+  }
+
+  .canvas-mode-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .canvas-mode-toggles {
+    justify-content: flex-start;
+  }
+
+  .operational-header {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    row-gap: 8px;
+  }
+
+  .operational-header__meta {
+    grid-column: 1 / 2;
+    display: grid;
+    gap: 2px;
+  }
+
+  .operational-header__actions {
+    grid-column: 2 / 3;
+  }
+
+  .operational-header__tabs {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  .floating-focus-card {
+    display: none;
+  }
+
+  .operational-bottom-panel {
+    height: clamp(180px, 26dvh, 240px);
+  }
+
+  .operational-bottom-panel.expanded {
+    height: clamp(280px, 48dvh, 520px);
+  }
+
+  .floating-focus-card .detail-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .primary-workspace {
+    --map-control-inset: 8px;
+    --map-control-top: 8px;
+    --map-control-stack-top: 58px;
+    --map-control-size: 38px;
+  }
+
+  .app-topbar {
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 8px;
+    min-height: 46px;
+    padding: 6px 10px;
+  }
+
+  .brand strong {
+    font-size: 0.8rem;
+  }
+
+  .topbar-actions {
+    justify-self: end;
+    gap: 10px;
+  }
+
+  .view-switcher button {
+    width: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .expandable-search.expanded {
+    width: min(260px, calc(100vw - 156px));
+  }
+
+  .workspace-view-switcher {
+    padding: 3px;
+  }
+
+  .workspace-filter-trigger {
+    width: var(--map-filter-size);
+    min-width: var(--map-filter-size);
+    min-height: var(--map-filter-size);
+    border-radius: 999px;
+  }
+
+  .filter-sheet {
+    top: calc(var(--map-control-stack-top) - 46px);
+    right: calc(var(--map-control-inset) + var(--map-filter-size) + 4px);
+    left: auto;
+    bottom: auto;
+    width: max-content;
+    min-width: 0;
+    max-width: min(390px, calc(100% - 18px));
+    max-height: min(70dvh, calc(100% - 104px));
+    padding: 5px 7px;
+    border-radius: 999px;
+  }
+}

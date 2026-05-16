@@ -1,0 +1,648 @@
+.map-studio-shell {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 92%, #f6f1df 8%), var(--color-surface) 46%),
+    var(--color-surface);
+}
+
+.map-studio-shell--loading {
+  place-items: center;
+  gap: 14px;
+  min-height: 420px;
+  padding: 28px;
+}
+
+.map-studio-shell--loading > div {
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.map-studio-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface-elevated) 88%, var(--color-surface-soft) 12%);
+}
+
+.map-studio-topbar__title {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.map-studio-topbar__title strong {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.map-studio-topbar__title span {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-studio-topbar__actions,
+.map-studio-context-dock__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.map-studio-topbar__actions button,
+.map-studio-context-dock__actions button,
+.map-studio-domain-tabs button,
+.map-studio-context-dock__chips button {
+  min-height: 34px;
+  padding: 8px 12px;
+  color: var(--color-text);
+  font-size: 0.76rem;
+  font-weight: 850;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 7px;
+}
+
+.map-studio-topbar__actions button:hover:not(:disabled),
+.map-studio-context-dock__actions button:hover:not(:disabled),
+.map-studio-domain-tabs button:hover,
+.map-studio-context-dock__chips button:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-line) 66%);
+}
+
+.map-studio-topbar__actions .primary,
+.map-studio-context-dock__actions .primary {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.map-studio-domain-tabs {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface-soft) 78%, var(--color-surface) 22%);
+  scrollbar-width: none;
+}
+
+.map-studio-domain-tabs::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.map-studio-domain-tabs button {
+  flex: 0 0 auto;
+  min-width: max-content;
+  color: var(--color-muted);
+  background: transparent;
+}
+
+.map-studio-domain-tabs button.active {
+  color: var(--color-primary-strong);
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface) 91%);
+  border-color: color-mix(in srgb, var(--color-primary) 26%, var(--color-line) 74%);
+  box-shadow: inset 0 -2px 0 var(--color-primary);
+}
+
+.map-studio-domain-tabs__short {
+  display: none;
+}
+
+.map-studio-workspace {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.map-studio-board-host {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgb(42 62 60 / 5%) 1px, transparent 1px),
+    linear-gradient(0deg, rgb(42 62 60 / 5%) 1px, transparent 1px),
+    color-mix(in srgb, var(--color-surface) 94%, #ead89b 6%);
+  background-size: 32px 32px;
+}
+
+.map-studio-layer-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent 22%);
+  background: color-mix(in srgb, var(--color-surface-elevated) 78%, transparent 22%);
+  scrollbar-width: none;
+}
+
+.map-studio-layer-bar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.map-studio-layer-bar button {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent 30%);
+  border-radius: 999px;
+}
+
+.map-studio-layer-bar button.active {
+  color: var(--color-primary-strong);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface) 90%);
+  border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-line) 66%);
+}
+
+.map-studio-layer-bar button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.map-studio-board-host__stage {
+  display: grid;
+  min-height: 0;
+  padding: 10px 14px 12px;
+  overflow: hidden;
+}
+
+.parametric-board {
+  display: grid;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.parametric-board__svg {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+}
+
+.parametric-board__surface {
+  transition: opacity 160ms ease;
+}
+
+.parametric-board__surface.is-muted {
+  opacity: 0.62;
+}
+
+.parametric-board__shore {
+  stroke: rgb(255 255 255 / 50%);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.parametric-board__shore.is-strong {
+  stroke: rgb(255 255 255 / 78%);
+  stroke-width: 5;
+}
+
+.parametric-board__boundary {
+  color: rgb(26 55 52 / 70%);
+}
+
+.parametric-board__boundary.is-muted {
+  opacity: 0.34;
+}
+
+.parametric-board__boundary rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+.parametric-board__boundary path {
+  fill: none;
+  stroke: rgb(24 52 49 / 52%);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.parametric-board__boundary line {
+  stroke: rgb(25 55 52 / 34%);
+  stroke-width: 1;
+}
+
+.parametric-board__boundary text {
+  fill: rgb(25 55 52 / 62%);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.parametric-board__areas.is-muted,
+.parametric-board__tracks.is-muted,
+.parametric-board__objects.is-muted,
+.parametric-board__constraints.is-muted,
+.parametric-board__warnings.is-muted,
+.parametric-board__selection.is-muted {
+  opacity: 0.28;
+}
+
+.parametric-board__area {
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.parametric-board__area rect:not(.parametric-board__hit) {
+  stroke: rgb(38 74 67 / 24%);
+  stroke-width: 1.2;
+}
+
+.parametric-board__area path {
+  fill: none;
+  stroke: rgb(255 255 255 / 30%);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.parametric-board__area.is-selected rect:not(.parametric-board__hit) {
+  stroke: rgb(0 103 94 / 88%);
+  stroke-width: 2.8;
+  filter: url(#board-soft-glow);
+}
+
+.parametric-board__area.is-outscope {
+  opacity: 0.34;
+}
+
+.parametric-board__hit,
+.parametric-board__track-hit,
+.parametric-board__object-hit {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.parametric-board__track {
+  cursor: pointer;
+}
+
+.parametric-board__track line:not(.parametric-board__track-hit) {
+  stroke-width: 2.2;
+  stroke-opacity: 0.56;
+  stroke-linecap: round;
+  stroke-dasharray: 10 8;
+}
+
+.parametric-board__tracks:not(.is-muted) .parametric-board__track line:not(.parametric-board__track-hit) {
+  stroke-width: 3;
+  stroke-opacity: 0.72;
+}
+
+.parametric-board__track.is-selected line:not(.parametric-board__track-hit) {
+  stroke-width: 5;
+  stroke-opacity: 0.95;
+  stroke-dasharray: 0;
+  filter: url(#board-soft-glow);
+}
+
+.parametric-board__track.is-outscope {
+  opacity: 0.28;
+}
+
+.parametric-board__track-hit {
+  stroke-width: 18;
+}
+
+.parametric-board__object {
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.parametric-board__object.is-outscope {
+  opacity: 0.3;
+}
+
+.parametric-board__focus-ring {
+  display: none;
+  fill: none;
+  stroke: rgb(0 103 94 / 75%);
+  stroke-width: 2;
+}
+
+.parametric-board__object.is-selected .parametric-board__focus-ring {
+  display: block;
+  filter: url(#board-soft-glow);
+}
+
+.parametric-board__footprint {
+  fill: rgb(255 255 255 / 16%);
+  stroke: rgb(26 72 66 / 32%);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 5;
+}
+
+.parametric-board__object.is-umbrella .parametric-board__footprint {
+  stroke: rgb(180 111 30 / 42%);
+}
+
+.parametric-board__object.is-palm .parametric-board__footprint,
+.parametric-board__object.is-palmetta .parametric-board__footprint {
+  stroke: rgb(20 116 84 / 42%);
+}
+
+.parametric-board__constraints line {
+  stroke: rgb(38 67 64 / 70%);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.parametric-board__constraints circle {
+  fill: #fff;
+  stroke: rgb(38 67 64 / 74%);
+  stroke-width: 1.2;
+}
+
+.parametric-board__constraints rect {
+  fill: rgb(255 255 255 / 88%);
+  stroke: rgb(38 67 64 / 18%);
+}
+
+.parametric-board__constraints text {
+  fill: rgb(34 55 52 / 82%);
+  font-size: 10.5px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.parametric-board__constraints .is-invalid line,
+.parametric-board__constraints .is-invalid circle {
+  stroke: #b94c2c;
+}
+
+.parametric-board__warnings circle {
+  fill: #b94c2c;
+  stroke: rgb(255 255 255 / 82%);
+  stroke-width: 2;
+}
+
+.parametric-board__warnings text {
+  fill: #fff;
+  font-size: 13px;
+  font-weight: 950;
+  text-anchor: middle;
+}
+
+.parametric-board__selection rect {
+  fill: none;
+  stroke: rgb(0 103 94 / 78%);
+  stroke-width: 2;
+  stroke-dasharray: 9 7;
+  filter: url(#board-soft-glow);
+}
+
+.parametric-board__selection line {
+  stroke: rgb(0 103 94 / 82%);
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: 0.32;
+}
+
+.parametric-board__area-label rect,
+.parametric-board__track-label rect {
+  fill: rgb(255 255 255 / 84%);
+  stroke: rgb(28 55 52 / 14%);
+}
+
+.parametric-board__area-label.is-selected rect,
+.parametric-board__track-label.is-selected rect {
+  fill: rgb(232 252 247 / 94%);
+  stroke: rgb(0 103 94 / 32%);
+}
+
+.parametric-board__area-label text,
+.parametric-board__track-label text {
+  fill: rgb(27 49 46 / 84%);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.map-studio-context-dock {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.9fr) minmax(0, 2.4fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 86px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface-elevated) 92%, var(--color-surface-soft) 8%);
+}
+
+.map-studio-context-dock__scope,
+.map-studio-context-dock__metrics > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.map-studio-context-dock__scope span,
+.map-studio-context-dock__metrics span,
+.map-studio-context-dock__constraints label > span {
+  color: var(--color-muted);
+  font-size: 0.67rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.map-studio-context-dock__scope strong,
+.map-studio-context-dock__metrics strong {
+  overflow: hidden;
+  font-size: 0.83rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-studio-context-dock__scope small {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-studio-context-dock__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.map-studio-context-dock__metrics > div {
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--color-surface-soft) 70%, transparent 30%);
+  border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent 24%);
+  border-radius: 7px;
+}
+
+.map-studio-context-dock__chips {
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.map-studio-context-dock__chips::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.map-studio-context-dock__chips button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  background: color-mix(in srgb, var(--color-surface-soft) 70%, transparent 30%);
+}
+
+.map-studio-context-dock__chips button.active {
+  color: var(--color-primary-strong);
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-line) 68%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent 86%);
+}
+
+.map-studio-context-dock__constraints {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.map-studio-context-dock__constraints label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  background: color-mix(in srgb, var(--color-surface-soft) 70%, transparent 30%);
+  border: 1px solid var(--color-line);
+  border-radius: 7px;
+}
+
+.map-studio-context-dock__constraints input {
+  width: 62px;
+  min-height: 30px;
+  padding: 4px 6px;
+}
+
+.map-studio-context-dock__constraints em {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-muted);
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+@media (max-width: 980px) {
+  .map-studio-topbar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .map-studio-topbar__actions {
+    justify-content: flex-start;
+  }
+
+  .map-studio-domain-tabs__label {
+    display: none;
+  }
+
+  .map-studio-domain-tabs__short {
+    display: inline;
+  }
+
+  .map-studio-context-dock {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .map-studio-context-dock__actions {
+    justify-content: flex-start;
+  }
+
+  .map-studio-context-dock__metrics,
+  .map-studio-context-dock__constraints {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .map-studio-shell {
+    grid-template-rows: auto auto minmax(360px, 1fr) auto;
+    overflow: auto;
+  }
+
+  .map-studio-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    padding: 10px 12px;
+  }
+
+  .map-studio-topbar__title span {
+    white-space: normal;
+  }
+
+  .map-studio-topbar__actions button {
+    flex: 1 1 92px;
+  }
+
+  .map-studio-board-host__stage {
+    padding: 8px;
+  }
+
+  .parametric-board__svg {
+    min-height: 340px;
+  }
+
+  .parametric-board__area-label:not(.is-selected) {
+    display: none;
+  }
+
+  .parametric-board__track-label:not(.is-selected) {
+    opacity: 0.72;
+  }
+
+  .map-studio-context-dock {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    min-height: 0;
+    border-top-color: color-mix(in srgb, var(--color-line-strong) 82%, transparent 18%);
+    box-shadow: 0 -14px 32px rgb(25 35 32 / 14%);
+  }
+
+  .map-studio-context-dock__metrics,
+  .map-studio-context-dock__constraints {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-context-dock__actions button {
+    width: 100%;
+  }
+}

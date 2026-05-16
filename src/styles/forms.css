@@ -1,0 +1,79 @@
+.account-form,
+.payment-form,
+.reservation-form,
+.customer-form,
+.customer-picker,
+.tariff-form,
+.extra-item-form,
+.customer-list-search,
+.operational-note {
+  display: grid;
+  gap: 10px;
+}
+
+.account-form label,
+.payment-form label,
+.reservation-form label,
+.customer-form label,
+.customer-picker label,
+.tariff-form label,
+.extra-item-form label,
+.customer-list-search,
+.operational-note label {
+  display: grid;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  color: var(--color-text);
+  background: var(--color-field-bg);
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+textarea {
+  min-height: 88px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-field-border) 84%);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-field-border) 60%);
+  box-shadow: 0 0 0 3px rgb(18 118 101 / 10%);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+input[readonly],
+textarea[readonly] {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-muted);
+}

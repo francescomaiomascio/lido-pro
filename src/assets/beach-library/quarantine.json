@@ -1,0 +1,154 @@
+[
+  {
+    "assetId": "umbrella-classic-round",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "SVG Repo icon style; licensed but not professional/top-down enough for main library.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "umbrella-striped-parasol",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Duplicate/heterogeneous icon style; hold until coherent umbrella set is selected.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "umbrella-premium-beach",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Random imported icon; not aligned with professional pack direction.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "palm-tropical",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Frontal palm tree, not suitable for top-down beach plan.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "palm-compact",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Frontal/clipart palm tree, not suitable for top-down beach plan.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "small-palm",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Palmetta remains a palm size variant, but this imported asset is clipart/front-view and not approved.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "small-palm-shrub",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Wrong taxonomy: shrub/decorative plant imported under palmette. Future Verde e decorazioni only.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "small-palm-decorative-plant",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Wrong taxonomy: decorative plant is not a palm/palmette. Future Verde e decorazioni only.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "furniture-sunbed-real",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Generic icon style; not part of a coherent professional beach pack.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "furniture-deck-chair-real",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Generic icon style; not part of a coherent professional beach pack.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "furniture-chair-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic UI/furniture icon; not beach-plan asset quality.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "furniture-table-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic table/chairs icon; not beach-plan asset quality.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "map-shower-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic service icon; usable later as technical icon, not main map asset.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "map-trash-bin-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic service icon; usable later as technical icon, not main map asset.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "map-service-cabin-real",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Cabin icon style not compatible with current visual direction.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "map-info-point-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic marker icon; keep out of main asset library.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "walkway-wood-plank-real",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Single icon, not a coherent material/pattern system.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "walkway-bamboo-tile-real",
+    "status": "quarantined",
+    "visualStyle": "flat_icon",
+    "reason": "Bamboo icon is decorative plant-like, not walkway material.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  },
+  {
+    "assetId": "walkway-modular-deck-real",
+    "status": "quarantined",
+    "visualStyle": "technical_icon",
+    "reason": "Generic deck icon, not a usable material/pattern preview.",
+    "approvedForCanvas": false,
+    "approvedForLibraryPreview": false
+  }
+]

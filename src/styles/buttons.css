@@ -1,0 +1,90 @@
+.button-primary,
+.open-operational-button,
+.panel-heading button,
+.beach-list-row button,
+.extra-item-form button,
+.customer-form-actions button:first-child,
+.customer-actions button:first-child,
+.assignment-type button.active,
+.operational-tabs button.active,
+.view-switcher button.active,
+.status-summary button.active,
+.status-filters button.active,
+.usage-filters button.active,
+.list-filters button.active,
+.filter-button.active {
+  color: #f6fbfa;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: inset 0 -1px 0 rgb(255 255 255 / 10%);
+}
+
+.button-secondary,
+.filter-button,
+.menu-button,
+.customer-actions button,
+.customer-form-actions button,
+.assignment-type button,
+.extra-catalog-row button,
+.extra-list button,
+.tariff-rule-row button,
+.price-suggestion-card button,
+.customer-list-row > button,
+.app-intro-banner__actions button {
+  color: var(--color-text);
+  background: var(--color-surface-soft);
+  border-color: var(--color-line);
+}
+
+.button-ghost,
+.operational-header button,
+.floating-focus-card__close,
+.map-controls button,
+.view-switcher button,
+.operational-tabs button,
+.list-filters button,
+.status-summary button,
+.status-filters button,
+.usage-filters button {
+  color: var(--color-primary-strong);
+  background: transparent;
+  border-color: transparent;
+}
+
+.button-danger,
+.customer-actions button:last-child,
+.customer-form-actions button:last-child {
+  color: var(--color-danger-strong);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface) 90%);
+  border-color: color-mix(in srgb, var(--color-danger) 18%, var(--color-line) 82%);
+}
+
+.button-compact,
+.map-controls button,
+.floating-focus-card__close,
+.operational-header button,
+.panel-heading button,
+.tariff-rule-row button,
+.customer-list-row > button,
+.extra-catalog-row button,
+.extra-list button {
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 24%, var(--color-line) 76%);
+}
+
+button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 42%, white 58%);
+  outline-offset: 1px;
+}
+
+button:disabled {
+  opacity: 0.48;
+  box-shadow: none;
+}

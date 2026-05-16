@@ -1,0 +1,109 @@
+:root {
+  font-family:
+    Inter, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  color: #223033;
+  background: #dfe6df;
+  --color-app-bg: #dfe6df;
+  --color-app-bg-soft: #e8ede6;
+  --color-surface: rgb(239 244 238 / 88%);
+  --color-surface-soft: rgb(230 237 229 / 78%);
+  --color-surface-muted: rgb(218 228 220 / 72%);
+  --color-surface-strong: rgb(205 219 211 / 86%);
+  --color-surface-elevated: rgb(244 248 242 / 86%);
+  --color-text: #223033;
+  --color-text-secondary: #4a5a5c;
+  --color-text-muted: #73817e;
+  --color-primary: #16786c;
+  --color-primary-strong: #0d514b;
+  --color-on-primary: #f7fffb;
+  --color-success: #238b72;
+  --color-warning: #9a7628;
+  --color-danger: #b45a50;
+  --color-danger-strong: #863b35;
+  --color-line: rgb(35 55 55 / 12%);
+  --color-line-strong: rgb(35 55 55 / 18%);
+  --color-field-bg: rgb(255 255 250 / 66%);
+  --color-field-border: rgb(35 55 55 / 16%);
+  --color-muted: var(--color-text-muted);
+  --color-sand: #d6c18a;
+  --color-water: #6caeb8;
+  --color-palm: #14855f;
+  --color-umbrella: #bd584a;
+  --color-small-palm: #6a9b3d;
+  --shadow-soft: 0 12px 30px rgb(28 45 43 / 10%);
+  --shadow-raised: 0 10px 24px rgb(28 45 43 / 14%);
+  --shadow-panel: 0 18px 42px rgb(28 45 43 / 16%);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius: var(--radius-md);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --touch-target: 56px;
+}
+
+[data-theme='neutral'] {
+  --color-app-bg: #dfe6df;
+  --color-app-bg-soft: #e8ede6;
+  --color-surface: rgb(239 244 238 / 88%);
+  --color-surface-soft: rgb(230 237 229 / 78%);
+  --color-surface-muted: rgb(218 228 220 / 72%);
+  --color-surface-strong: rgb(205 219 211 / 86%);
+  --color-surface-elevated: rgb(244 248 242 / 86%);
+  --color-text: #223033;
+  --color-text-secondary: #4a5a5c;
+  --color-text-muted: #73817e;
+  --color-primary: #16786c;
+  --color-primary-strong: #0d514b;
+  --color-on-primary: #f7fffb;
+  --color-success: #238b72;
+  --color-warning: #9a7628;
+  --color-danger: #b45a50;
+  --color-danger-strong: #863b35;
+  --color-line: rgb(35 55 55 / 12%);
+  --color-line-strong: rgb(35 55 55 / 18%);
+  --color-field-bg: rgb(255 255 250 / 66%);
+  --color-field-border: rgb(35 55 55 / 16%);
+  --color-muted: var(--color-text-muted);
+  --shadow-soft: 0 12px 30px rgb(28 45 43 / 10%);
+  --shadow-raised: 0 10px 24px rgb(28 45 43 / 14%);
+  --shadow-panel: 0 18px 42px rgb(28 45 43 / 16%);
+}
+
+[data-theme='dark'] {
+  --color-app-bg: #03090b;
+  --color-app-bg-soft: #071012;
+  --color-surface: rgb(8 18 21 / 92%);
+  --color-surface-soft: rgb(11 25 28 / 86%);
+  --color-surface-muted: rgb(16 35 39 / 82%);
+  --color-surface-strong: rgb(22 48 52 / 90%);
+  --color-surface-elevated: rgb(8 18 21 / 88%);
+  --color-text: #f7f7f4;
+  --color-text-secondary: #d9d9d2;
+  --color-text-muted: #aaa99f;
+  --color-primary: #1e8f79;
+  --color-primary-strong: #f4fffb;
+  --color-on-primary: #041b19;
+  --color-success: #279b81;
+  --color-warning: #bf9228;
+  --color-danger: #bf5d53;
+  --color-danger-strong: #e19d97;
+  --color-line: rgb(255 255 247 / 11%);
+  --color-line-strong: rgb(255 255 247 / 18%);
+  --color-field-bg: rgb(255 255 255 / 6%);
+  --color-field-border: rgb(224 255 249 / 14%);
+  --color-muted: var(--color-text-muted);
+  --color-sand: #6d6047;
+  --color-water: #2d6872;
+  --color-palm: #1d946e;
+  --color-umbrella: #b85c50;
+  --color-small-palm: #7aa84b;
+  --shadow-soft: 0 16px 36px rgb(0 0 0 / 28%);
+  --shadow-raised: 0 12px 28px rgb(0 0 0 / 32%);
+  --shadow-panel: 0 20px 46px rgb(0 0 0 / 36%);
+}
