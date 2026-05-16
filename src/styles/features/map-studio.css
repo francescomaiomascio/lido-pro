@@ -646,3 +646,73 @@
     width: 100%;
   }
 }
+
+/* MAP.STUDIO.TOPOLOGY.CUTOVER.R2
+   Studio mappa is a full settings-pane tool. It fills the pane supplied by
+   settings.css instead of sizing itself from the viewport. */
+.settings-content > .parametric-setup-page {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  place-self: stretch !important;
+}
+
+.settings-content > .parametric-setup-page > .map-studio-shell,
+.settings-content .map-studio-shell {
+  position: relative !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.settings-content .map-studio-workspace,
+.settings-content .map-studio-board-host,
+.settings-content .map-studio-board-host__stage,
+.settings-content .parametric-board {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.settings-content .map-studio-topbar {
+  grid-row: 1 !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.settings-content .map-studio-domain-tabs {
+  grid-row: 2 !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.settings-content .map-studio-workspace {
+  grid-row: 3 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: hidden !important;
+}
+
+.settings-content .map-studio-context-dock {
+  grid-row: 4 !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.settings-content .parametric-board__svg {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}

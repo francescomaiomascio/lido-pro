@@ -80,7 +80,8 @@
       return
     }
 
-    isMobile = window.innerWidth <= mobileSettingsBreakpoint
+    const coarsePointer = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
+    isMobile = window.innerWidth <= mobileSettingsBreakpoint && coarsePointer
     if (!isMobile) {
       mobileDetailOpen = true
       if (!navTouchedByUser) {
@@ -314,6 +315,7 @@
         </div>
       </header>
 
+
       <div class="settings-shell__body">
         {#if !isMobile || !mobileDetailOpen}
           <SettingsNavigation
@@ -325,15 +327,6 @@
           />
         {/if}
 
-        {#if !isMobile}
-          <button
-            type="button"
-            class="settings-shell__nav-resize-handle"
-            aria-label="Ridimensiona menu impostazioni"
-            onpointerdown={startNavResize}
-            ondblclick={toggleNavMode}
-          ></button>
-        {/if}
 
         {#if !isMobile || mobileDetailOpen}
           <SettingsContent

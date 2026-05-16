@@ -1,6 +1,7 @@
 <script lang="ts">
   import BeachCanvasSettingsPanel from './panels/BeachCanvasSettingsPanel.svelte'
   import CustomersSettingsPanel from './panels/CustomersSettingsPanel.svelte'
+  import MapStudioSettingsPanel from './panels/MapStudioSettingsPanel.svelte'
   import RegistrySettingsPanel from './panels/RegistrySettingsPanel.svelte'
   import SystemSettingsPanel from './panels/SystemSettingsPanel.svelte'
   import TariffsSettingsPanel from './panels/TariffsSettingsPanel.svelte'
@@ -87,6 +88,8 @@
     <TariffsSettingsPanel onCatalogChange={onExtraCatalogChange} />
   {:else if activeSection === 'registry'}
     <RegistrySettingsPanel openRequest={registryOpenRequest} />
+  {:else if activeSection === 'beach-parametric-setup'}
+    <MapStudioSettingsPanel />
   {:else if beachSections.includes(activeSection)}
     <BeachCanvasSettingsPanel
       section={activeSection}

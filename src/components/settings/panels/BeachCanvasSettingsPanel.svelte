@@ -53,7 +53,6 @@
   import type { BeachItem, BeachLayout, BeachStatusSummary } from '../../../lib/types/beach'
   import BeachLibraryCategoryList from '../library/BeachLibraryCategoryList.svelte'
   import BeachLibraryItemList from '../library/BeachLibraryItemList.svelte'
-  import MapStudioPanel from '../map-studio/MapStudioPanel.svelte'
   import SettingsControlGroup from '../SettingsControlGroup.svelte'
   import SettingsFieldRow from '../SettingsFieldRow.svelte'
   import SettingsHeader from '../SettingsHeader.svelte'
@@ -562,22 +561,7 @@
   })
 </script>
 
-{#if section === 'beach-parametric-setup'}
-  <section class="settings-panel settings-ui-page parametric-setup-page" aria-label="Studio mappa">
-    <MapStudioPanel
-      setup={parametricSetup}
-      output={parametricOutput}
-      status={parametricDraftStatus}
-      {distanceRows}
-      draftAvailable={draftLayoutVersions.length > 0}
-      onReload={loadCurrentParametricSetup}
-      onSave={saveCurrentParametricSetup}
-      onCalculate={calculateCurrentParametricSetup}
-      onShowDraft={() => switchLayoutViewMode('draft')}
-      onUpdateDistance={updateSetupDistance}
-    />
-  </section>
-{:else if section === 'beach-configuration'}
+{#if section === 'beach-configuration'}
   <section class="settings-panel settings-ui-page" aria-label="Configurazione spiaggia">
     <SettingsHeader
       title="Configurazione spiaggia"

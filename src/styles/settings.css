@@ -5672,3 +5672,134 @@
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* SETTINGS.TOPOLOGY.CUTOVER.R2
+   Authoritative shell topology: the shell is header + body, the body is nav +
+   content. No resize ghost column and no paint containment over the pane. */
+.settings-shell-layer {
+  display: grid !important;
+  isolation: isolate !important;
+}
+
+.settings-shell-backdrop {
+  z-index: 0 !important;
+}
+
+.settings-shell {
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+}
+
+.settings-shell__header {
+  position: relative !important;
+  z-index: 5 !important;
+  grid-row: 1 !important;
+}
+
+.settings-shell__body {
+  position: relative !important;
+  z-index: 1 !important;
+  display: grid !important;
+  grid-row: 2 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  grid-template-columns: var(--settings-nav-width, 280px) minmax(0, 1fr) !important;
+  grid-template-areas: 'settings-nav settings-content' !important;
+}
+
+.settings-shell__body > .settings-nav {
+  grid-area: settings-nav !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.settings-shell__body > .settings-content {
+  grid-area: settings-content !important;
+  position: relative !important;
+  z-index: 4 !important;
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-content: stretch !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: auto !important;
+  contain: none !important;
+  container-type: normal !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 92%, white 8%), var(--color-surface)) !important;
+}
+
+.settings-shell.is-mobile .settings-shell__body {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-areas: 'settings-content' !important;
+}
+
+.settings-shell.is-mobile .settings-shell__body > .settings-nav,
+.settings-shell.is-mobile .settings-shell__body > .settings-content {
+  grid-area: settings-content !important;
+}
+
+.settings-shell__body > .settings-content::before,
+.settings-shell__body > .settings-content::after,
+.settings-shell__nav-resize-handle {
+  display: none !important;
+  content: none !important;
+  pointer-events: none !important;
+}
+
+.settings-shell__body > .settings-content > .settings-panel,
+.settings-shell__body > .settings-content > .settings-ui-page,
+.settings-shell__body > .settings-content > .registry-panel,
+.settings-shell__body > .settings-content > .listino-panel {
+  position: relative !important;
+  z-index: 1 !important;
+  align-self: stretch !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* SETTINGS.TOPOLOGY.CUTOVER.R3
+   Override the older high-specificity nav-expanded/compact rules that kept a
+   7px resize column in the grid. With no resize handle in markup, that column
+   becomes the detail pane and makes the mounted content look blank. */
+.settings-shell.settings-shell--nav-expanded .settings-shell__body,
+.settings-shell.settings-shell--nav-compact .settings-shell__body,
+.settings-shell.settings-shell--nav-collapsed .settings-shell__body,
+.settings-shell__body.settings-shell__body--nav-collapsed {
+  grid-template-columns: var(--settings-nav-width, 280px) minmax(0, 1fr) !important;
+  grid-template-areas: 'settings-nav settings-content' !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-shell__body > .settings-nav,
+.settings-shell.settings-shell--nav-compact .settings-shell__body > .settings-nav,
+.settings-shell.settings-shell--nav-collapsed .settings-shell__body > .settings-nav {
+  grid-area: settings-nav !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-shell__body > .settings-content,
+.settings-shell.settings-shell--nav-compact .settings-shell__body > .settings-content,
+.settings-shell.settings-shell--nav-collapsed .settings-shell__body > .settings-content {
+  grid-area: settings-content !important;
+  width: 100% !important;
+}
