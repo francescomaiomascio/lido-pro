@@ -21,11 +21,12 @@ The project focuses on operational workflows such as beach layout management, re
 
 ## Setup
 
-Clone the repository and enter the project directory:
+Clone the repository and enter the project directory. The directory name is detected from the repository URL, so no local path needs to be edited:
 
 ```sh
-git clone <repository-url>
-cd <project-directory>
+repo_url="https://github.com/francescomaiomascio/beach-bdf.git"
+git clone "$repo_url"
+cd "$(basename -s .git "$repo_url")"
 ```
 
 Use the Node.js version declared by the repository:
