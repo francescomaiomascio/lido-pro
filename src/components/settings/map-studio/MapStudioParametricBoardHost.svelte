@@ -5,25 +5,27 @@
   import MapStudioLayerBar from './MapStudioLayerBar.svelte'
   import ParametricBoard from './board/ParametricBoard.svelte'
   import type { MapStudioLayerId } from './mapStudioLayers'
+  import type { MapStudioControlPlane } from './state/mapStudioControlPlane'
+  import type { MapStudioScopeId } from './state/mapStudioScope'
 
   let {
     setup,
     output = null,
     projectState,
+    controlPlane,
     disabledLayers = [],
     onLayerToggle,
-    onSelectedZoneChange,
-    onSelectedRowChange,
-    onSelectedItemChange,
+    onScopeChange,
+    onScopeHover,
   }: {
     setup: ParametricSetupState
     output?: ParametricLayoutOutput | null
     projectState: MapStudioProjectState
+    controlPlane: MapStudioControlPlane
     disabledLayers?: MapStudioLayerId[]
     onLayerToggle: (layer: MapStudioLayerId) => void
-    onSelectedZoneChange: (id: string) => void
-    onSelectedRowChange: (id: string) => void
-    onSelectedItemChange: (code: string) => void
+    onScopeChange: (scopeId: MapStudioScopeId) => void
+    onScopeHover: (scopeId?: MapStudioScopeId) => void
   } = $props()
 </script>
 
@@ -34,9 +36,9 @@
       {setup}
       {output}
       {projectState}
-      {onSelectedZoneChange}
-      {onSelectedRowChange}
-      {onSelectedItemChange}
+      emphasis={controlPlane.boardEmphasis}
+      onScopeChange={onScopeChange}
+      onScopeHover={onScopeHover}
     />
   </div>
 </section>

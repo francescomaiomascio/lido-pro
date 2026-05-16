@@ -36,12 +36,12 @@ export const mapStudioLayers: MapStudioLayer[] = [
 
 export const domainLayerEmphasis: Record<MapStudioDomainId, MapStudioLayerId[]> = {
   perimeter: ['base.surface', 'sand.surface', 'sea.edge', 'usable.boundary', 'selection.focus'],
-  'functional-areas': ['base.surface', 'sand.surface', 'functional.areas', 'selection.focus'],
+  functionalAreas: ['base.surface', 'sand.surface', 'functional.areas', 'selection.focus'],
   tracks: ['functional.areas', 'tracks.rows', 'selection.focus'],
   footprints: ['functional.areas', 'object.footprints', 'selection.focus'],
-  constraints: ['usable.boundary', 'metric.constraints', 'selection.focus'],
-  validation: ['calculation.preview', 'warnings', 'metric.constraints'],
-  versions: ['base.surface', 'sand.surface', 'calculation.preview', 'warnings'],
+  metricConstraints: ['usable.boundary', 'metric.constraints', 'tracks.rows', 'selection.focus'],
+  verification: ['calculation.preview', 'warnings', 'metric.constraints'],
+  versionsPublication: ['base.surface', 'sand.surface', 'calculation.preview', 'warnings'],
 }
 
 export const layersForDomain = (domainId: MapStudioDomainId) => domainLayerEmphasis[domainId]

@@ -7,22 +7,25 @@
   import MapStudioDomainTabs from './MapStudioDomainTabs.svelte'
   import MapStudioParametricBoardHost from './MapStudioParametricBoardHost.svelte'
   import MapStudioContextDock from './MapStudioContextDock.svelte'
-  import type { BeachDistanceRules } from '../../../lib/map-canvas'
   import type { MapStudioLayerId } from './mapStudioLayers'
+  import type { MapStudioAction } from './state/mapStudioActions'
+  import type { MapStudioControlPlane } from './state/mapStudioControlPlane'
+  import type { MapStudioScopeId } from './state/mapStudioScope'
 
   let {
     setup,
     output = null,
     status,
     projectState,
-    distanceRows,
+    controlPlane,
     draftAvailable,
     disabledLayers,
     onDomainChange,
     onLayerToggle,
-    onSelectedZoneChange,
-    onSelectedRowChange,
-    onSelectedItemChange,
+    onScopeChange,
+    onScopeHover,
+    onClearScope,
+    onAction,
     onSave,
     onCalculate,
     onShowDraft,
@@ -32,14 +35,15 @@
     output?: ParametricLayoutOutput | null
     status: string
     projectState: MapStudioProjectState
-    distanceRows: Array<{ label: string; key: keyof BeachDistanceRules; hint: string }>
+    controlPlane: MapStudioControlPlane
     draftAvailable: boolean
     disabledLayers: MapStudioLayerId[]
     onDomainChange: (domain: MapStudioDomainId) => void
     onLayerToggle: (layer: MapStudioLayerId) => void
-    onSelectedZoneChange: (id: string) => void
-    onSelectedRowChange: (id: string) => void
-    onSelectedItemChange: (code: string) => void
+    onScopeChange: (scopeId: MapStudioScopeId) => void
+    onScopeHover: (scopeId?: MapStudioScopeId) => void
+    onClearScope: () => void
+    onAction: (action: MapStudioAction) => void
     onSave: () => void
     onCalculate: () => void
     onShowDraft: () => void
@@ -55,23 +59,20 @@
       {setup}
       {output}
       {projectState}
+      {controlPlane}
       {disabledLayers}
       {onLayerToggle}
-      {onSelectedZoneChange}
-      {onSelectedRowChange}
-      {onSelectedItemChange}
+      {onScopeChange}
+      {onScopeHover}
     />
   </div>
   <MapStudioContextDock
     {setup}
-    {output}
     {projectState}
-    {distanceRows}
-    {draftAvailable}
-    {onSelectedZoneChange}
-    {onSelectedRowChange}
+    {controlPlane}
+    {onScopeChange}
+    {onClearScope}
+    {onAction}
     {onUpdateDistance}
-    {onCalculate}
-    {onShowDraft}
   />
 </section>

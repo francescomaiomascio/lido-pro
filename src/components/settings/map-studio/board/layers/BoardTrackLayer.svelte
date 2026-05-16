@@ -1,18 +1,20 @@
 <script lang="ts">
   import type { MetricBoardViewModel } from '../metricBoardViewModel'
+  import type { MapStudioBoardEmphasisModel } from '../../state/mapStudioSelectors'
+  import type { MapStudioScopeId } from '../../state/mapStudioScope'
 
   let {
     vm,
     active,
-    selectedTrackId = undefined,
-    selectedAreaId = undefined,
-    onSelectedRowChange,
+    emphasis,
+    onScopeChange,
+    onScopeHover,
   }: {
     vm: MetricBoardViewModel
     active: boolean
-    selectedTrackId?: string
-    selectedAreaId?: string
-    onSelectedRowChange: (id: string) => void
+    emphasis: MapStudioBoardEmphasisModel
+    onScopeChange: (scopeId: MapStudioScopeId) => void
+    onScopeHover: (scopeId?: MapStudioScopeId) => void
   } = $props()
 
   const color = (family: string) =>
@@ -21,16 +23,25 @@
 
 <g class="parametric-board__tracks" class:is-muted={!active}>
   {#each vm.tracks as track}
-    {@const selected = selectedTrackId === track.row.id}
-    {@const outscope = Boolean((selectedTrackId && !selected) || (selectedAreaId && track.row.zoneId !== selectedAreaId))}
+    {@const scopeId = `track:${track.row.id}` as MapStudioScopeId}
+    {@const selected = emphasis.selectedEntity?.kind === 'track' && emphasis.selectedEntity.id === track.row.id}
+    {@const emphasized = emphasis.emphasizedTrackIds.includes(track.row.id)}
+    {@const hovered = emphasis.hoveredEntity?.kind === 'track' && emphasis.hoveredEntity.id === track.row.id}
+    {@const outscope = emphasis.mutedTrackIds.includes(track.row.id)}
     <g
       class="parametric-board__track"
       class:is-selected={selected}
+      class:is-emphasized={emphasized}
+      class:is-hovered={hovered}
       class:is-outscope={outscope}
       role="button"
       tabindex="0"
-      onkeydown={(event) => event.key === 'Enter' && onSelectedRowChange(track.row.id)}
-      onclick={() => onSelectedRowChange(track.row.id)}
+      onmouseenter={() => onScopeHover(scopeId)}
+      onmouseleave={() => onScopeHover()}
+      onfocus={() => onScopeHover(scopeId)}
+      onblur={() => onScopeHover()}
+      onkeydown={(event) => event.key === 'Enter' && onScopeChange(scopeId)}
+      onclick={() => onScopeChange(scopeId)}
     >
       <line x1={track.x1} x2={track.x2} y1={track.y} y2={track.y} stroke={color(track.row.family)} />
       <line class="parametric-board__track-hit" x1={track.x1} x2={track.x2} y1={track.y} y2={track.y} />

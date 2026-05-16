@@ -3137,3 +3137,138 @@
     justify-self: start;
   }
 }
+
+/* Registry selected-row final cut: keep the reservation sheet out of the ledger plane. */
+.registry-workspace.has-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.registry-workspace.has-detail .registry-detail {
+  order: -1;
+  position: relative;
+  top: auto;
+  z-index: 0;
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-surface-elevated) 58%, transparent 42%);
+  border: 1px solid color-mix(in srgb, var(--color-line) 64%, transparent 36%);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.registry-workspace.has-detail .registry-workspace__records {
+  order: 0;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.registry-workspace.has-detail .registry-table {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.registry-workspace.has-detail .registry-detail__header {
+  min-width: 0;
+  padding-bottom: 8px;
+}
+
+.registry-workspace.has-detail .registry-detail__header h3,
+.registry-workspace.has-detail .registry-detail__header p,
+.registry-workspace.has-detail .registry-detail__booking-main strong,
+.registry-workspace.has-detail .registry-detail__booking-main small,
+.registry-workspace.has-detail .registry-detail__booking-card dd {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.registry-workspace.has-detail .registry-detail__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(230px, 0.88fr);
+  align-items: start;
+  gap: 10px 20px;
+  min-width: 0;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card,
+.registry-workspace.has-detail .registry-detail__activity,
+.registry-workspace.has-detail .registry-detail__timeline {
+  min-width: 0;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card {
+  grid-column: 1;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.registry-workspace.has-detail .registry-detail__activity,
+.registry-workspace.has-detail .registry-detail__timeline {
+  grid-column: 2;
+}
+
+.registry-workspace.has-detail .registry-detail__timeline {
+  grid-row: span 2;
+}
+
+.registry-workspace.has-detail .registry-table__head,
+.registry-workspace.has-detail .registry-row button {
+  grid-template-columns:
+    minmax(118px, 1.18fr)
+    minmax(118px, 1.06fr)
+    minmax(118px, 1fr)
+    minmax(82px, 0.62fr)
+    minmax(108px, 0.76fr)
+    minmax(98px, 0.7fr);
+  gap: clamp(8px, 0.9vw, 13px);
+}
+
+.registry-workspace.has-detail .registry-table__head span:last-child,
+.registry-workspace.has-detail .registry-cell--status {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .registry-workspace.has-detail .registry-detail__body {
+    grid-template-columns: 1fr;
+  }
+
+  .registry-workspace.has-detail .registry-detail__booking-card,
+  .registry-workspace.has-detail .registry-detail__activity,
+  .registry-workspace.has-detail .registry-detail__timeline {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .registry-workspace.has-detail .registry-table__head,
+  .registry-workspace.has-detail .registry-row button {
+    grid-template-columns:
+      minmax(104px, 1.1fr)
+      minmax(108px, 1fr)
+      minmax(108px, 0.96fr)
+      minmax(74px, 0.58fr)
+      minmax(98px, 0.74fr)
+      minmax(88px, 0.66fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .registry-workspace.has-detail .registry-detail {
+    padding: 10px 12px;
+  }
+}

@@ -12,6 +12,6 @@ export const layerTone = (input: {
   if (active) return 'strong'
   if (input.activeDomain === 'perimeter' && ['functional.areas', 'tracks.rows', 'object.footprints'].includes(input.layer)) return 'quiet'
   if (input.activeDomain === 'tracks' && input.layer === 'object.footprints') return 'quiet'
-  if (input.activeDomain === 'constraints' && ['functional.areas', 'tracks.rows', 'object.footprints'].includes(input.layer)) return 'medium'
+  if (input.activeDomain === 'metricConstraints' && ['functional.areas', 'tracks.rows', 'object.footprints'].includes(input.layer)) return 'medium'
   return 'muted'
 }

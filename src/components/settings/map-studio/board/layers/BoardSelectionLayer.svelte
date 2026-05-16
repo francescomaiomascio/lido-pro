@@ -1,20 +1,27 @@
 <script lang="ts">
   import type { MetricBoardViewModel } from '../metricBoardViewModel'
+  import type { MapStudioBoardEmphasisModel } from '../../state/mapStudioSelectors'
 
   let {
     vm,
     active,
-    selectedAreaId = undefined,
-    selectedTrackId = undefined,
+    emphasis,
   }: {
     vm: MetricBoardViewModel
     active: boolean
-    selectedAreaId?: string
-    selectedTrackId?: string
+    emphasis: MapStudioBoardEmphasisModel
   } = $props()
 
-  const selectedArea = $derived(selectedAreaId ? vm.areas.find((area) => area.zone.id === selectedAreaId) : undefined)
-  const selectedTrack = $derived(selectedTrackId ? vm.tracks.find((track) => track.row.id === selectedTrackId) : undefined)
+  const selectedArea = $derived(
+    emphasis.selectedEntity?.relatedAreaIds[0]
+      ? vm.areas.find((area) => area.zone.id === emphasis.selectedEntity?.relatedAreaIds[0])
+      : undefined,
+  )
+  const selectedTrack = $derived(
+    emphasis.selectedEntity?.relatedTrackIds[0]
+      ? vm.tracks.find((track) => track.row.id === emphasis.selectedEntity?.relatedTrackIds[0])
+      : undefined,
+  )
 </script>
 
 <g class="parametric-board__selection" class:is-muted={!active}>

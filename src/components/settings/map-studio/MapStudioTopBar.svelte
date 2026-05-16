@@ -42,6 +42,6 @@
   <div class="map-studio-topbar__actions" aria-label="Azioni Studio mappa">
     <button type="button" onclick={onSave}>Salva</button>
     <button type="button" class="primary" onclick={onCalculate}>Verifica</button>
-    <button type="button" onclick={onShowDraft} disabled={!draftAvailable}>Anteprima</button>
+    <button type="button" onclick={onShowDraft} disabled={!draftAvailable}>Apri anteprima</button>
   </div>
 </header>

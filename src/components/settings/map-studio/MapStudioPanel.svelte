@@ -4,9 +4,19 @@
   import type { ParametricSetupState } from '../../../lib/map-canvas/parametric/parametricSetupState'
   import type { BeachDistanceRules } from '../../../lib/map-canvas'
   import MapStudioShell from './MapStudioShell.svelte'
-  import { createMapStudioProjectState, setMapStudioDomain, type MapStudioProjectState } from './MapStudioProjectState'
+  import {
+    clearMapStudioScope,
+    createMapStudioProjectState,
+    setMapStudioDomain,
+    setMapStudioHover,
+    setMapStudioScope,
+    type MapStudioProjectState,
+  } from './MapStudioProjectState'
   import type { MapStudioDomainId } from './mapStudioDomains'
   import type { MapStudioLayerId } from './mapStudioLayers'
+  import type { MapStudioAction } from './state/mapStudioActions'
+  import { buildMapStudioControlPlane } from './state/mapStudioControlPlane'
+  import type { MapStudioScopeId } from './state/mapStudioScope'
 
   let {
     setup,
@@ -33,6 +43,11 @@
   } = $props()
 
   let projectState = $state<MapStudioProjectState | null>(null)
+  const controlPlane = $derived(
+    setup && projectState
+      ? buildMapStudioControlPlane({ setup, output, state: projectState, distanceRows, draftAvailable })
+      : null,
+  )
 
   $effect(() => {
     const currentProjectState = untrack(() => projectState)
@@ -76,6 +91,12 @@
     })
   }
 
+  const ensureLayer = (layer: MapStudioLayerId) => {
+    updateProjectState((state) => state.activeLayerSet.includes(layer)
+      ? state
+      : { ...state, activeLayerSet: [...state.activeLayerSet, layer] })
+  }
+
   const disabledLayers = $derived.by<MapStudioLayerId[]>(() => {
     const disabled: MapStudioLayerId[] = []
     if (!output?.warnings.length) disabled.push('warnings')
@@ -83,55 +104,80 @@
     return disabled
   })
 
-  const selectZone = (id: string) => {
-    updateProjectState((state) => ({
-      ...state,
-      activeScope: `area:${id}`,
-      selectedAreaId: id,
-      selectedTrackId: undefined,
-      selectedObjectTypeId: undefined,
-    }))
+  const setScope = (scopeId: MapStudioScopeId) => {
+    const entity = controlPlane?.relations.entitiesByScopeId.get(scopeId)
+    updateProjectState((state) => setMapStudioScope(state, scopeId, entity))
   }
 
-  const selectRow = (id: string) => {
-    const row = setup?.rows.find((candidate) => candidate.id === id)
-    updateProjectState((state) => ({
-      ...state,
-      activeScope: `track:${id}`,
-      selectedAreaId: row?.zoneId ?? state.selectedAreaId,
-      selectedTrackId: id,
-      selectedObjectTypeId: undefined,
-    }))
+  const setHoverScope = (scopeId?: MapStudioScopeId) => {
+    const entity = scopeId ? controlPlane?.relations.entitiesByScopeId.get(scopeId) : undefined
+    updateProjectState((state) => setMapStudioHover(state, entity))
   }
 
-  const selectItem = (code: string) => {
-    updateProjectState((state) => ({
-      ...state,
-      activeScope: `object:${code}`,
-      selectedObjectTypeId: code,
-    }))
+  const clearScope = () => {
+    updateProjectState(clearMapStudioScope)
+  }
+
+  const activateAction = (action: MapStudioAction) => {
+    if (action.disabledReason) return
+    if (action.id === 'clearScope') {
+      clearScope()
+      return
+    }
+    if (action.id === 'switchDomain' && action.domainId) {
+      changeDomain(action.domainId)
+      return
+    }
+    if (action.id === 'toggleLayer' && action.layerId) {
+      toggleLayer(action.layerId)
+      return
+    }
+    if (action.id === 'focusPerimeter') {
+      ensureLayer('usable.boundary')
+      setScope('perimeter')
+      return
+    }
+    if (action.id === 'focusScope') {
+      ensureLayer('selection.focus')
+      if (action.scopeId) setScope(action.scopeId)
+      return
+    }
+    if (action.id === 'runVerification') {
+      onCalculate()
+      return
+    }
+    if (action.id === 'openPreview' || action.id === 'showActiveLayout') {
+      onShowDraft()
+    }
+  }
+
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') clearScope()
   }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 {#if !setup || !projectState}
   <section class="map-studio-shell map-studio-shell--loading">
     <div><strong>Setup mappa non caricato</strong><span>{status}</span></div>
     <button type="button" onclick={onReload}>Ricarica setup</button>
   </section>
-{:else}
+{:else if controlPlane}
   <MapStudioShell
     {setup}
     {output}
     {status}
     {projectState}
-    {distanceRows}
+    {controlPlane}
     {draftAvailable}
     {disabledLayers}
     onDomainChange={changeDomain}
     onLayerToggle={toggleLayer}
-    onSelectedZoneChange={selectZone}
-    onSelectedRowChange={selectRow}
-    onSelectedItemChange={selectItem}
+    onScopeChange={setScope}
+    onScopeHover={setHoverScope}
+    onClearScope={clearScope}
+    onAction={activateAction}
     {onSave}
     {onCalculate}
     {onShowDraft}

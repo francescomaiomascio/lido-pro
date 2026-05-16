@@ -229,6 +229,12 @@
   opacity: 0.34;
 }
 
+.parametric-board__boundary.is-selected rect {
+  stroke: rgb(0 103 94 / 82%);
+  stroke-width: 3;
+  filter: url(#board-soft-glow);
+}
+
 .parametric-board__boundary rect {
   fill: none;
   stroke: currentColor;
@@ -286,6 +292,17 @@
   filter: url(#board-soft-glow);
 }
 
+.parametric-board__area.is-emphasized rect:not(.parametric-board__hit) {
+  stroke: rgb(0 103 94 / 62%);
+  stroke-width: 2.2;
+}
+
+.parametric-board__area.is-hovered rect:not(.parametric-board__hit) {
+  stroke: rgb(0 103 94 / 86%);
+  stroke-width: 2.6;
+  filter: url(#board-soft-glow);
+}
+
 .parametric-board__area.is-outscope {
   opacity: 0.34;
 }
@@ -320,6 +337,18 @@
   filter: url(#board-soft-glow);
 }
 
+.parametric-board__track.is-emphasized line:not(.parametric-board__track-hit) {
+  stroke-width: 4.4;
+  stroke-opacity: 0.9;
+}
+
+.parametric-board__track.is-hovered line:not(.parametric-board__track-hit) {
+  stroke-width: 5;
+  stroke-opacity: 0.96;
+  stroke-dasharray: 0;
+  filter: url(#board-soft-glow);
+}
+
 .parametric-board__track.is-outscope {
   opacity: 0.28;
 }
@@ -349,6 +378,19 @@
   filter: url(#board-soft-glow);
 }
 
+.parametric-board__object.is-emphasized {
+  opacity: 1;
+}
+
+.parametric-board__object.is-hovered .parametric-board__focus-ring,
+.parametric-board__object.is-emphasized .parametric-board__focus-ring {
+  display: block;
+}
+
+.parametric-board__object.is-hovered .parametric-board__focus-ring {
+  filter: url(#board-soft-glow);
+}
+
 .parametric-board__footprint {
   fill: rgb(255 255 255 / 16%);
   stroke: rgb(26 72 66 / 32%);
@@ -369,6 +411,26 @@
   stroke: rgb(38 67 64 / 70%);
   stroke-width: 1.5;
   stroke-dasharray: 6 5;
+}
+
+.parametric-board__constraints g {
+  cursor: pointer;
+}
+
+.parametric-board__constraints .is-emphasized line,
+.parametric-board__constraints .is-selected line,
+.parametric-board__constraints .is-hovered line {
+  stroke-width: 2.6;
+  stroke-opacity: 0.95;
+  stroke-dasharray: 0;
+  filter: url(#board-soft-glow);
+}
+
+.parametric-board__constraints .is-emphasized rect,
+.parametric-board__constraints .is-selected rect,
+.parametric-board__constraints .is-hovered rect {
+  fill: rgb(232 252 247 / 96%);
+  stroke: rgb(0 103 94 / 30%);
 }
 
 .parametric-board__constraints circle {
@@ -398,6 +460,16 @@
   fill: #b94c2c;
   stroke: rgb(255 255 255 / 82%);
   stroke-width: 2;
+}
+
+.parametric-board__warnings g {
+  cursor: pointer;
+}
+
+.parametric-board__warnings .is-selected circle,
+.parametric-board__warnings .is-hovered circle {
+  filter: url(#board-soft-glow);
+  stroke-width: 3;
 }
 
 .parametric-board__warnings text {
@@ -453,6 +525,7 @@
 }
 
 .map-studio-context-dock__scope,
+.map-studio-context-dock__body,
 .map-studio-context-dock__metrics > div {
   display: grid;
   gap: 2px;
@@ -485,6 +558,16 @@
   white-space: nowrap;
 }
 
+.map-studio-context-dock__scope em {
+  overflow: hidden;
+  color: color-mix(in srgb, var(--color-muted) 86%, var(--color-primary) 14%);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 760;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .map-studio-context-dock__metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -492,11 +575,23 @@
   min-width: 0;
 }
 
+.map-studio-context-dock__body {
+  gap: 8px;
+}
+
 .map-studio-context-dock__metrics > div {
   padding: 8px 10px;
   background: color-mix(in srgb, var(--color-surface-soft) 70%, transparent 30%);
   border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent 24%);
   border-radius: 7px;
+}
+
+.map-studio-context-dock__metrics > div.tone-warning {
+  border-color: color-mix(in srgb, var(--color-warning) 38%, var(--color-line) 62%);
+}
+
+.map-studio-context-dock__metrics > div.tone-positive {
+  border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-line) 66%);
 }
 
 .map-studio-context-dock__chips {
@@ -539,6 +634,10 @@
   background: color-mix(in srgb, var(--color-surface-soft) 70%, transparent 30%);
   border: 1px solid var(--color-line);
   border-radius: 7px;
+}
+
+.map-studio-context-dock__constraints label.secondary {
+  opacity: 0.68;
 }
 
 .map-studio-context-dock__constraints input {

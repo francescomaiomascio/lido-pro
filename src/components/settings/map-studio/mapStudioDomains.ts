@@ -1,11 +1,11 @@
 export type MapStudioDomainId =
   | 'perimeter'
-  | 'functional-areas'
+  | 'functionalAreas'
   | 'tracks'
   | 'footprints'
-  | 'constraints'
-  | 'validation'
-  | 'versions'
+  | 'metricConstraints'
+  | 'verification'
+  | 'versionsPublication'
 
 export interface MapStudioDomain {
   id: MapStudioDomainId
@@ -22,7 +22,7 @@ export const mapStudioDomains: MapStudioDomain[] = [
     description: 'Dimensioni spiaggia, lato mare, confine utile e confini tecnici.',
   },
   {
-    id: 'functional-areas',
+    id: 'functionalAreas',
     label: 'Aree funzionali',
     shortLabel: 'Aree',
     description: 'Mare, ingresso, palme, ombrelloni, palmette, vuoti e aree non utilizzabili.',
@@ -40,19 +40,19 @@ export const mapStudioDomains: MapStudioDomain[] = [
     description: 'Dimensioni fisiche degli oggetti e clearance attorno agli elementi.',
   },
   {
-    id: 'constraints',
+    id: 'metricConstraints',
     label: 'Vincoli metrici',
     shortLabel: 'Vincoli',
     description: 'Minimi metrici, margini, separazioni zona e regole collisione.',
   },
   {
-    id: 'validation',
+    id: 'verification',
     label: 'Verifica',
     shortLabel: 'Verifica',
     description: 'Prontezza calcolo, warning, conflitti e disponibilita anteprima.',
   },
   {
-    id: 'versions',
+    id: 'versionsPublication',
     label: 'Versioni / Pubblicazione',
     shortLabel: 'Versioni',
     description: 'Layout attivo protetto, configurazione progetto e anteprima.',

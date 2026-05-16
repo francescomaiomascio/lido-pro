@@ -1,100 +1,105 @@
 <script lang="ts">
   import type { BeachDistanceRules } from '../../../lib/map-canvas'
-  import type { ParametricLayoutOutput } from '../../../lib/map-canvas/parametric/parametricLayoutEngine'
   import type { ParametricSetupState } from '../../../lib/map-canvas/parametric/parametricSetupState'
-  import { getMapStudioDomain } from './mapStudioDomains'
   import type { MapStudioProjectState } from './MapStudioProjectState'
-  import { buildMapStudioContext } from './mapStudioSelectors'
+  import { actionButtonTitle, type MapStudioAction } from './state/mapStudioActions'
+  import type { MapStudioControlPlane } from './state/mapStudioControlPlane'
+  import type { MapStudioScopeId } from './state/mapStudioScope'
 
   let {
     setup,
-    output = null,
     projectState,
-    distanceRows,
-    draftAvailable,
-    onSelectedZoneChange,
-    onSelectedRowChange,
+    controlPlane,
+    onScopeChange,
+    onAction,
     onUpdateDistance,
-    onCalculate,
-    onShowDraft,
   }: {
     setup: ParametricSetupState
-    output?: ParametricLayoutOutput | null
     projectState: MapStudioProjectState
-    distanceRows: Array<{ label: string; key: keyof BeachDistanceRules; hint: string }>
-    draftAvailable: boolean
-    onSelectedZoneChange: (id: string) => void
-    onSelectedRowChange: (id: string) => void
+    controlPlane: MapStudioControlPlane
+    onScopeChange: (scopeId: MapStudioScopeId) => void
+    onClearScope: () => void
+    onAction: (action: MapStudioAction) => void
     onUpdateDistance: <K extends keyof ParametricSetupState['distanceRules']>(key: K, value: ParametricSetupState['distanceRules'][K]) => void
-    onCalculate: () => void
-    onShowDraft: () => void
   } = $props()
 
-  const domain = $derived(getMapStudioDomain(projectState.activeDomain))
-  const context = $derived(buildMapStudioContext({ setup, state: projectState, distanceRows }))
+  const dock = $derived(controlPlane.dockModel)
   const numberFromInput = (event: Event) => Number((event.currentTarget as HTMLInputElement).value)
 </script>
 
 <section class="map-studio-context-dock" aria-label="Pannello contestuale Studio mappa">
   <div class="map-studio-context-dock__scope">
-    <span>{domain.label}</span>
-    <strong>{context.title}</strong>
-    <small>{context.scopeLabel} · {context.subtitle}</small>
+    <span>{dock.domainLabel}</span>
+    <strong>{dock.title}</strong>
+    <small>{dock.scopeLabel} · {dock.subtitle}</small>
+    {#if dock.hint}
+      <em>{dock.hint}</em>
+    {/if}
   </div>
 
-  {#if projectState.activeDomain === 'perimeter'}
-    <div class="map-studio-context-dock__metrics">
-      <div><span>Perimetro</span><strong>{setup.beach.widthM}m × {setup.beach.depthM}m</strong></div>
-      <div><span>Lato mare</span><strong>{setup.beach.seaSide}</strong></div>
-      <div><span>Margini</span><strong>{setup.beach.marginsM.top}/{setup.beach.marginsM.right}/{setup.beach.marginsM.bottom}/{setup.beach.marginsM.left}m</strong></div>
-    </div>
-  {:else if projectState.activeDomain === 'functional-areas'}
-    <div class="map-studio-context-dock__chips" aria-label="Aree funzionali">
-      {#each setup.zones as zone}
-        <button type="button" class:active={projectState.selectedAreaId === zone.id} onclick={() => onSelectedZoneChange(zone.id)}>{zone.label}</button>
-      {/each}
-    </div>
-  {:else if projectState.activeDomain === 'tracks'}
-    <div class="map-studio-context-dock__chips" aria-label="Tracciati pertinenti">
-      {#each context.tracks.slice(0, 14) as track}
-        <button type="button" class:active={projectState.selectedTrackId === track.id} onclick={() => onSelectedRowChange(track.id)}>{track.label}</button>
-      {/each}
-    </div>
-  {:else if projectState.activeDomain === 'footprints'}
-    <div class="map-studio-context-dock__metrics">
-      {#each context.assets.slice(0, 4) as asset}
-        <div><span>{asset.label}</span><strong>{asset.defaultDiameterM ? `${asset.defaultDiameterM}m Ø` : `${asset.defaultWidthM}m × ${asset.defaultHeightM}m`}</strong></div>
-      {/each}
-    </div>
-  {:else if projectState.activeDomain === 'constraints'}
-    <div class="map-studio-context-dock__constraints">
-      {#each context.constraints.slice(0, 3) as constraint}
-        <label>
-          <span>{constraint.label}</span>
-          <em><input type="number" min="0" step="0.1" value={setup.distanceRules[constraint.key]} oninput={(event) => onUpdateDistance(constraint.key, numberFromInput(event))} /> m</em>
-        </label>
-      {/each}
-    </div>
-  {:else if projectState.activeDomain === 'validation'}
-    <div class="map-studio-context-dock__metrics">
-      <div><span>Input</span><strong>{setup.zones.length} aree · {setup.rows.length} tracciati</strong></div>
-      <div><span>Warning</span><strong>{output?.warnings.length ?? 0}</strong></div>
-      <div><span>Anteprima</span><strong>{draftAvailable ? 'disponibile' : 'non disponibile'}</strong></div>
-    </div>
-  {:else}
-    <div class="map-studio-context-dock__metrics">
-      <div><span>Layout attivo protetto</span><strong>{projectState.activeConfigurationId ?? setup.layoutVersionId}</strong></div>
-      <div><span>Configurazione progetto</span><strong>{setup.status === 'draft_calculated' ? 'calcolata' : 'in modifica'}</strong></div>
-      <div><span>Anteprima</span><strong>{draftAvailable ? 'disponibile' : 'da generare'}</strong></div>
-    </div>
-  {/if}
+  <div class="map-studio-context-dock__body">
+    {#if projectState.activeDomain === 'functionalAreas'}
+      <div class="map-studio-context-dock__chips" aria-label="Aree funzionali">
+        {#each dock.areaChips as chip}
+          <button type="button" class:active={chip.active} onclick={() => onScopeChange(chip.scopeId)}>{chip.label}</button>
+        {/each}
+      </div>
+    {:else if projectState.activeDomain === 'tracks'}
+      <div class="map-studio-context-dock__chips" aria-label="Tracciati pertinenti">
+        {#each dock.trackChips.slice(0, 14) as chip}
+          <button type="button" class:active={chip.active} onclick={() => onScopeChange(chip.scopeId)}>{chip.label}</button>
+        {/each}
+      </div>
+    {:else if projectState.activeDomain === 'footprints'}
+      <div class="map-studio-context-dock__chips" aria-label="Tipi oggetto pertinenti">
+        {#each dock.objectTypeChips as chip}
+          <button type="button" class:active={chip.active} onclick={() => onScopeChange(chip.scopeId)}>{chip.label}</button>
+        {/each}
+      </div>
+    {:else if projectState.activeDomain === 'metricConstraints'}
+      <div class="map-studio-context-dock__constraints">
+        {#each dock.constraintRows.slice(0, 4) as constraint}
+          <label class:secondary={constraint.priority === 'secondary'}>
+            <span>{constraint.label}</span>
+            <em><input type="number" min="0" step="0.1" value={setup.distanceRules[constraint.key]} oninput={(event) => onUpdateDistance(constraint.key, numberFromInput(event))} /> m</em>
+          </label>
+        {/each}
+      </div>
+    {/if}
+
+    {#if projectState.activeDomain !== 'metricConstraints'}
+      <div class="map-studio-context-dock__metrics">
+        {#each dock.metrics as metric}
+          <div class:tone-warning={metric.tone === 'warning'} class:tone-positive={metric.tone === 'positive'}>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  </div>
 
   <div class="map-studio-context-dock__actions">
-    {#if projectState.activeDomain === 'versions'}
-      <button type="button" class="primary" onclick={onShowDraft} disabled={!draftAvailable}>Apri anteprima</button>
-      <button type="button" onclick={onShowDraft} disabled={!draftAvailable}>Confronta</button>
-    {:else}
-      <button type="button" class="primary" onclick={onCalculate}>{context.primaryActionLabel}</button>
+    {#if dock.primaryAction}
+      <button
+        type="button"
+        class="primary"
+        disabled={Boolean(dock.primaryAction.disabledReason)}
+        title={actionButtonTitle(dock.primaryAction)}
+        onclick={() => dock.primaryAction && onAction(dock.primaryAction)}
+      >
+        {dock.primaryAction.label}
+      </button>
     {/if}
+    {#each dock.secondaryActions as action}
+      <button
+        type="button"
+        disabled={Boolean(action.disabledReason)}
+        title={actionButtonTitle(action)}
+        onclick={() => onAction(action)}
+      >
+        {action.label}
+      </button>
+    {/each}
   </div>
 </section>

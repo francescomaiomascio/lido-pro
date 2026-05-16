@@ -2,6 +2,8 @@
   import type { ParametricLayoutOutput } from '../../../../lib/map-canvas/parametric/parametricLayoutEngine'
   import type { ParametricSetupState } from '../../../../lib/map-canvas/parametric/parametricSetupState'
   import type { MapStudioProjectState } from '../MapStudioProjectState'
+  import type { MapStudioBoardEmphasisModel } from '../state/mapStudioSelectors'
+  import type { MapStudioScopeId } from '../state/mapStudioScope'
   import BoardSvgDefs from './BoardSvgDefs.svelte'
   import { buildMetricBoardViewModel } from './metricBoardViewModel'
   import { layerVisible } from './metricBoardLayers'
@@ -19,16 +21,16 @@
     setup,
     output = null,
     projectState,
-    onSelectedZoneChange,
-    onSelectedRowChange,
-    onSelectedItemChange,
+    emphasis,
+    onScopeChange,
+    onScopeHover,
   }: {
     setup: ParametricSetupState
     output?: ParametricLayoutOutput | null
     projectState: MapStudioProjectState
-    onSelectedZoneChange: (id: string) => void
-    onSelectedRowChange: (id: string) => void
-    onSelectedItemChange: (code: string) => void
+    emphasis: MapStudioBoardEmphasisModel
+    onScopeChange: (scopeId: MapStudioScopeId) => void
+    onScopeHover: (scopeId?: MapStudioScopeId) => void
   } = $props()
 
   const vm = $derived(buildMetricBoardViewModel(setup, output))
@@ -40,29 +42,28 @@
   const warningActive = $derived(layerVisible(projectState.activeLayerSet, 'warnings'))
   const selectionActive = $derived(layerVisible(projectState.activeLayerSet, 'selection.focus'))
   const boundaryActive = $derived(layerVisible(projectState.activeLayerSet, 'usable.boundary'))
-  const areaLabelsActive = $derived(projectState.activeDomain === 'functional-areas' || areaActive || selectionActive)
-  const trackLabelsActive = $derived(projectState.activeDomain === 'tracks' || trackActive || projectState.activeDomain === 'constraints')
+  const areaLabelsActive = $derived(projectState.activeDomain === 'functionalAreas' || areaActive || selectionActive)
+  const trackLabelsActive = $derived(projectState.activeDomain === 'tracks' || trackActive || projectState.activeDomain === 'metricConstraints')
 </script>
 
 <section class="parametric-board" aria-label="Tavola parametrica professionale">
   <svg class="parametric-board__svg" viewBox={`0 0 ${vm.frame.width} ${vm.frame.height}`} role="img" aria-label="Tavola parametrica spiaggia 31m per 28m">
     <BoardSvgDefs />
     <BoardSurfaceLayer {vm} activeLayers={projectState.activeLayerSet} />
-    <BoardBoundaryLayer {vm} active={boundaryActive} />
-    <BoardFunctionalAreaLayer {vm} active={areaActive} selectedAreaId={projectState.selectedAreaId} {onSelectedZoneChange} />
-    <BoardTrackLayer {vm} active={trackActive} selectedTrackId={projectState.selectedTrackId} selectedAreaId={projectState.selectedAreaId} {onSelectedRowChange} />
+    <BoardBoundaryLayer {vm} active={boundaryActive} {emphasis} />
+    <BoardFunctionalAreaLayer {vm} active={areaActive} {emphasis} {onScopeChange} {onScopeHover} />
+    <BoardTrackLayer {vm} active={trackActive} {emphasis} {onScopeChange} {onScopeHover} />
     <BoardObjectLayer
       {vm}
       active={objectActive}
       footprintsActive={footprintActive}
-      selectedAreaId={projectState.selectedAreaId}
-      selectedTrackId={projectState.selectedTrackId}
-      selectedObjectCode={projectState.selectedObjectTypeId}
-      {onSelectedItemChange}
+      {emphasis}
+      {onScopeChange}
+      {onScopeHover}
     />
-    <BoardConstraintLayer {vm} active={constraintActive} />
-    <BoardWarningLayer {vm} active={warningActive} />
-    <BoardSelectionLayer {vm} active={selectionActive} selectedAreaId={projectState.selectedAreaId} selectedTrackId={projectState.selectedTrackId} />
-    <BoardLabelLayer {vm} {areaLabelsActive} {trackLabelsActive} selectedAreaId={projectState.selectedAreaId} selectedTrackId={projectState.selectedTrackId} />
+    <BoardConstraintLayer {vm} active={constraintActive} {emphasis} {onScopeChange} {onScopeHover} />
+    <BoardWarningLayer {vm} active={warningActive} {emphasis} {onScopeChange} {onScopeHover} />
+    <BoardSelectionLayer {vm} active={selectionActive} {emphasis} />
+    <BoardLabelLayer {vm} {areaLabelsActive} {trackLabelsActive} {emphasis} />
   </svg>
 </section>
