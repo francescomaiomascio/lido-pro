@@ -133,7 +133,7 @@ Expected preserved baseline:
 
 Automated validation:
 
-- `pwd`: `/Users/francescomaiomascio/Developer/beach-bdf`
+- `pwd`: `<project-directory>`
 - `node -v`: `v20.20.2`
 - `npm -v`: `10.8.2`
 - `npm run check`: passed, 0 errors and 0 warnings

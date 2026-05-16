@@ -59,7 +59,7 @@ Persistent success bars are replaced by `AppToast.svelte` and `toastState.ts`. T
 
 Executed:
 
-- `pwd` -> `/Users/francescomaiomascio/Developer/beach-bdf`
+- `pwd` -> `<project-directory>`
 - `node -v` -> `v20.20.2`
 - `npm -v` -> `10.8.2`
 - `npm run check` -> passed

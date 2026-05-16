@@ -45,14 +45,14 @@ Tables:
 
 ```sh
 pwd
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH node -v
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npm -v
+node -v
+npm -v
 npm run check
 npm run build
 npm run cap:sync
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npx cap sync android
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH node --experimental-strip-types -e "import('./src/lib/layout/metricBeachLayout.ts').then(({createInitialMetricBeachItems}) => console.log(createInitialMetricBeachItems().length))"
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npx cap open android
+npx cap sync android
+node --experimental-strip-types -e "import('./src/lib/layout/metricBeachLayout.ts').then(({createInitialMetricBeachItems}) => console.log(createInitialMetricBeachItems().length))"
+npx cap open android
 adb devices
 curl -I http://localhost:5173/
 ```
@@ -82,7 +82,7 @@ Vite browser development uses `BrowserMemoryAdapter`. This fallback is only for 
 ## Node Status
 
 - Node 24.15.0 was installed with Homebrew.
-- `node@24` was linked by Homebrew, but the Codex shell still had `/opt/homebrew/opt/node@20/bin` earlier in PATH.
+- The local shell previously used a different Node.js version than the one declared by the project.
 - Capacitor scripts prefix Node 24 in PATH so Capacitor 8 can run reliably in this workspace.
 - Homebrew auto-update reported an unrelated stash instruction for the external `macos-fuse-t` tap. No project files were affected.
 

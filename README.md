@@ -19,29 +19,48 @@ The project focuses on operational workflows such as beach layout management, re
 - npm
 - Android Studio, only for Android builds and device testing
 
-## Quick Start
+## Setup
+
+Clone the repository and enter the project directory:
 
 ```sh
+git clone <repository-url>
+cd <project-directory>
+```
+
+Use the Node.js version declared by the repository:
+
+```sh
+nvm use
 npm install
+```
+
+If `nvm` is not available, install the Node.js version shown in `.nvmrc` with your preferred Node version manager.
+
+Run the local development server:
+
+```sh
 npm run dev
 ```
 
-For validation:
+The Vite development server prints the local and network URLs in the terminal.
+
+Validate the project:
 
 ```sh
 npm run check
 npm run build
 ```
 
-For Android synchronization:
+For Android development, install Android Studio and the Android SDK, then synchronize Capacitor:
 
 ```sh
 npm run cap:sync
+npm run cap:open
 ```
 
 ## Documentation
 
-- Setup and clone instructions: [`SETUP.md`](SETUP.md)
 - Architecture notes: [`docs/architecture`](docs/architecture)
 - Delivery waves: [`docs/waves`](docs/waves)
 
@@ -50,3 +69,12 @@ npm run cap:sync
 The repository tracks source code, documentation, configuration and curated assets required to build the application.
 
 Private files, environment files, dependency folders, build outputs, generated web bundles and native build artifacts are intentionally excluded.
+
+Do not commit:
+
+- `.env` files or local secrets
+- `node_modules`
+- `dist`
+- Android build folders
+- generated Capacitor web bundles
+- local editor or operating system files

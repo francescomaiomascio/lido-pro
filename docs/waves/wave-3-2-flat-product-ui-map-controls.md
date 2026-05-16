@@ -81,12 +81,12 @@ Mouse wheel zoom and pointer drag pan are supported. Tapping an item still selec
 
 ```sh
 pwd
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH node -v
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npm -v
+node -v
+npm -v
 npm run check
 npm run build
 npm run cap:sync
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npx cap sync android
+npx cap sync android
 curl -I http://localhost:5173/
 ```
 

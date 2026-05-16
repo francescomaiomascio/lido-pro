@@ -87,14 +87,14 @@ Diagnostics now live in `Menu -> Diagnostica` and show:
 
 ```sh
 pwd
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH node -v
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npm -v
+node -v
+npm -v
 npm run check
 npm run build
 npm run cap:sync
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npx cap sync android
+npx cap sync android
 curl -I http://localhost:5173/
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH node --experimental-strip-types -e "import('./src/lib/layout/metricBeachLayout.ts').then(({createInitialMetricBeachItems}) => console.log(createInitialMetricBeachItems().length))"
+node --experimental-strip-types -e "import('./src/lib/layout/metricBeachLayout.ts').then(({createInitialMetricBeachItems}) => console.log(createInitialMetricBeachItems().length))"
 ```
 
 Results:

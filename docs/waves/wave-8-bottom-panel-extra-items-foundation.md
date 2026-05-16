@@ -104,7 +104,7 @@ npm -v
 npm run check
 npm run build
 npm run cap:sync
-PATH=/opt/homebrew/bin:/opt/homebrew/opt/node@24/bin:$PATH npx cap sync android
+npx cap sync android
 ```
 
 Results:

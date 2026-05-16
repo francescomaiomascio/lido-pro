@@ -112,7 +112,7 @@ Future actions are disabled:
 
 ## Validation Results
 
-- `pwd`: `/Users/francescomaiomascio/Developer/beach-bdf`
+- `pwd`: `<project-directory>`
 - `node -v`: `v20.20.2`
 - `npm -v`: `10.8.2`
 - `npm run check`: passed
