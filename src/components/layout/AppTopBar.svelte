@@ -1,7 +1,6 @@
 <script lang="ts">
   import { APP_DISPLAY_NAME, DEFAULT_WORKSPACE_NAME } from '../../lib/config/appConfig'
   import {
-    getLidoProModule,
     lidoproTopbarItems,
     type LidoProModuleId,
     type LidoProPrimaryModuleId,
@@ -28,7 +27,6 @@
   } = $props()
 
   let searchExpanded = $state(false)
-  const activeModuleLabel = $derived(getLidoProModule(activeModule).label)
 
   const selectTopbarItem = (id: LidoProPrimaryModuleId | 'bar') => {
     if (id === 'bar') {
@@ -50,7 +48,6 @@
     onclick={() => onModuleSelect('dashboard')}
   >
     <img class="brand__wordmark" src="/brand/svg/lidopro-wordmark-color.svg" alt={APP_DISPLAY_NAME} />
-    <span class="brand__module">{activeModuleLabel}</span>
   </button>
 
   <nav class="topbar-module-nav" aria-label="Workspace LidoPro">
@@ -67,14 +64,7 @@
         onclick={() => selectTopbarItem(module.id)}
       >
         <span class="topbar-module-nav__icon" aria-hidden="true">
-          {#if module.id === 'dashboard'}
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 5h7v7H4z"></path>
-              <path d="M13 5h7v4h-7z"></path>
-              <path d="M13 11h7v8h-7z"></path>
-              <path d="M4 14h7v5H4z"></path>
-            </svg>
-          {:else if module.id === 'clients'}
+          {#if module.id === 'clients'}
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M15 19v-1.4a3.6 3.6 0 0 0-3.6-3.6H7.6A3.6 3.6 0 0 0 4 17.6V19"></path>
               <circle cx="9.5" cy="8" r="3"></circle>

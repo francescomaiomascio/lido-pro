@@ -82,12 +82,6 @@ export const lidoproModules: LidoProModule[] = [
 
 export const lidoproTopbarItems: LidoProTopbarItem[] = [
   {
-    id: 'dashboard',
-    label: 'Home',
-    shortLabel: 'Home',
-    description: 'Console operativa del lido.',
-  },
-  {
     id: 'activeLayout',
     label: 'Spiaggia',
     shortLabel: 'Spiaggia',
