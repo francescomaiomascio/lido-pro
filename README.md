@@ -85,6 +85,12 @@ Commercial use, pilots, deployments, partnerships, licensing, reseller activity,
 
 See [LICENSE.md](LICENSE.md), [COMMERCIAL.md](COMMERCIAL.md), [NOTICE.md](NOTICE.md), [TRADEMARK.md](TRADEMARK.md), [SECURITY.md](SECURITY.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Runtime Architecture
+
+<p align="center">
+  <img src="public/brand/readme/lidopro-readme-runtime-architecture.svg" alt="LidoPro runtime architecture: Svelte and Vite application with Tauri, Capacitor, and browser preview targets" width="920">
+</p>
+
 The product source lives primarily in `src/`. Tauri and Capacitor are native shells around the same product application, not separate product codebases.
 
 ## Quick Start
