@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="154" viewBox="0 0 920 154" role="img" aria-label="LidoPro commercial product boundary">
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="920" y2="154" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#07151a"/>
+      <stop offset="0.58" stop-color="#0b1720"/>
+      <stop offset="1" stop-color="#10141f"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="-8%" y="-18%" width="116%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="154" rx="22" fill="url(#panel)"/>
+  <rect x="0.5" y="0.5" width="919" height="153" rx="21.5" fill="none" stroke="#1f3f46"/>
+  <path d="M34 118 C42 58 76 28 139 24 C105 36 84 62 76 104 C63 99 49 103 34 118Z" fill="#0f3f46" opacity="0.92"/>
+  <path d="M58 95 C94 66 132 66 171 86" fill="none" stroke="#2dd4bf" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="95" cy="76" r="4" fill="#ecfeff"/>
+  <circle cx="113" cy="68" r="3" fill="#2dd4bf"/>
+
+  <text x="204" y="36" fill="#effaf8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16" font-weight="900" letter-spacing="2.8">COMMERCIAL PRODUCT BOUNDARY</text>
+  <text x="204" y="62" fill="#a9c5c3" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" font-weight="650">Public source visibility supports review and evaluation. It does not grant production, resale, hosting, or brand rights.</text>
+  <rect x="204" y="76" width="662" height="2" rx="1" fill="url(#line)" opacity="0.8"/>
+
+  <g filter="url(#shadow)" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+    <g transform="translate(204 92)">
+      <rect width="150" height="42" rx="10" fill="#102a2d" stroke="#255a5f"/>
+      <text x="16" y="18" fill="#99f6e4" font-size="11" font-weight="900" letter-spacing="1.4">LICENSE</text>
+      <text x="16" y="32" fill="#f8fafc" font-size="13" font-weight="800">Proprietary</text>
+    </g>
+    <g transform="translate(368 92)">
+      <rect width="158" height="42" rx="10" fill="#172033" stroke="#334155"/>
+      <text x="16" y="18" fill="#cbd5e1" font-size="11" font-weight="900" letter-spacing="1.4">REPOSITORY</text>
+      <text x="16" y="32" fill="#f8fafc" font-size="13" font-weight="800">Source-visible</text>
+    </g>
+    <g transform="translate(540 92)">
+      <rect width="150" height="42" rx="10" fill="#0e2b3a" stroke="#1d6d80"/>
+      <text x="16" y="18" fill="#bae6fd" font-size="11" font-weight="900" letter-spacing="1.4">RUNTIME</text>
+      <text x="16" y="32" fill="#f8fafc" font-size="13" font-weight="800">Tauri + Android</text>
+    </g>
+    <g transform="translate(704 92)">
+      <rect width="162" height="42" rx="10" fill="#332215" stroke="#9a5b16"/>
+      <text x="16" y="18" fill="#fed7aa" font-size="11" font-weight="900" letter-spacing="1.4">NOT GRANTED</text>
+      <text x="16" y="32" fill="#fff7ed" font-size="13" font-weight="800">Deploy / host / resell</text>
+    </g>
+  </g>
+</svg>

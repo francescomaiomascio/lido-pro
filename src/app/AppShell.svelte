@@ -1,24 +1,28 @@
 <script lang="ts">
   import { Dialog } from '@capacitor/dialog'
   import { onMount } from 'svelte'
-  import type { Component } from 'svelte'
   import BeachItemList from '../components/beach/BeachItemList.svelte'
   import BeachMap from '../components/beach/BeachMap.svelte'
+  import LidoProDashboard from '../components/dashboard/LidoProDashboard.svelte'
   import AppTopBar from '../components/layout/AppTopBar.svelte'
   import FilterSheet from '../components/layout/FilterSheet.svelte'
   import ViewSwitcher from '../components/layout/ViewSwitcher.svelte'
   import OperationalBottomPanel from '../components/operational/OperationalBottomPanel.svelte'
+  import CustomersSettingsPanel from '../components/settings/panels/CustomersSettingsPanel.svelte'
+  import MapStudioSettingsPanel from '../components/settings/panels/MapStudioSettingsPanel.svelte'
+  import RegistrySettingsPanel from '../components/settings/panels/RegistrySettingsPanel.svelte'
+  import SystemSettingsPanel from '../components/settings/panels/SystemSettingsPanel.svelte'
+  import TariffsSettingsPanel from '../components/settings/panels/TariffsSettingsPanel.svelte'
   import AppToast from '../components/ui/AppToast.svelte'
-  import { APP_DISPLAY_NAME } from '../lib/config/appConfig'
   import { getBeachDisplayCode } from '../lib/format/beachDisplayCodes'
   import { getBeachItemSearchText, sortBeachItems } from '../lib/format/beachLabels'
   import { loadInitialLanguage, saveLanguage, setLanguage, type AppLanguage } from '../lib/i18n/languageStore'
+  import type { LidoProModuleId } from '../lib/navigation/lidoproNavigation'
   import { createBeachViewState } from '../lib/state/beachViewState'
   import {
     OPEN_REGISTRY_EVENT,
     type OpenRegistryRequest,
   } from '../lib/state/registryFilters'
-  import type { SettingsSection } from '../lib/state/settingsMenuState'
   import { loadInitialTheme, saveTheme, setTheme } from '../lib/theme/themeStore'
   import type { AppTheme } from '../lib/theme/themeTokens'
   import {
@@ -73,28 +77,8 @@
   import type { AccountExtraItem, AccountExtraItemInput, ExtraItemCatalogEntry, TariffIncludedItem } from '../lib/types/extraItem'
   import type { AccountLedger, ReservationSummary } from '../lib/types/reservationSummary'
 
-  type AppMenuSheetProps = {
-    open: boolean
-    appDisplayName: string
-    activeSection: SettingsSection
-    directDetailOpen: boolean
-    layout: BeachLayout | null
-    summary: BeachStatusSummaryType
-    typeSummary: { palms: number; umbrellas: number; smallPalms: number }
-    items: BeachItem[]
-    runtime: DatabaseRuntime | null
-    theme: AppTheme
-    language: AppLanguage
-    registryOpenRequest: OpenRegistryRequest | null
-    extraCatalog: ExtraItemCatalogEntry[]
-    onClose: () => void
-    onSectionSelect: (section: SettingsSection) => void
-    onExtraCatalogChange: (catalog: ExtraItemCatalogEntry[]) => void
-    onThemeChange: (theme: AppTheme) => void
-    onLanguageChange: (language: AppLanguage) => void
-  }
-
   let viewState = $state(createBeachViewState())
+  let activeModule: LidoProModuleId = $state('dashboard')
   let operationalPanel = $state(createOperationalPanelState())
   let layout: BeachLayout | null = $state(null)
   let items: BeachItem[] = $state([])
@@ -114,18 +98,13 @@
   let includedEquipment = $state<TariffIncludedItem[]>([])
   let theme: AppTheme = $state(loadInitialTheme())
   let language: AppLanguage = $state(loadInitialLanguage())
-  let activeSettingsSection: SettingsSection = $state('beach-parametric-setup')
-  let settingsDirectDetailOpen = $state(false)
   let registryOpenRequest: OpenRegistryRequest | null = $state(null)
-  let AppMenuSheetComponent = $state<Component<AppMenuSheetProps> | null>(null)
-  let settingsMenuLoad: Promise<Component<AppMenuSheetProps>> | null = null
-  let settingsClosedAt = 0
   let loadingStepIndex = $state(0)
   const loadingSteps = [
     'Apertura database locale',
     'Verifica persistenza browser',
-    'Caricamento 58 posti',
-    'Preparazione mappa operativa',
+    'Caricamento layout attivo',
+    'Preparazione dashboard',
   ]
   const loadingStep = $derived(loadingSteps[loadingStepIndex] ?? loadingSteps.at(-1)!)
 
@@ -166,6 +145,15 @@
     openAccounts: items.filter((item) => item.activeAccount?.active).length,
     activeReservations: items.filter((item) => item.currentReservation?.active).length,
   })
+  const runtimeLabel = $derived(
+    runtime === 'native-sqlite'
+      ? 'SQLite nativo'
+      : runtime === 'web-persistent-sqlite'
+        ? 'Persistenza web'
+        : runtime === 'browser-memory-fallback'
+          ? 'Memoria browser temporanea'
+          : 'Non disponibile',
+  )
 
   const loadState = async () => {
     const state = await loadBeachState()
@@ -286,37 +274,16 @@
     viewState.activeView = 'map'
   }
 
-  const loadSettingsMenu = () => {
-    settingsMenuLoad ??= import('../components/layout/AppMenuSheet.svelte').then((module) => {
-      AppMenuSheetComponent = module.default as Component<AppMenuSheetProps>
-      return AppMenuSheetComponent
-    })
-    return settingsMenuLoad
-  }
-
-  const openSettingsSection = (section: SettingsSection, directDetail = true) => {
-    activeSettingsSection = section
-    settingsDirectDetailOpen = directDetail
-    void loadSettingsMenu()
-    viewState.menuOpen = true
-  }
-
-  const openSettingsFromTopbar = () => {
-    if (Date.now() - settingsClosedAt < 350) {
-      return
+  const selectModule = (module: LidoProModuleId) => {
+    activeModule = module
+    if (module !== 'activeLayout') {
+      viewState.filtersOpen = false
     }
-    openSettingsSection(activeSettingsSection, false)
-  }
-
-  const closeSettingsMenu = () => {
-    settingsClosedAt = Date.now()
-    viewState.menuOpen = false
-    settingsDirectDetailOpen = false
   }
 
   const handleOpenRegistryRequest = (event: Event) => {
     registryOpenRequest = (event as CustomEvent<OpenRegistryRequest>).detail
-    openSettingsSection('registry', true)
+    selectModule('registry')
   }
 
   const updateNote = async (note: string) => {
@@ -734,14 +701,22 @@
 <div class="app-shell" data-theme={theme}>
   <AppTopBar
     searchQuery={viewState.searchQuery}
+    {activeModule}
+    workspaceName="Spiaggia BDF"
+    {runtimeLabel}
     onSearchChange={(searchQuery) => (viewState.searchQuery = searchQuery)}
-    onMenuOpen={openSettingsFromTopbar}
+    onModuleSelect={selectModule}
+    onOpenSystem={() => selectModule('system')}
   />
 
-  <main class="product-shell" class:panel-expanded={operationalPanel.isExpanded}>
+  <main
+    class="product-shell"
+    class:panel-expanded={activeModule === 'activeLayout' && operationalPanel.isExpanded}
+  >
     <section
       class="primary-workspace"
-      class:map-mode={viewState.activeView === 'map'}
+      class:map-mode={activeModule === 'activeLayout' && viewState.activeView === 'map'}
+      class:workspace-mode={activeModule !== 'activeLayout'}
       class:filters-open={viewState.filtersOpen}
       aria-label="Area principale"
     >
@@ -750,7 +725,7 @@
           <div class="loading-panel__content">
             <div class="loading-panel__header">
               <p class="loading-panel__eyebrow">LidoPro</p>
-              <h1>Preparazione mappa</h1>
+              <h1>Preparazione workspace</h1>
               <p>{loadingStep}</p>
             </div>
 
@@ -795,74 +770,128 @@
           <p>{errorMessage}</p>
         </div>
       {:else if layout}
-        <div class="workspace-view-switcher">
-          <ViewSwitcher
-            activeView={viewState.activeView}
-            onViewChange={(activeView) => (viewState.activeView = activeView)}
-          />
-        </div>
-
-        <button
-          class="workspace-filter-trigger"
-          class:active={viewState.filtersOpen}
-          type="button"
-          aria-expanded={viewState.filtersOpen}
-          aria-label={viewState.filtersOpen ? 'Chiudi filtri' : 'Apri filtri'}
-          onclick={() => {
-            viewState.filtersOpen = !viewState.filtersOpen
-            viewState.menuOpen = false
-          }}
-        >
-          {#if viewState.filtersOpen}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true">
-              <path d="M6 6l12 12"></path>
-              <path d="M18 6 6 18"></path>
-            </svg>
-          {:else}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 6h16"></path>
-              <path d="M7 12h10"></path>
-              <path d="M10 18h4"></path>
-            </svg>
-          {/if}
-          <span>Filtri</span>
-        </button>
-
-        {#if viewState.activeView === 'map'}
-          <BeachMap
+        {#if activeModule === 'dashboard'}
+          <LidoProDashboard
             {layout}
-            {items}
-            matchingItemIds={new Set(filteredItems.map((item) => item.id))}
-            selectedItemId={viewState.selectedItemId}
-            searchQuery={viewState.searchQuery}
-            statusFilter={viewState.statusFilter}
-            onSelectItem={selectItem}
-            onClearSelection={clearSelection}
-            onOpenOperationalPanel={() => openOperationalPanel('overview')}
+            {summary}
+            {typeSummary}
+            {workspaceSummary}
+            {runtime}
+            onOpenModule={selectModule}
           />
-        {:else}
-          <BeachItemList
-            items={filteredItems}
-            selectedItemId={viewState.selectedItemId}
-            onOpenItem={openItemFromList}
-          />
-        {/if}
+        {:else if activeModule === 'activeLayout'}
+          <div class="active-layout-workspace" aria-label="Layout attivo operativo">
+            <div class="active-layout-ribbon" role="status">
+              <strong>Layout attivo protetto</strong>
+              <span>Operativita giornaliera · progettazione strutturale in Studio</span>
+            </div>
 
-        <FilterSheet
-          open={viewState.filtersOpen}
-          {summary}
-          statusFilter={viewState.statusFilter}
-          usageFilter={viewState.usageFilter}
-          onClose={() => (viewState.filtersOpen = false)}
-          onStatusFilterChange={(statusFilter) => (viewState.statusFilter = statusFilter)}
-          onUsageFilterChange={(usageFilter) => (viewState.usageFilter = usageFilter)}
-        />
+            <div class="workspace-view-switcher">
+              <ViewSwitcher
+                activeView={viewState.activeView}
+                onViewChange={(activeView) => (viewState.activeView = activeView)}
+              />
+            </div>
+
+            <button
+              class="workspace-filter-trigger"
+              class:active={viewState.filtersOpen}
+              type="button"
+              aria-expanded={viewState.filtersOpen}
+              aria-label={viewState.filtersOpen ? 'Chiudi filtri' : 'Apri filtri'}
+              onclick={() => {
+                viewState.filtersOpen = !viewState.filtersOpen
+              }}
+            >
+              {#if viewState.filtersOpen}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" aria-hidden="true">
+                  <path d="M6 6l12 12"></path>
+                  <path d="M18 6 6 18"></path>
+                </svg>
+              {:else}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 6h16"></path>
+                  <path d="M7 12h10"></path>
+                  <path d="M10 18h4"></path>
+                </svg>
+              {/if}
+              <span>Filtri</span>
+            </button>
+
+            {#if viewState.activeView === 'map'}
+              <BeachMap
+                {layout}
+                {items}
+                matchingItemIds={new Set(filteredItems.map((item) => item.id))}
+                selectedItemId={viewState.selectedItemId}
+                searchQuery={viewState.searchQuery}
+                statusFilter={viewState.statusFilter}
+                onSelectItem={selectItem}
+                onClearSelection={clearSelection}
+                onOpenOperationalPanel={() => openOperationalPanel('overview')}
+              />
+            {:else}
+              <BeachItemList
+                items={filteredItems}
+                selectedItemId={viewState.selectedItemId}
+                onOpenItem={openItemFromList}
+              />
+            {/if}
+
+            <FilterSheet
+              open={viewState.filtersOpen}
+              {summary}
+              statusFilter={viewState.statusFilter}
+              usageFilter={viewState.usageFilter}
+              onClose={() => (viewState.filtersOpen = false)}
+              onStatusFilterChange={(statusFilter) => (viewState.statusFilter = statusFilter)}
+              onUsageFilterChange={(usageFilter) => (viewState.usageFilter = usageFilter)}
+            />
+          </div>
+        {:else if activeModule === 'studioProjects'}
+          <section class="workspace-page workspace-page--studio" aria-label="Studio e progetti">
+            <MapStudioSettingsPanel />
+          </section>
+        {:else if activeModule === 'clients'}
+          <section class="workspace-page workspace-page--clients" aria-label="Clienti">
+            <CustomersSettingsPanel />
+          </section>
+        {:else if activeModule === 'registry'}
+          <section class="workspace-page workspace-page--registry" aria-label="Registro">
+            <RegistrySettingsPanel openRequest={registryOpenRequest} />
+          </section>
+        {:else if activeModule === 'priceList'}
+          <section class="workspace-page workspace-page--price-list" aria-label="Listino">
+            <TariffsSettingsPanel
+              {items}
+              onCatalogChange={(catalog) => (extraCatalog = catalog)}
+            />
+          </section>
+        {:else if activeModule === 'system'}
+          <section class="workspace-page workspace-page--system" aria-label="Sistema">
+            <SystemSettingsPanel
+              {language}
+              {theme}
+              {layout}
+              itemCount={items.length}
+              {runtime}
+              {runtimeLabel}
+              onLanguageChange={(nextLanguage) => {
+                language = setLanguage(nextLanguage)
+                saveLanguage(nextLanguage)
+              }}
+              onThemeChange={(nextTheme) => {
+                theme = setTheme(nextTheme)
+              }}
+            />
+          </section>
+        {/if}
       {/if}
 
     </section>
   </main>
 
-  {#if operationalPanel.isOpen}
+  {#if activeModule === 'activeLayout' && operationalPanel.isOpen}
     <OperationalBottomPanel
       item={selectedItem}
       displayCode={selectedDisplayCode}
@@ -883,8 +912,8 @@
       summary={workspaceSummary}
       onOpenList={() => (viewState.activeView = 'list')}
       onOpenFilters={() => (viewState.filtersOpen = true)}
-      onOpenTariffs={() => openSettingsSection('tariffs', true)}
-      onOpenExtra={() => openSettingsSection('extras', true)}
+      onOpenTariffs={() => selectModule('priceList')}
+      onOpenExtra={() => selectModule('priceList')}
       onTabChange={(tab) => (operationalPanel.activeTab = tab)}
       onPanelSizeChange={(panelSize) => {
         operationalPanel.panelSize = panelSize
@@ -915,36 +944,3 @@
 </div>
 
 <AppToast />
-
-<div class="settings-host" data-theme={theme}>
-  {#if AppMenuSheetComponent}
-    <AppMenuSheetComponent
-      open={viewState.menuOpen}
-      activeSection={activeSettingsSection}
-      {layout}
-      {summary}
-      {typeSummary}
-      {items}
-      {runtime}
-      appDisplayName={APP_DISPLAY_NAME}
-      {theme}
-      {language}
-      {registryOpenRequest}
-      directDetailOpen={settingsDirectDetailOpen}
-      {extraCatalog}
-      onClose={closeSettingsMenu}
-      onSectionSelect={(section) => {
-        activeSettingsSection = section
-        settingsDirectDetailOpen = true
-      }}
-      onExtraCatalogChange={(catalog) => (extraCatalog = catalog)}
-      onThemeChange={(nextTheme) => {
-        theme = setTheme(nextTheme)
-      }}
-      onLanguageChange={(nextLanguage) => {
-        language = setLanguage(nextLanguage)
-        saveLanguage(nextLanguage)
-      }}
-    />
-  {/if}
-</div>

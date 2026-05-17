@@ -39,6 +39,6 @@ export type SettingsMenuState = {
 
 export const createSettingsMenuState = (): SettingsMenuState => ({
   open: false,
-  activeSection: 'beach-parametric-setup',
+  activeSection: 'system',
   mobileDetailOpen: false,
 })

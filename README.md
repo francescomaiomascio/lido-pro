@@ -1,24 +1,32 @@
 <p align="center">
-  <img src="public/brand/lidopro-wordmark-transparent.png" alt="LidoPro logo" width="520">
+  <img src="public/brand/lidopro-wordmark-traced.svg" alt="LidoPro logo" width="520">
 </p>
 
 # LidoPro
 
 <p align="center">
-  <strong>Local-first operating software for beach club operations.</strong>
+  <strong>Gestione operativa e progettazione parametrica per stabilimenti balneari.</strong>
 </p>
 
 <p align="center">
-  LidoPro is a proprietary commercial local-first application for beach club operations - from map-based layout planning and service management to local booking, customers, pricing, and account tracking.
+  LidoPro is a local-first management workspace for beach establishments: active layout, customers, reservations, registry, pricing, local accounts, and parametric beach-layout planning.
 </p>
 
 <p align="center">
-  <code>Proprietary commercial</code>
-  <code>Source-available, not open source</code>
-  <code>Local-first</code>
-  <code>Tauri Desktop</code>
-  <code>Capacitor Android</code>
-  <code>Browser preview only</code>
+  <img alt="Proprietary commercial" src="https://img.shields.io/badge/commercial-proprietary-0F766E?style=flat&labelColor=111827">
+  <img alt="Source-available, not open source" src="https://img.shields.io/badge/source--available-not%20open%20source-334155?style=flat&labelColor=111827">
+  <img alt="Local-first" src="https://img.shields.io/badge/local--first-offline%20operations-0891B2?style=flat&labelColor=111827">
+  <img alt="Tauri Desktop" src="https://img.shields.io/badge/Tauri-Desktop-24C8DB?style=flat&logo=tauri&logoColor=white&labelColor=111827">
+  <img alt="Capacitor Android" src="https://img.shields.io/badge/Capacitor-Android-22C55E?style=flat&logo=android&logoColor=white&labelColor=111827">
+  <img alt="Browser preview only" src="https://img.shields.io/badge/browser-preview%20only-64748B?style=flat&labelColor=111827">
+</p>
+
+<p align="center">
+  <img alt="Lido Studio" src="https://img.shields.io/badge/Lido-Studio-0E7490?style=flat&labelColor=0F172A">
+  <img alt="Lido Booking" src="https://img.shields.io/badge/Lido-Booking-2563EB?style=flat&labelColor=0F172A">
+  <img alt="Lido Clienti" src="https://img.shields.io/badge/Lido-Clienti-7C3AED?style=flat&labelColor=0F172A">
+  <img alt="Lido Listino" src="https://img.shields.io/badge/Lido-Listino-F59E0B?style=flat&labelColor=0F172A">
+  <img alt="Local accounts" src="https://img.shields.io/badge/local-accounts-EA580C?style=flat&labelColor=0F172A">
 </p>
 
 <p align="center">
@@ -31,19 +39,41 @@
 
 ## Product Overview
 
-LidoPro is built around the beach map as the operational surface. Layout planning, place state, booking activity, customer assignments, pricing, and local account tracking are designed to stay close to the daily work of a beach club rather than live in disconnected screens.
+LidoPro is a local-first operating workspace for managing a beach establishment. It brings the active beach layout, customers, reservations, pricing, registry activity, and local account tracking into one product surface designed for daily operational work.
 
-The product is local-first today. Cloud sync, account systems, payment integrations, customer portals, hosted booking, and SaaS operation are controlled commercial product boundaries and are not live unless implemented, configured, reviewed, and explicitly released.
+The product separates the active operational layout from Studio projects. Staff work on the protected active layout; structural changes are prepared in Lido Studio as project drafts, reviewed through layout previews, and published only through a controlled path.
 
-| Domain | Product surface | Current scope |
-| --- | --- | --- |
-| Layout and map | Lido Studio | local map, beach-place state, layout operations |
-| Reservations | Lido Booking | local reservation and assignment workflow |
-| Customers | Lido Clienti | registry, assignments, customer activity |
-| Pricing | Lido Listino | tariffs, extras, article/catalog foundations |
-| Accounts | Local accounts | local ledger and payment-record foundations |
-| Desktop runtime | LidoPro Desktop | Tauri development/runtime shell |
-| Mobile validation | LidoPro Mobile | Capacitor Android phone/tablet target |
+<p align="center">
+  <img src="public/brand/readme/lidopro-readme-product-rail.svg" alt="LidoPro product surfaces" width="920">
+</p>
+
+## Product Areas
+
+- **Dashboard:** app entry point, project status, active layout state, drafts, versions, and operational readiness.
+- **Layout attivo:** protected operational beach view for places, customers, periods, local account state, and daily work.
+- **Studio / Progetti:** parametric design workspace for project drafts, base layouts, verification, previews, and controlled publication.
+- **Clienti:** customer registry, customer profiles, assignments, and activity foundations.
+- **Registro:** operational events, reservation activity, account state, and local work history.
+- **Listino:** tariffs, extras, catalog items, beach equipment, and price foundations connected to accounts.
+- **Sistema:** local settings, diagnostics, backup boundaries, responsive/device validation, and local runtime state.
+
+## Layout Model
+
+LidoPro separates three layout concepts:
+
+| Concept | Meaning |
+| --- | --- |
+| Project draft | editable project configuration prepared in Lido Studio |
+| Layout preview | verifiable proposal generated before publication |
+| Active layout | protected operational projection used by staff during daily work |
+
+The operational map consumes the active layout. Studio projects do not mutate production or daily operational data directly.
+
+## Current Status
+
+LidoPro is under active local development. The current product direction is local-first: offline operational workflows, desktop runtime, Android tablet validation, and controlled layout planning come before hosted infrastructure.
+
+Cloud sync, multi-device account sync, payment processing, public customer portals, hosted booking, and SaaS operation are commercial roadmap boundaries unless they are explicitly implemented, configured, reviewed, and released.
 
 ## Commercial and Repository Status
 
@@ -52,6 +82,10 @@ LidoPro is proprietary commercial software. This repository may be public/source
 Repository access does not grant rights to copy, modify, redistribute, host, resell, white-label, deploy, sublicense, or use the application commercially. Commercial use, private pilots, deployments, partnerships, licensing, reseller activity, agency delivery, hosted operation, or customer evaluation require prior written permission from Francesco Maiomascio.
 
 Cloud, payment, account, customer portal, hosted booking, and SaaS capabilities are commercial product boundaries and are not live unless implemented, configured, reviewed, and explicitly released.
+
+<p align="center">
+  <img src="public/brand/readme/lidopro-readme-status-rail.svg" alt="LidoPro commercial repository and runtime status" width="920">
+</p>
 
 See [LICENSE.md](LICENSE.md), [COMMERCIAL.md](COMMERCIAL.md), [NOTICE.md](NOTICE.md), [TRADEMARK.md](TRADEMARK.md), [SECURITY.md](SECURITY.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -124,6 +158,8 @@ Daily development:
 | Browser preview | `npm run dev:server` |
 
 Do not claim a platform, package, or binary is released unless it has been built, tested, signed/notarized where required, and explicitly approved for distribution.
+
+Use Node 24 for Capacitor commands if the current shell Node version is below Capacitor requirements.
 
 ## Responsive Validation
 

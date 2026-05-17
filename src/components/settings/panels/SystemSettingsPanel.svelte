@@ -30,7 +30,14 @@
     onThemeChange: (theme: AppTheme) => void
   } = $props()
 
-  type SystemSection = 'interface' | 'local-data' | 'diagnostics' | 'application' | 'backup'
+  type SystemSection =
+    | 'interface'
+    | 'local-data'
+    | 'account'
+    | 'integrations'
+    | 'diagnostics'
+    | 'application'
+    | 'backup'
 
   let activeSection: SystemSection = $state('interface')
 
@@ -46,6 +53,8 @@
   const systemTabs: Array<{ id: SystemSection; label: string }> = [
     { id: 'interface', label: 'Interfaccia' },
     { id: 'local-data', label: 'Dati locali' },
+    { id: 'account', label: 'Account / Provider' },
+    { id: 'integrations', label: 'Integrazioni' },
     { id: 'diagnostics', label: 'Diagnostica' },
     { id: 'application', label: 'Applicazione' },
     { id: 'backup', label: 'Sicurezza / Backup' },
@@ -112,6 +121,38 @@
         <div><dt>Dimensioni</dt><dd>{layout ? `${layout.widthM}m x ${layout.depthM}m` : 'Non disponibili'}</dd></div>
         <div><dt>Stato persistenza</dt><dd>{persistenceLabel}</dd></div>
       </dl>
+    </section>
+    {/if}
+
+    {#if activeSection === 'account'}
+    <section class="settings-admin-section settings-admin-section--wide">
+      <header><strong>Account / Provider</strong></header>
+      <div class="settings-admin-rows">
+        <div class="settings-admin-row">
+          <div><strong>Account locale</strong><span>Profilo operativo locale</span></div>
+          <span class="settings-admin-muted">Nessun provider esterno connesso.</span>
+        </div>
+        <div class="settings-admin-row">
+          <div><strong>Google / Apple</strong><span>Previsto</span></div>
+          <span class="settings-admin-muted">Accesso provider non configurato in questa build.</span>
+        </div>
+      </div>
+    </section>
+    {/if}
+
+    {#if activeSection === 'integrations'}
+    <section class="settings-admin-section settings-admin-section--wide">
+      <header><strong>Integrazioni</strong></header>
+      <div class="settings-admin-rows">
+        <div class="settings-admin-row">
+          <div><strong>Lido Cloud</strong><span>Non attivo</span></div>
+          <span class="settings-admin-muted">Sync e account multi-device sono confini futuri.</span>
+        </div>
+        <div class="settings-admin-row">
+          <div><strong>Lido Pay</strong><span>Non attivo</span></div>
+          <span class="settings-admin-muted">Provider pagamento non implementati ne configurati.</span>
+        </div>
+      </div>
     </section>
     {/if}
 

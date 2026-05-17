@@ -27,14 +27,6 @@
     items: NavItem[]
   }> = $derived([
     {
-      title: labels.management,
-      items: [
-        { id: 'customers', label: labels.customers, description: 'Anagrafiche e contatti' },
-        { id: 'registry', label: 'Registro', description: 'Prenotazioni e saldi' },
-        { id: 'tariffs', label: 'Listino', description: 'Prezzi, articoli e dotazioni' },
-      ],
-    },
-    {
       title: labels.system,
       items: [
         { id: 'system', label: 'Sistema', description: 'Preferenze, diagnostica e versione' },
@@ -47,7 +39,6 @@
       id: 'beach-map',
       title: 'Spiaggia',
       items: [
-        { id: 'beach-parametric-setup', label: 'Studio mappa', description: 'Layout parametrico e pubblicazione' },
         { id: 'beach-dimensions-capacity', label: 'Registro misure', description: 'Oggetti e vincoli fisici' },
         { id: 'beach-layout-versions', label: 'Configurazioni salvate', description: 'Mappe, bozze e backup' },
         { id: 'beach-assets', label: 'Asset costruzione', description: 'Materiali e asset tecnici Studio' },
@@ -101,7 +92,7 @@
   }
 
   const beachGroupHomeSection: Record<string, SettingsSection> = {
-    'beach-map': 'beach-parametric-setup',
+    'beach-map': 'beach-dimensions-capacity',
   }
 
   const stopChromePointer = (event: PointerEvent | MouseEvent) => {
@@ -124,7 +115,7 @@
       ...openBeachGroups,
       [groupId]: true,
     }
-    onSelect(beachGroupHomeSection[groupId] ?? 'beach-parametric-setup')
+    onSelect(beachGroupHomeSection[groupId] ?? 'beach-dimensions-capacity')
   }
 
 
@@ -521,7 +512,7 @@
 
       <div class="settings-nav__compact-divider" aria-hidden="true"></div>
       {#each beachGroups as beachGroup}
-        {@render compactItem(beachGroup.id, beachGroup.title, isActiveBeachGroup(beachGroup), beachGroupHomeSection[beachGroup.id] ?? 'beach-parametric-setup', beachGroup.items.length)}
+        {@render compactItem(beachGroup.id, beachGroup.title, isActiveBeachGroup(beachGroup), beachGroupHomeSection[beachGroup.id] ?? 'beach-dimensions-capacity', beachGroup.items.length)}
         {#each beachGroup.items as item}
           {@render compactItem(item.id, item.label, item.id === activeSection, item.id)}
         {/each}
