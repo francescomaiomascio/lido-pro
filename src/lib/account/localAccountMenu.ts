@@ -1,3 +1,5 @@
+import { DEFAULT_WORKSPACE_NAME } from '../config/appConfig'
+
 export type LocalAccountMenuSection = {
   title: string
   items: LocalAccountMenuItem[]
@@ -27,7 +29,7 @@ export const localAccountMenuSections: LocalAccountMenuSection[] = [
         id: 'workspace',
         label: 'Lido / workspace',
         description: 'Workspace corrente e dati dello stabilimento.',
-        status: 'Spiaggia BDF',
+        status: DEFAULT_WORKSPACE_NAME,
         action: 'system',
       },
     ],

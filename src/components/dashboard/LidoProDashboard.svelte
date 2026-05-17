@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { DEFAULT_WORKSPACE_NAME } from '../../lib/config/appConfig'
   import type { LidoProModuleId } from '../../lib/navigation/lidoproNavigation'
   import type {
     BeachLayout,
@@ -154,7 +155,7 @@
     <dl class="lidopro-console-status" aria-label="Stato sintetico">
       <div>
         <dt>Workspace</dt>
-        <dd>Spiaggia BDF</dd>
+        <dd>{DEFAULT_WORKSPACE_NAME}</dd>
       </div>
       <div>
         <dt>Account</dt>

@@ -17,11 +17,11 @@
 .app-topbar {
   position: relative;
   display: grid;
-  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(148px, 0.28fr) minmax(0, 1fr) minmax(88px, 0.22fr);
   align-items: center;
-  gap: 14px;
-  min-height: 62px;
-  padding: 8px 18px;
+  gap: 10px;
+  min-height: 54px;
+  padding: 6px 12px;
   background: var(--color-surface-soft);
   border-bottom: 1px solid var(--color-line-strong);
   box-shadow: none;
@@ -31,18 +31,29 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 0 0 auto;
+  justify-self: start;
   min-width: 0;
-  height: 46px;
+  max-width: 100%;
+  height: 40px;
+  padding: 0;
   overflow: hidden;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
   transition: max-width 180ms ease;
+}
+
+.brand:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
 }
 
 .brand__wordmark {
   display: block;
   width: auto;
-  height: 44px;
-  max-width: min(180px, 30vw);
+  height: 38px;
+  max-width: min(164px, 24vw);
   object-fit: contain;
   object-position: left center;
 }
@@ -63,14 +74,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  justify-self: center;
+  gap: clamp(7px, 1.2vw, 16px);
   min-width: 0;
-  padding: 3px;
+  padding: 0;
+  max-width: min(790px, 100%);
   overflow-x: auto;
   scrollbar-width: none;
-  background: color-mix(in srgb, var(--color-surface-elevated) 58%, transparent 42%);
-  border: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent 38%);
-  border-radius: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 
 .topbar-module-nav::-webkit-scrollbar {
@@ -83,12 +96,13 @@
   align-items: center;
   gap: 7px;
   min-width: fit-content;
-  min-height: 34px;
-  padding: 0 10px;
-  color: color-mix(in srgb, var(--color-text-secondary) 88%, var(--color-text) 12%);
+  min-height: 38px;
+  padding: 0 4px;
+  color: color-mix(in srgb, var(--color-text-secondary) 82%, var(--color-text) 18%);
   background: transparent;
   border: 0;
-  border-radius: 9px;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   font-size: 0.72rem;
   font-weight: 880;
   white-space: nowrap;
@@ -101,7 +115,21 @@
 
 .topbar-module-nav__item:hover {
   color: var(--color-primary-strong);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  background: transparent;
+  border-bottom-color: color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.topbar-module-nav__item:disabled,
+.topbar-module-nav__item.disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.topbar-module-nav__item:disabled:hover,
+.topbar-module-nav__item.disabled:hover {
+  color: color-mix(in srgb, var(--color-text-secondary) 88%, var(--color-text) 12%);
+  background: transparent;
+  border-bottom-color: transparent;
 }
 
 .topbar-module-nav__item:active {
@@ -110,8 +138,9 @@
 
 .topbar-module-nav__item.active {
   color: var(--color-primary-strong);
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-elevated) 90%);
-  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--color-primary) 70%, transparent 30%);
+  background: transparent;
+  border-bottom-color: color-mix(in srgb, var(--color-primary) 72%, transparent);
+  box-shadow: none;
 }
 
 .topbar-module-nav__icon {
@@ -270,9 +299,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 14px;
+  justify-self: end;
+  gap: 8px;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .expandable-search {
@@ -288,7 +318,7 @@
 }
 
 .expandable-search.expanded {
-  width: clamp(176px, 24vw, 270px);
+  width: clamp(158px, 20vw, 230px);
 }
 
 .expandable-search__trigger,
@@ -1062,21 +1092,21 @@
 
 @media (max-width: 1180px) {
   .app-topbar {
-    grid-template-columns: max-content minmax(0, 1fr) max-content;
-    gap: 10px;
-    padding-inline: 14px;
+    grid-template-columns: minmax(126px, 0.22fr) minmax(0, 1fr) max-content;
+    gap: 8px;
+    padding-inline: 10px;
   }
 
   .brand__wordmark {
-    max-width: min(150px, 24vw);
+    max-width: min(138px, 22vw);
   }
 
   .topbar-module-nav {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .topbar-module-nav__item {
-    padding-inline: 10px;
+    padding-inline: 3px;
   }
 
   .topbar-module-nav__label {
@@ -1099,8 +1129,8 @@
 @media (max-width: 760px) {
   .app-topbar {
     grid-template-columns: minmax(0, 1fr) max-content;
-    min-height: 58px;
-    padding: 7px 10px;
+    min-height: 52px;
+    padding: 5px 8px 6px;
   }
 
   .brand {
@@ -1108,8 +1138,8 @@
   }
 
   .brand__wordmark {
-    max-width: 126px;
-    height: 38px;
+    max-width: 112px;
+    height: 34px;
   }
 
   .brand__module {
@@ -1120,12 +1150,13 @@
     grid-column: 1 / -1;
     grid-row: 2;
     justify-content: flex-start;
-    border-radius: 10px;
+    max-width: 100%;
+    padding: 0;
   }
 
   .topbar-module-nav__item {
-    min-height: 30px;
-    padding-inline: 9px;
+    min-height: 28px;
+    padding-inline: 4px;
     font-size: 0.68rem;
   }
 
@@ -1173,12 +1204,12 @@
 
 @media (max-width: 560px) {
   .app-topbar {
-    gap: 6px;
+    gap: 5px;
   }
 
   .brand__wordmark {
-    max-width: 110px;
-    height: 34px;
+    max-width: 96px;
+    height: 30px;
   }
 
   .brand__module {
@@ -1187,20 +1218,21 @@
   }
 
   .topbar-action,
-  .expandable-search__trigger {
+  .expandable-search__trigger,
+  .account-menu__trigger {
     width: 28px;
     min-width: 28px;
     min-height: 28px;
   }
 
   .topbar-module-nav {
-    padding: 2px;
+    padding: 0;
   }
 
   .topbar-module-nav__item {
     gap: 5px;
     min-height: 28px;
-    padding-inline: 8px;
+    padding-inline: 3px;
   }
 
   .topbar-module-nav__icon,

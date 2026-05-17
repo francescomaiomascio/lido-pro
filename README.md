@@ -2,8 +2,6 @@
   <img src="public/brand/lidopro-wordmark-traced.svg" alt="LidoPro logo" width="520">
 </p>
 
-# LidoPro
-
 <p align="center">
   <strong>Commercial operating platform for beach establishments.</strong>
 </p>
@@ -26,32 +24,20 @@
 </p>
 
 <p align="center">
-  <img alt="Lido Studio" src="https://img.shields.io/badge/Lido-Studio-0E7490?style=flat&labelColor=0F172A">
-  <img alt="Lido Booking" src="https://img.shields.io/badge/Lido-Booking-2563EB?style=flat&labelColor=0F172A">
-  <img alt="Lido Clienti" src="https://img.shields.io/badge/Lido-Clienti-7C3AED?style=flat&labelColor=0F172A">
-  <img alt="Lido Listino" src="https://img.shields.io/badge/Lido-Listino-F59E0B?style=flat&labelColor=0F172A">
-  <img alt="Local accounts" src="https://img.shields.io/badge/local-accounts-EA580C?style=flat&labelColor=0F172A">
-</p>
-
-<p align="center">
   <img src="public/brand/readme/lidopro-map-desktop-preview.png" alt="LidoPro desktop map interface preview" width="920">
 </p>
 
 <p align="center">
-  <em>LidoPro desktop preview - operational beach map, selected place detail, and local booking/account workflow.</em>
+  <em>LidoPro desktop preview — operational beach map, selected place detail, and local booking/account workflow.</em>
 </p>
 
 ## Product Overview
 
 LidoPro starts from the beach map as the operational surface. Lido Studio handles parametric design and planning of the beach layout, while the active operational map is the protected daily surface used by staff.
 
-Clicking a place or operational item should open the working context around that object: status, customer, reservation, period, account state, equipment, and history. Customer, reservation, registry, account, and transaction surfaces are intended to be connected parts of the same operating platform rather than isolated modules.
+Each place, reservation, customer, account state, equipment record, and operational event should be connected through the same product surface rather than living in isolated screens.
 
-The current implementation is local-first and operator-focused. Local-first is the current deployment/runtime posture, not the full product boundary. The product direction is a connected commercial platform for beach operations.
-
-LidoPro is expanding toward distinct operational domains. Beach operations cover layout, places, assignments, reservations, customer activity, account state, and daily map work. Bar and service operations are a strategic product domain for orders, service items, food/beverage catalog flows, and beach delivery workflows. Catalog/listino, customers, registry, accounts, and reporting are shared foundations across these domains.
-
-Future commercial platform direction includes customer booking portal, real payments and transactions, account/customer login, cloud synchronization, multi-device use, and intelligent assistance for parametric editing and operational help. These capabilities are not live unless explicitly implemented, configured, reviewed, and released.
+The current implementation is local-first and operator-focused. The broader product direction is a connected commercial platform for beach operations, including beach management, bar/service operations, customer booking, real payments, cloud synchronization, multi-device accounts, and intelligent operational assistance when implemented and released.
 
 <p align="center">
   <img src="public/brand/readme/lidopro-readme-product-rail.svg" alt="LidoPro product surfaces" width="920">
@@ -59,18 +45,18 @@ Future commercial platform direction includes customer booking portal, real paym
 
 ## Product Pillars
 
-| Pillar | Description |
-| --- | --- |
-| Parametric Beach Studio | Current/local design and verification of beach layouts before publication. |
-| Active Operational Map | Current/local protected daily map used by staff for places, reservations, customers, and account state. |
-| Booking and Customer Operations | Current/local reservations, assignments, customer records, activity, and local workflow history. |
-| Catalog, Pricing, and Accounts | Current/local tariffs, extras, articles, local ledger, and payment-record foundations. |
-| Bar and Service Operations | Strategic product domain for orders, service items, food/beverage flows, and beach delivery workflows when implemented and released. |
-| Connected Platform Direction | Strategic direction for cloud sync, customer portal, real payments, multi-device accounts, and intelligent assistance when implemented and released. |
+| Pillar | Scope | Status |
+| --- | --- | --- |
+| Parametric Beach Studio | Design and verify beach layouts before publication. | Implemented / evolving |
+| Active Operational Map | Protected daily map for places, reservations, customers, and account state. | Implemented / evolving |
+| Booking and Customer Operations | Reservations, assignments, customer records, activity, and local workflow history. | Implemented / evolving |
+| Catalog, Pricing, and Accounts | Tariffs, extras, articles, local ledger, and payment-record foundations. | Implemented / evolving |
+| Bar and Service Operations | Orders, service items, food/beverage flows, and beach delivery workflows. | Product domain / not fully released |
+| Connected Platform Direction | Cloud sync, customer portal, real payments, multi-device accounts, and intelligent assistance. | Strategic boundary / not live |
 
 ## Operational Layout Model
 
-The map is governed by three layout states:
+The operational map is not just a drawing layer. It is the published working projection used by staff. Studio drafts can be edited and verified, but daily operations continue to rely on the protected active layout until a controlled publication step promotes a new layout.
 
 | Concept | Meaning |
 | --- | --- |
@@ -78,26 +64,26 @@ The map is governed by three layout states:
 | Layout preview | Verifiable proposal generated before publication. |
 | Active layout | Protected operational projection used by staff during daily work. |
 
-The active layout drives daily work in the operational map. Studio drafts must not mutate operational, customer, reservation, or account data directly; structural changes move through preview and controlled publication boundaries.
+Studio drafts must not mutate operational, customer, reservation, or account data directly.
 
 ## Current Status
 
-- Product stage: active development / commercial pre-release.
-- Current runtime: local-first operator application.
-- Primary daily runtime: Tauri Desktop.
-- Primary field validation target: Android tablet.
-- Browser: development preview only.
-- Not live unless explicitly released: cloud sync, customer portal, real payments, hosted booking, SaaS operation, AI assistant.
+| Area | Status |
+| --- | --- |
+| Product stage | Active development / commercial pre-release |
+| Current runtime posture | Local-first operator application |
+| Primary desktop runtime | Tauri Desktop |
+| Primary field validation target | Android tablet |
+| Browser | Development preview only |
+| Not live unless released | Cloud sync, customer portal, real payments, hosted booking, SaaS operation, AI assistant |
 
 ## Commercial and Repository Status
 
 LidoPro is proprietary commercial software. This repository is public/source-available for transparency, portfolio review, technical review, and evaluation. Repository access does not grant rights to copy, modify, redistribute, host, resell, white-label, deploy, sublicense, or use the application commercially.
 
-Commercial use, pilots, deployments, partnerships, licensing, reseller activity, agency delivery, hosted operation, or customer evaluation require prior written permission.
+Repository access does not provide production deployment rights, commercial use rights, hosted service access, public app-store distribution, sublicensing, or redistribution rights.
 
-<p align="center">
-  <img src="public/brand/readme/lidopro-readme-status-rail.svg" alt="LidoPro commercial repository and runtime status" width="920">
-</p>
+Commercial use, pilots, deployments, partnerships, licensing, reseller activity, agency delivery, hosted operation, or customer evaluation require prior written permission.
 
 See [LICENSE.md](LICENSE.md), [COMMERCIAL.md](COMMERCIAL.md), [NOTICE.md](NOTICE.md), [TRADEMARK.md](TRADEMARK.md), [SECURITY.md](SECURITY.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -113,16 +99,6 @@ Svelte/Vite application
 
 The product source lives primarily in `src/`. Tauri and Capacitor are native shells around the same product application, not separate product codebases.
 
-## Development and Device Matrix
-
-| Target | Role | Tooling | Command / action | Notes |
-| --- | --- | --- | --- | --- |
-| macOS Desktop | primary desktop development runtime | Tauri, Rust, Cargo | `npm run app:dev` | preferred daily workflow |
-| Linux Desktop | desktop validation/local build target | Tauri, Rust, Cargo, WebKitGTK/native dependencies | `npm run app:dev` / `npm run desktop:build` | validate on Linux before claiming Linux packages |
-| Android phone/tablet | primary mobile/operational validation target | Capacitor Android, Android Studio, Android SDK, physical device/emulator | `npm run cap:sync:android` / `npm run cap:open:android` / `npm run cap:run:android` | Android tablet is the main operational field target |
-| iPad/iPhone | Apple mobile validation target when enabled | Capacitor iOS, Xcode, iOS Simulator/device | `npx cap add ios` / `npx cap sync ios` / `npx cap open ios` | requires Xcode; not App Store distribution |
-| Browser | fast UI/responsive preview only | Vite dev server, browser responsive mode | `npm run dev:server` | not product runtime, not native validation |
-
 ## Quick Start
 
 ```sh
@@ -136,54 +112,32 @@ npm run build
 npm run app:dev
 ```
 
-`npm run app:dev` is the canonical local development command. It starts one Vite dev server at `http://localhost:5173` and opens LidoPro Desktop through Tauri against that same endpoint.
+## Development Matrix
 
-## Requirements
+| Area | Tooling | Commands / notes |
+| --- | --- | --- |
+| Core | Git, Node.js from [.nvmrc](.nvmrc), npm | `npm install`, `npm run check`, `npm run build` |
+| Desktop | Tauri, Rust, Cargo | `npm run app:dev`, `npm run desktop:build` |
+| Android | Capacitor Android, Android Studio, Android SDK | `npm run cap:sync:android`, `npm run cap:run:android` |
+| iOS/iPad | Capacitor iOS when enabled, Xcode | `npx cap sync ios`, `npx cap open ios` |
+| Linux | Tauri, WebKitGTK/native dependencies | validate on Linux before claiming package support |
+| Browser | Vite dev server | `npm run dev:server`; preview only, not product runtime |
 
-| Area | Requirements |
-| --- | --- |
-| Core | Git, Node.js from [.nvmrc](.nvmrc), npm |
-| Desktop | Rust, Cargo, Tauri system dependencies |
-| Android | Android Studio, Android SDK, emulator or physical Android device |
-| iOS/iPad | macOS, Xcode, Xcode command line tools, Simulator or physical device |
-| Linux | WebKitGTK/native Tauri dependencies, build tools |
+`npm run app:dev` is the canonical local development command. It starts one Vite dev server at `http://localhost:5173` and opens LidoPro Desktop through Tauri against that same endpoint. VS Code is the primary editor. Tauri is the main desktop runtime. Android tablet validation should use Android Studio or a physical device before closing UI work.
 
-## Daily Workflow
+## Responsive Quality Gate
 
-```text
-Daily development:
-1. Edit in VS Code.
-2. Run npm run app:dev.
-3. Use Tauri as the main desktop runtime.
-4. Use browser responsive mode only for quick layout checks.
-5. Validate Android/tablet through Android Studio or a physical device before closing UI work.
-```
-
-## Validation
-
-| Scope | Commands |
-| --- | --- |
-| Core | `npm run check`, `npm run build`, `git diff --check` |
-| Desktop | `npm run app:dev`, `npm run desktop:build` |
-| Android | `npm run cap:sync:android`, `npm run cap:open:android`, `npm run cap:run:android` |
-| iOS/iPad if configured | `npm run cap:sync:ios`, `npm run cap:open:ios`, `npm run cap:run:ios` |
-| Browser preview | `npm run dev:server` |
-
-Do not claim a platform, package, or binary is released unless it has been built, tested, signed/notarized where required, and explicitly approved for distribution.
-
-Use Node 24 for Capacitor commands if the current shell Node version is below Capacitor requirements.
-
-## Responsive Validation
+UI changes must be checked across desktop, tablet, and smartphone layouts.
 
 | Category | Viewports |
 | --- | --- |
-| Desktop landscape | 1440x900, 1280x800 |
+| Desktop | 1440x900, 1280x800 |
 | Tablet landscape | 1180x820, 1138x712, 1024x768 |
 | Tablet portrait | 820x1180, 768x1024 |
 | Smartphone portrait | 430x932, 390x844, 360x800 |
 | Smartphone landscape | 844x390, 932x430 |
 
-Acceptance checks: no horizontal overflow, no clipped primary content, no overlapped text, controls do not cover critical content, panels scroll internally, map/canvas remains usable, primary actions remain reachable, and smartphone layouts are verticalized.
+Acceptance: no horizontal overflow, no clipped content, no overlapped text, no controls covering critical content, internal panel scrolling, reachable primary actions, usable map/canvas, and verticalized smartphone layouts.
 
 See [docs/platform/responsive-device-matrix.md](docs/platform/responsive-device-matrix.md) and [docs/platform/ui-responsive-checklist.md](docs/platform/ui-responsive-checklist.md).
 
@@ -191,16 +145,16 @@ See [docs/platform/responsive-device-matrix.md](docs/platform/responsive-device-
 
 ```text
 lido-pro/
-  src/          Svelte product application
+  src/          product application source
   src-tauri/    Tauri desktop shell
   android/      Capacitor Android shell
   public/       static and brand assets
   asset-lab/    asset generation pipeline
-  docs/         product/platform/repo/commercial docs
+  docs/         product, platform, repo, commercial docs
   scripts/      local helper scripts
 ```
 
-Generated/local folders such as `node_modules/`, `dist/`, `src-tauri/target/`, `android/**/build/`, local databases, exports, backups, and signing material must not be committed.
+Generated/local folders such as `node_modules/`, `dist/`, `src-tauri/target/`, `android/**/build/`, local databases, exports, backups, signing material, and release artifacts must not be committed.
 
 ## Documentation
 
@@ -232,19 +186,6 @@ Before making the repository public, run the public release checklist and a manu
 - Android validation: Android Studio, Android SDK, and an emulator or physical device are required.
 - iOS validation: Xcode and Xcode command line tools are required when iOS is intentionally enabled.
 - Browser preview: useful for quick layout checks, but it does not validate native WebView, plugin, SQLite/native storage, package permission, signing, or device-specific behavior.
-
-## Non-Goals / Not Included
-
-Repository access does not include:
-
-- public SaaS service access
-- live payment processing unless explicitly implemented and released
-- live customer portal unless explicitly implemented and released
-- cloud sync/account service unless explicitly implemented and released
-- public App Store, Mac App Store, or Linux package distribution
-- production/customer deployment rights
-- commercial use rights
-- sublicensing or redistribution rights
 
 ## Commercial Contact
 

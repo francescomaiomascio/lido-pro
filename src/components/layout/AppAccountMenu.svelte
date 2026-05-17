@@ -17,13 +17,22 @@
     open = false
     onOpenSystem()
   }
+
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      open = false
+    }
+  }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="account-menu" class:open>
   <button
     type="button"
     class="account-menu__trigger"
     aria-label="Apri account e workspace"
+    aria-haspopup="dialog"
     aria-expanded={open}
     onclick={() => (open = !open)}
   >
@@ -56,6 +65,7 @@
                 type="button"
                 class="account-menu__item"
                 disabled={item.disabled}
+                title={item.disabled ? item.status : item.label}
                 onclick={() => item.action === 'system' && runSystemAction()}
               >
                 <span>

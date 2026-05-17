@@ -16,6 +16,17 @@ export type LidoProModule = {
   description: string
 }
 
+export type LidoProTopbarItem =
+  | (LidoProModule & { id: LidoProPrimaryModuleId; disabled?: false })
+  | {
+      id: 'bar'
+      label: string
+      shortLabel: string
+      description: string
+      disabled: true
+      disabledReason: string
+    }
+
 export const lidoproPrimaryModules: Array<LidoProModule & { id: LidoProPrimaryModuleId }> = [
   {
     id: 'dashboard',
@@ -67,6 +78,47 @@ export const lidoproUtilityModules: LidoProModule[] = [
 export const lidoproModules: LidoProModule[] = [
   ...lidoproPrimaryModules,
   ...lidoproUtilityModules,
+]
+
+export const lidoproTopbarItems: LidoProTopbarItem[] = [
+  {
+    id: 'activeLayout',
+    label: 'Layout',
+    shortLabel: 'Layout',
+    description: 'Mappa operativa protetta usata durante il lavoro quotidiano.',
+  },
+  {
+    id: 'bar',
+    label: 'Bar',
+    shortLabel: 'Bar',
+    description: 'Ordini, servizi e delivery spiaggia. Modulo previsto, non attivo.',
+    disabled: true,
+    disabledReason: 'Modulo Bar previsto, non configurato in questa build.',
+  },
+  {
+    id: 'clients',
+    label: 'Clienti',
+    shortLabel: 'Clienti',
+    description: 'Anagrafiche, profili e assegnazioni cliente.',
+  },
+  {
+    id: 'registry',
+    label: 'Registro',
+    shortLabel: 'Registro',
+    description: 'Attivita, prenotazioni e saldi operativi.',
+  },
+  {
+    id: 'priceList',
+    label: 'Listino',
+    shortLabel: 'Listino',
+    description: 'Tariffe, catalogo, dotazioni e articoli collegati ai conti.',
+  },
+  {
+    id: 'studioProjects',
+    label: 'Studio',
+    shortLabel: 'Studio',
+    description: 'Bozze, sketch, verifica e pubblicazione controllata.',
+  },
 ]
 
 export const getLidoProModule = (id: LidoProModuleId) =>

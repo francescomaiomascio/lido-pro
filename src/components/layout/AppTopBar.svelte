@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { APP_DISPLAY_NAME } from '../../lib/config/appConfig'
+  import { APP_DISPLAY_NAME, DEFAULT_WORKSPACE_NAME } from '../../lib/config/appConfig'
   import {
     getLidoProModule,
-    lidoproPrimaryModules,
+    lidoproTopbarItems,
     type LidoProModuleId,
+    type LidoProPrimaryModuleId,
   } from '../../lib/navigation/lidoproNavigation'
   import AppAccountMenu from './AppAccountMenu.svelte'
   import ExpandableSearch from './ExpandableSearch.svelte'
@@ -11,7 +12,7 @@
   let {
     searchQuery,
     activeModule,
-    workspaceName = 'Spiaggia BDF',
+    workspaceName = DEFAULT_WORKSPACE_NAME,
     runtimeLabel = 'locale',
     onSearchChange,
     onModuleSelect,
@@ -28,23 +29,38 @@
 
   let searchExpanded = $state(false)
   const activeModuleLabel = $derived(getLidoProModule(activeModule).label)
+
+  const selectTopbarItem = (id: LidoProPrimaryModuleId | 'bar') => {
+    if (id === 'bar') {
+      return
+    }
+    onModuleSelect(id)
+  }
 </script>
 
 <header class="app-topbar" class:search-expanded={searchExpanded}>
-  <div class="brand" aria-label={`${APP_DISPLAY_NAME} - Gestione spiaggia`}>
-    <img class="brand__wordmark" src="/brand/lidopro-wordmark-transparent.png" alt={APP_DISPLAY_NAME} />
+  <button
+    type="button"
+    class="brand"
+    aria-label="Vai alla dashboard LidoPro"
+    onclick={() => onModuleSelect('dashboard')}
+  >
+    <img class="brand__wordmark" src="/brand/svg/lidopro-wordmark-color.svg" alt={APP_DISPLAY_NAME} />
     <span class="brand__module">{activeModuleLabel}</span>
-  </div>
+  </button>
 
   <nav class="topbar-module-nav" aria-label="Workspace LidoPro">
-    {#each lidoproPrimaryModules as module}
+    {#each lidoproTopbarItems as module}
       <button
         type="button"
         class="topbar-module-nav__item"
         class:active={module.id === activeModule}
+        class:disabled={module.disabled}
         aria-current={module.id === activeModule ? 'page' : undefined}
-        title={module.description}
-        onclick={() => onModuleSelect(module.id)}
+        aria-disabled={module.disabled ? 'true' : undefined}
+        disabled={module.disabled}
+        title={module.disabled ? module.disabledReason : module.description}
+        onclick={() => selectTopbarItem(module.id)}
       >
         <span class="topbar-module-nav__icon" aria-hidden="true">
           {#if module.id === 'dashboard'}
@@ -87,6 +103,13 @@
               <path d="M4 18h16"></path>
               <path d="M6 15 16 5l3 3-10 10H6z"></path>
               <path d="m14 7 3 3"></path>
+            </svg>
+          {:else if module.id === 'bar'}
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 4h12"></path>
+              <path d="M8 4v5a4 4 0 0 0 8 0V4"></path>
+              <path d="M12 13v6"></path>
+              <path d="M8 20h8"></path>
             </svg>
           {:else}
             <svg viewBox="0 0 24 24" fill="none">

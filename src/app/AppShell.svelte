@@ -14,6 +14,7 @@
   import SystemSettingsPanel from '../components/settings/panels/SystemSettingsPanel.svelte'
   import TariffsSettingsPanel from '../components/settings/panels/TariffsSettingsPanel.svelte'
   import AppToast from '../components/ui/AppToast.svelte'
+  import { DEFAULT_WORKSPACE_NAME } from '../lib/config/appConfig'
   import { getBeachDisplayCode } from '../lib/format/beachDisplayCodes'
   import { getBeachItemSearchText, sortBeachItems } from '../lib/format/beachLabels'
   import { loadInitialLanguage, saveLanguage, setLanguage, type AppLanguage } from '../lib/i18n/languageStore'
@@ -702,7 +703,7 @@
   <AppTopBar
     searchQuery={viewState.searchQuery}
     {activeModule}
-    workspaceName="Spiaggia BDF"
+    workspaceName={DEFAULT_WORKSPACE_NAME}
     {runtimeLabel}
     onSearchChange={(searchQuery) => (viewState.searchQuery = searchQuery)}
     onModuleSelect={selectModule}

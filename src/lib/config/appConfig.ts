@@ -1,4 +1,5 @@
 export const APP_DISPLAY_NAME = 'LidoPro'
+export const DEFAULT_WORKSPACE_NAME = 'Lido Demo'
 
 export const businessConfig = {
   daily: {
