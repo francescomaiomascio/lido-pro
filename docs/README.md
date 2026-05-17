@@ -20,6 +20,7 @@ This directory contains product, platform, repository, legal, commercial, archit
 - [Responsive device matrix](platform/responsive-device-matrix.md)
 - [UI responsive checklist](platform/ui-responsive-checklist.md)
 - [Development workflows](platform/development-workflows.md)
+- [Language policy](repo/language-policy.md)
 
 ## Canonical Product Language
 

@@ -1,25 +1,40 @@
 # LidoPro Naming
 
-This document defines the canonical naming model for the product and repository-facing language.
+This document defines canonical naming, product definition, and repository-facing language rules for LidoPro.
+
+See [docs/repo/language-policy.md](../repo/language-policy.md) for the project-wide language policy.
 
 ## Canonical Product Name
 
-**LidoPro** is the full commercial product name.
+**LidoPro** is the full commercial product/platform name.
 
-Use LidoPro when referring to the complete proprietary commercial local-first beach management application.
+Canonical English product definition:
 
-## Module Names
+```text
+LidoPro is a proprietary commercial operating platform for beach establishments.
+```
 
-Canonical module naming:
+Use LidoPro when referring to the complete proprietary commercial product/platform. Do not reduce the product identity to the current local-first runtime posture.
 
-- **Lido Studio**: beach map, layout planning, sketch/canvas, and parametric design.
+## Module Families And Boundaries
+
+Canonical module-family naming:
+
+- **Lido Studio**: beach map, layout planning, sketch/canvas, parametric design, and controlled layout publication boundaries.
+- **Studio Mappa**: allowed Italian UI/domain label for the map-design area.
 - **Lido Booking**: reservation and daily operational booking workflows.
 - **Lido Clienti**: customer registry, assignments, customer history, and profiles.
-- **Lido Listino**: pricing, catalog, extras, tariff rules, and suggestions.
-- **Lido Pay**: future payment integrations. Not live.
-- **Lido Cloud**: future sync, account, portal, and multi-device layer. Not live.
+- **Lido Listino**: pricing, catalog, extras, tariff rules, articles, and suggestions.
+- **Lido Pay**: future payment integrations, real transactions, and production payment processing. Not live unless explicitly implemented and released.
+- **Lido Cloud**: future sync, account/customer login, customer portal, hosted booking, and multi-device layer. Not live unless explicitly implemented and released.
 
-Use short Italian labels inside dense UI where useful, for example `Studio`, `Booking`, `Clienti`, `Listino`, `Cassa`, or `Sistema`.
+Allowed Italian or hybrid UI/domain labels include `Layout attivo`, `Registro`, `Studio`, `Booking`, `Clienti`, `Listino`, `Cassa`, and `Sistema` when they are used as canonical product terms or compact UI labels.
+
+## Repository Language
+
+Repository-facing documentation, README copy, code comments, and commercial/repository/legal documentation are English.
+
+Application UI copy is Italian-first and should remain i18n-ready where possible. Do not hardcode mixed Italian/English strings unless they are intentional product terminology.
 
 ## Temporary Names
 
@@ -61,7 +76,7 @@ Do not make `Sirena` the product name. Prefer an abstract mark: a mermaid silhou
 
 ## Brand And Trademark Posture
 
-LidoPro is a reserved commercial product name.
+LidoPro is a reserved commercial product/platform name.
 
 Lido Studio is the layout/design module name. Lido Booking, Lido Clienti, Lido Listino, Lido Pay, and Lido Cloud are reserved product/module names unless explicitly released for external use.
 
@@ -71,10 +86,11 @@ Repository visibility does not grant rights to use the LidoPro name, logo, siren
 
 ## Brand Assets
 
-Current PNG brand assets live in `public/brand`.
+Current brand assets live in `public/brand`.
 
 Canonical files:
 
+- `lidopro-wordmark-traced.svg`: traced logo for README and controlled vector surfaces.
 - `lidopro-wordmark.png`: horizontal logo for README and wide surfaces.
 - `lidopro-wordmark-transparent.png`: transparent/cropped horizontal logo for README, topbar, and app surfaces.
 - `lidopro-logo-full.png`: stacked logo lockup.
@@ -87,14 +103,14 @@ Canonical files:
 - `android-chrome-512x512.png`: 512px web app icon generated from the transparent mark.
 - `public/favicon.ico`: transparent legacy browser fallback generated from the transparent mark.
 
-The current assets are PNG, not SVG. Use the transparent mark for favicons and compact UI. Wider lockups can stay on controlled brand surfaces with background, border radius, and object-fit rules so raster edges do not look accidental.
+Use transparent marks for favicons and compact UI. Wider lockups can stay on controlled brand surfaces with background, border radius, and object-fit rules so raster edges do not look accidental.
 
 ## Public Copy Guardrails
 
 Use:
 
 ```text
-LidoPro is proprietary commercial local-first beach management software currently under active development / pre-release.
+LidoPro is proprietary commercial operating-platform software for beach establishments. The current implementation is local-first and operator-focused.
 ```
 
 Do not claim:
@@ -106,4 +122,5 @@ Do not claim:
 - live cloud sync;
 - production payment processing;
 - hosted customer accounts;
+- live intelligent-assistant behavior;
 - ready-for-all-stabilimenti deployment.

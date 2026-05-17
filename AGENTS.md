@@ -1,5 +1,15 @@
 # LidoPro Agent Rules
 
+## Repository language is English
+
+Any new documentation, README copy, code comments, and repository-facing text must be written in English.
+
+User-facing application copy remains Italian-first and should go through the existing i18n or product-copy structure where appropriate.
+
+Future UI changes must not hardcode mixed-language strings unless the mixed wording is intentionally part of canonical product terminology.
+
+Completion messages must report whether a wave introduces new user-facing copy and whether that copy is Italian-first and i18n-ready.
+
 ## Responsive validation is mandatory for UI work
 
 Any wave that changes UI, layout, navigation, map, panels, forms, tables, modals, drawers, sheets, or typography must validate responsive behavior. Desktop-only validation is not sufficient.
