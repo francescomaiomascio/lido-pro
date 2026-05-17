@@ -18,6 +18,7 @@
 
   const labels = $derived(getLanguageLabels(language))
   const compact = $derived(mode === 'compact')
+  let searchQuery = $state('')
 
   type NavItem = { id: SettingsSection; label: string; description: string; planned?: boolean }
 
@@ -49,32 +50,40 @@
         { id: 'beach-parametric-setup', label: 'Studio mappa', description: 'Layout parametrico e pubblicazione' },
         { id: 'beach-dimensions-capacity', label: 'Registro misure', description: 'Oggetti e vincoli fisici' },
         { id: 'beach-layout-versions', label: 'Configurazioni salvate', description: 'Mappe, bozze e backup' },
-      ],
-    },
-    {
-      id: 'element-library',
-      title: 'Libreria elementi',
-      items: [
-        { id: 'beach-assets', label: 'Asset spiaggia', description: 'Overview libreria' },
-        { id: 'beach-library-umbrellas', label: 'Ombrelloni', description: 'Varianti e ingombri' },
-        { id: 'beach-library-palms', label: 'Palme', description: 'Formati e palmette' },
-        { id: 'beach-library-furniture', label: 'Arredi spiaggia', description: 'Lettini e tavolini' },
-        { id: 'beach-library-map-items', label: 'Articoli e servizi', description: 'Docce, box e ostacoli' },
-        { id: 'beach-walkway-materials', label: 'Passerelle e materiali', description: 'Moduli e materiali' },
-        { id: 'beach-surface', label: 'Sfondi e palette', description: 'Sabbia, mare e colori' },
-        { id: 'beach-library-icons-symbols', label: 'Icone tecniche', description: 'Icone operative' },
+        { id: 'beach-assets', label: 'Asset costruzione', description: 'Materiali e asset tecnici Studio' },
       ],
     },
   ]
 
+  const normalizedSearch = $derived(searchQuery.trim().toLocaleLowerCase('it-IT'))
+  const itemMatchesSearch = (item: NavItem, groupTitle = '') => {
+    if (!normalizedSearch) return true
+    return `${item.label} ${item.description} ${item.id} ${groupTitle}`.toLocaleLowerCase('it-IT').includes(normalizedSearch)
+  }
+  const filteredGroups = $derived(
+    groups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => itemMatchesSearch(item, group.title)),
+      }))
+      .filter((group) => group.items.length > 0),
+  )
+  const filteredBeachGroups = $derived(
+    beachGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => itemMatchesSearch(item, group.title)),
+      }))
+      .filter((group) => !normalizedSearch || group.items.length > 0 || group.title.toLocaleLowerCase('it-IT').includes(normalizedSearch)),
+  )
+  const hasSearchResults = $derived(filteredGroups.length > 0 || filteredBeachGroups.length > 0)
+
   let openBeachGroups: Record<string, boolean> = $state({
     'beach-map': true,
-    'element-library': true,
   })
 
   const isActiveBeachGroup = (group: { id: string; items: NavItem[] }) =>
-    group.items.some((item) => item.id === activeSection) ||
-    (group.id === 'element-library' && activeSection === 'beach-assets')
+    group.items.some((item) => item.id === activeSection)
 
   const selectFromPointer = (event: PointerEvent, section: SettingsSection) => {
     event.preventDefault()
@@ -93,12 +102,19 @@
 
   const beachGroupHomeSection: Record<string, SettingsSection> = {
     'beach-map': 'beach-parametric-setup',
-    'element-library': 'beach-assets',
   }
 
   const stopChromePointer = (event: PointerEvent | MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
+  }
+
+  const stopFieldPointer = (event: PointerEvent | MouseEvent) => {
+    event.stopPropagation()
+  }
+
+  const clearSearch = () => {
+    searchQuery = ''
   }
 
   const openBeachGroupHome = (event: MouseEvent | PointerEvent, groupId: string) => {
@@ -125,20 +141,70 @@
 </script>
 
 <nav class="settings-nav" class:settings-nav--compact={compact} aria-label="Navigazione impostazioni">
-  {#if onToggleMode}
-    <button
-      type="button"
-      class="settings-nav__mode-toggle"
-      class:settings-nav__mode-toggle--compact={compact}
-      aria-label={compact ? 'Espandi sidebar impostazioni' : 'Comprimi sidebar impostazioni'}
-      title={compact ? 'Espandi sidebar' : 'Comprimi sidebar'}
-      onpointerdown={stopChromePointer}
-      onclick={onToggleMode}
-    >
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-        <path d={compact ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'} />
-      </svg>
-    </button>
+  {#if compact}
+    {#if onToggleMode}
+      <button
+        type="button"
+        class="settings-nav__mode-toggle settings-nav__mode-toggle--compact"
+        aria-label="Espandi sidebar impostazioni"
+        title="Espandi sidebar"
+        onpointerdown={stopChromePointer}
+        onclick={onToggleMode}
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
+    {/if}
+  {:else}
+    <div class="settings-nav__toolbar" role="search">
+      <label class="settings-nav__search">
+        <span class="settings-nav__search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+        </span>
+        <span class="sr-only">Cerca impostazioni</span>
+        <input
+          type="search"
+          bind:value={searchQuery}
+          placeholder="Cerca"
+          autocomplete="off"
+          spellcheck="false"
+          onpointerdown={stopFieldPointer}
+          onclick={stopFieldPointer}
+        />
+        {#if searchQuery}
+          <button
+            type="button"
+            class="settings-nav__search-clear"
+            aria-label="Cancella ricerca"
+            onclick={clearSearch}
+            onpointerdown={stopFieldPointer}
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        {/if}
+      </label>
+      {#if onToggleMode}
+        <button
+          type="button"
+          class="settings-nav__mode-toggle"
+          aria-label="Comprimi sidebar impostazioni"
+          title="Comprimi sidebar"
+          onpointerdown={stopChromePointer}
+          onclick={onToggleMode}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
+      {/if}
+    </div>
   {/if}
   {#snippet navRow(item: NavItem)}
     <button
@@ -345,8 +411,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 11 3H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82Z"></path><path d="M7 7h.01"></path></svg>
     {:else if id === 'beach-map'}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path><circle cx="17" cy="16" r="1.5"></circle></svg>
-    {:else if id === 'element-library'}
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h6v6H4z"></path><path d="M14 6h6v6h-6z"></path><path d="M4 16h6v4H4z"></path><path d="M14 16h6v4h-6z"></path></svg>
     {:else if id === 'beach-parametric-setup'}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path><circle cx="17" cy="16" r="1.5"></circle></svg>
     {:else if id === 'beach-dimensions-capacity'}
@@ -394,6 +458,60 @@
     </button>
   {/snippet}
 
+  {#snippet beachSection()}
+    <section class="settings-nav__group">
+      <h3>{labels.beach}</h3>
+      <div class="settings-nav__accordion">
+        {#each filteredBeachGroups as beachGroup}
+          <details
+            class="settings-nav__subgroup"
+            class:active={isActiveBeachGroup(beachGroup)}
+            open={openBeachGroups[beachGroup.id]}
+            ontoggle={(event) => {
+              openBeachGroups = {
+                ...openBeachGroups,
+                [beachGroup.id]: (event.currentTarget as HTMLDetailsElement).open,
+              }
+            }}
+          >
+            <summary
+              aria-label={beachGroup.title}
+              title={beachGroup.title}
+              onclick={(event) => event.preventDefault()}
+            >
+              <button
+                type="button"
+                class="settings-nav__subgroup-toggle"
+                aria-label={openBeachGroups[beachGroup.id] ? `Chiudi ${beachGroup.title}` : `Apri ${beachGroup.title}`}
+                onclick={(event) => toggleBeachGroup(event, beachGroup.id)}
+              >
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m6 4 4 4-4 4"></path>
+                </svg>
+              </button>
+              <span class="settings-nav__subgroup-icon" aria-hidden="true">
+                {@render compactGlyph(beachGroup.id)}
+              </span>
+              <button
+                type="button"
+                class="settings-nav__subgroup-title settings-nav__subgroup-title-button"
+                onclick={(event) => openBeachGroupHome(event, beachGroup.id)}
+              >
+                {beachGroup.title}
+              </button>
+              <small>{beachGroup.items.length}</small>
+            </summary>
+            <div class="settings-nav__rows settings-nav__rows--nested">
+              {#each beachGroup.items as item}
+                {@render navRow(item)}
+              {/each}
+            </div>
+          </details>
+        {/each}
+      </div>
+    </section>
+  {/snippet}
+
   {#if compact}
     <div class="settings-nav__compact-stack" aria-label="Navigazione compatta impostazioni">
       <div class="settings-nav__compact-section" aria-hidden="true"></div>
@@ -417,7 +535,18 @@
     </div>
   {:else}
 
-  {#each groups as group, groupIndex}
+  {#if !hasSearchResults}
+    <div class="settings-nav__empty">
+      <strong>Nessun risultato</strong>
+      <span>Prova con clienti, registro, listino o spiaggia.</span>
+    </div>
+  {/if}
+
+  {#if filteredBeachGroups.length > 0 && !filteredGroups.some((group) => group.title === labels.management)}
+    {@render beachSection()}
+  {/if}
+
+  {#each filteredGroups as group}
     <section class="settings-nav__group">
       <h3>{group.title}</h3>
       <div class="settings-nav__rows">
@@ -427,86 +556,8 @@
       </div>
     </section>
 
-    {#if groupIndex === 0}
-      <section class="settings-nav__group">
-        <h3>{labels.beach}</h3>
-        <div class="settings-nav__accordion">
-          {#each beachGroups as beachGroup}
-            <details
-              class="settings-nav__subgroup"
-              class:active={isActiveBeachGroup(beachGroup)}
-              open={openBeachGroups[beachGroup.id]}
-              ontoggle={(event) => {
-                openBeachGroups = {
-                  ...openBeachGroups,
-                  [beachGroup.id]: (event.currentTarget as HTMLDetailsElement).open,
-                }
-              }}
-            >
-              <summary
-                aria-label={beachGroup.title}
-                title={beachGroup.title}
-                onclick={(event) => event.preventDefault()}
-              >
-                <button
-                  type="button"
-                  class="settings-nav__subgroup-toggle"
-                  aria-label={openBeachGroups[beachGroup.id] ? `Chiudi ${beachGroup.title}` : `Apri ${beachGroup.title}`}
-                  onclick={(event) => toggleBeachGroup(event, beachGroup.id)}
-                >
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="m6 4 4 4-4 4"></path>
-                  </svg>
-                </button>
-                <span class="settings-nav__subgroup-icon" aria-hidden="true">
-                  {#if beachGroup.id === 'map-setup'}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 5h16v14H4z"></path>
-                      <path d="M8 9h8"></path>
-                      <path d="M8 13h5"></path>
-                    </svg>
-                  {:else if beachGroup.id === 'graphic-libraries'}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 5h6v6H4z"></path>
-                      <path d="M14 5h6v6h-6z"></path>
-                      <path d="M4 15h6v4H4z"></path>
-                      <path d="M14 15h6v4h-6z"></path>
-                    </svg>
-                  {:else if beachGroup.id === 'layout-versions'}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 5h6v6H4z"></path>
-                      <path d="M14 5h6v6h-6z"></path>
-                      <path d="M9 16h10"></path>
-                      <path d="M5 16h.01"></path>
-                    </svg>
-                  {:else}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 3v6"></path>
-                      <path d="M12 15v6"></path>
-                      <path d="M3 12h6"></path>
-                      <path d="M15 12h6"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                  {/if}
-                </span>
-                <button
-                  type="button"
-                  class="settings-nav__subgroup-title settings-nav__subgroup-title-button"
-                  onclick={(event) => openBeachGroupHome(event, beachGroup.id)}
-                >
-                  {beachGroup.title}
-                </button>
-                <small>{beachGroup.items.length}</small>
-              </summary>
-              <div class="settings-nav__rows settings-nav__rows--nested">
-                {#each beachGroup.items as item}
-                  {@render navRow(item)}
-                {/each}
-              </div>
-            </details>
-          {/each}
-        </div>
-      </section>
+    {#if group.title === labels.management && filteredBeachGroups.length > 0}
+      {@render beachSection()}
     {/if}
   {/each}
   {/if}

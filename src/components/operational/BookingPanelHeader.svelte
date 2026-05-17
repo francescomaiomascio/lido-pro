@@ -45,7 +45,7 @@
   const rowSlot = $derived(code ? parseRowSlotFromCode(code) : null)
   const rowSlotLabel = $derived(rowSlot ? `Fila ${rowSlot.row} · Posto ${rowSlot.slot}` : code ? `Posto ${code}` : '')
   const technicalCodeLabel = $derived(code ? `codice ${code}` : '')
-  const primaryPlaceLabel = $derived(item ? typeLabel : 'Spiaggia BDF')
+  const primaryPlaceLabel = $derived(item ? typeLabel : 'LidoPro')
   const secondaryPlaceLabel = $derived(item ? rowSlotLabel : `${totalItems} posti`)
   const statusLabel = $derived(item ? getBeachItemStatusLabel(item.status) : 'Offline locale')
   const customerLabel = $derived(item?.assignedCustomer?.customer.fullName ?? (item ? 'Nessun cliente' : 'Seleziona un posto sulla mappa'))

@@ -282,7 +282,7 @@
       title: 'Ombrelloni',
       description: 'Varianti grafiche e metriche degli ombrelloni.',
       categoryId: 'umbrellas',
-      note: 'Le varianti sono catalogo read-only: non cambiano ancora gli ombrelloni operativi sulla mappa.',
+      note: 'Le varianti vendibili sono governate dal Listino; qui restano solo materiali tecnici per lo Studio.',
     },
     'beach-library-palms': {
       title: 'Palme',
@@ -291,26 +291,26 @@
       note: 'La mappa usa ancora il renderer operativo corrente; qui prepariamo solo la libreria grafica.',
     },
     'beach-library-furniture': {
-      title: 'Arredi spiaggia',
-      description: 'Lettini, sedute e tavolini previsti per la libreria.',
+      title: 'Arredi tecnici',
+      description: 'Sagome e materiali non contabili per lo Studio.',
       categoryId: 'furniture',
       note: 'Catalogo preparatorio: gli arredi non sono ancora piazzabili sulla mappa.',
     },
     'beach-library-map-items': {
-      title: 'Articoli e servizi',
-      description: 'Servizi, elementi tecnici e ostacoli di scena.',
+      title: 'Oggetti tecnici',
+      description: 'Elementi tecnici e ostacoli di scena.',
       categoryId: 'map_items',
-      note: 'Questi articoli sono solo preview di libreria e non creano oggetti operativi.',
+      note: 'I servizi a pagamento stanno nel Listino; qui restano oggetti tecnici e ostacoli di mappa.',
     },
     'beach-library-icons-symbols': {
-      title: 'Icone tecniche',
+      title: 'Icone Studio',
       description: 'Segnaletica, servizi e simboli leggibili in mappa.',
       categoryId: 'icons_symbols',
       note: 'Le icone sono preview UI leggere; il motore operativo resta Canvas.',
     },
     'beach-walkway-materials': {
-      title: 'Passerelle e materiali',
-      description: 'Materiali, larghezze e moduli previsti per le passerelle.',
+      title: 'Materiali costruzione',
+      description: 'Materiali, larghezze e moduli tecnici dello Studio.',
       categoryId: 'walkways',
       note: 'Nessun materiale viene ancora applicato al layout corrente.',
     },
@@ -324,7 +324,7 @@
       title: 'Servizi / ostacoli',
       description: 'Servizi fissi, ostacoli e articoli tecnici di mappa.',
       categoryId: 'map_items',
-      note: 'Preview read-only; nessun servizio o ostacolo viene ancora aggiunto alla mappa.',
+      note: 'Superficie tecnica per oggetti non vendibili dello Studio.',
     },
   }
   const activeLibraryPage = $derived(libraryPageBySection[section])
@@ -662,7 +662,7 @@
     </SettingsSectionCard>
   </section>
 {:else if section === 'beach-dimensions-capacity'}
-  <section class="settings-panel settings-ui-page" aria-label="Registro misure">
+  <section class="settings-panel settings-ui-page settings-measure-registry" aria-label="Registro misure">
     <SettingsHeader title="Registro misure" description="Dimensioni fisiche di ombrelloni, palme, arredi e materiali usati dal motore." status="Registro tecnico" />
     <div class="map-studio-registry-summary">
       <div><span>Superficie</span><strong>{parametricSetup?.beach.widthM ?? beachMetricModel.beach.widthM}m × {parametricSetup?.beach.depthM ?? beachMetricModel.beach.depthM}m</strong></div>
@@ -810,15 +810,15 @@
     </div>
   </section>
 {:else if section === 'beach-assets'}
-  <section class="settings-panel beach-library-shell" aria-label="Asset spiaggia">
-    <SettingsHeader title="Asset spiaggia" description="Libreria grafica con quality gate: entrano solo asset coerenti e approvati." status="Quality gate" />
+  <section class="settings-panel beach-library-shell" aria-label="Asset costruzione">
+    <SettingsHeader title="Asset costruzione" description="Materiali e oggetti tecnici per costruire o renderizzare la mappa. Gli articoli vendibili stanno nel Listino." status="Studio" />
     <BeachLibraryCategoryList
       categories={realLibraryCategories}
       targetSections={libraryCategoryTargets}
       onOpen={onSectionSelect}
     />
     <div class="beach-library-note beach-library-note--action">
-      <span>Vuoi regolare la resa mentre guardi il Canvas? Usa la Modalità modifica: mostra griglia tecnica e prepara il Canvas Studio, senza drag o salvataggi.</span>
+      <span>Questa area raccoglie asset di costruzione e rendering. Prezzi, stock, dotazioni ed extra si gestiscono dal Listino.</span>
       <button type="button" onclick={openEditModeFromLibrary}>Apri modalità modifica</button>
     </div>
   </section>
@@ -835,7 +835,7 @@
     </SettingsHeader>
     <BeachLibraryItemList items={activeLibraryItems} groupByPalmScale={activeLibraryPage.categoryId === 'palms'} viewMode={libraryViewMode} showViewbar={false} />
     <div class="beach-library-note beach-library-note--action">
-      <span>Questa vetrina è collegata al Canvas, ma resta read-only. Passa a Modalità modifica per usare i controlli rapidi senza cambiare layout.</span>
+      <span>{activeLibraryPage.note}</span>
       <button type="button" onclick={openEditModeFromLibrary}>Apri modalità modifica</button>
     </div>
   </section>
@@ -904,9 +904,9 @@
 {:else if section === 'beach-layout-validation'}
   <section class="settings-panel" aria-label="Validazione layout">
     <SettingsSurface>
-      <SettingsHeader title="Validazione layout" description="Controlli read-only sul layout corrente proiettato sul Canvas." status="Read-only" />
+      <SettingsHeader title="Validazione layout" description="Controlli tecnici sul layout corrente proiettato sul Canvas." status="Tecnico" />
       <div class="settings-two-column">
-        <SettingsSectionCard title="Conteggi" description="Contratto corrente BDF">
+        <SettingsSectionCard title="Conteggi" description="Contratto layout corrente">
           <SettingsMetricGrid
             metrics={[
               { label: 'Totale', value: validation.total },

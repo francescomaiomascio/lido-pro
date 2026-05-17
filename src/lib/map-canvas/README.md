@@ -19,7 +19,7 @@ Svelte/HTML resta per pannelli, toolbar, menu e controlli.
 - conversioni metriche
 - griglia metrica
 - snapping
-- default BDF 31m x 28m
+- default LidoPro 31m x 28m
 
 ## Escluso
 

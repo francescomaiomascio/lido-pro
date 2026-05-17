@@ -74,7 +74,7 @@
       Cerca
       <input
         value={filters.customerQuery}
-        placeholder="Cliente, telefono"
+        placeholder="Cerca"
         oninput={(event) => update({ customerQuery: event.currentTarget.value, customerId: null })}
       />
     </label>

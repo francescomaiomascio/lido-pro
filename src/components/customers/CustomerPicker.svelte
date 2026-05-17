@@ -32,7 +32,7 @@
     Cerca cliente
     <input
       value={query}
-      placeholder="Nome o telefono"
+      placeholder="Cerca"
       oninput={(event) => {
         query = event.currentTarget.value
         loadCustomers()

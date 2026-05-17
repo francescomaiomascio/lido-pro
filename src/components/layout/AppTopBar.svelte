@@ -16,15 +16,13 @@
 </script>
 
 <header class="app-topbar" class:search-expanded={searchExpanded}>
-  <div class="brand">
-    <strong>{APP_DISPLAY_NAME}</strong>
-    <span>Gestione spiaggia</span>
+  <div class="brand" aria-label={`${APP_DISPLAY_NAME} - Gestione spiaggia`}>
+    <img class="brand__wordmark" src="/brand/lidopro-wordmark-transparent.png" alt={APP_DISPLAY_NAME} />
   </div>
 
   <div class="topbar-actions">
     <ExpandableSearch
       value={searchQuery}
-      placeholder="Cerca posto, cliente, stato"
       onChange={onSearchChange}
       onExpandedChange={(expanded) => (searchExpanded = expanded)}
     />

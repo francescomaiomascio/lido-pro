@@ -40,7 +40,7 @@ export function getOperationalState(input: {
     return {
       state: 'no_selection',
       nextAction: null,
-      title: 'Spiaggia BDF',
+      title: 'LidoPro',
       message: 'Seleziona un posto sulla mappa per iniziare.',
       primaryActionLabel: null,
       canShowCustomerDetails: false,

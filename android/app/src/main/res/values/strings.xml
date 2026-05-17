@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Beach BDF</string>
-    <string name="title_activity_main">Beach BDF</string>
-    <string name="package_name">it.beachbdf.app</string>
-    <string name="custom_url_scheme">it.beachbdf.app</string>
+    <string name="app_name">LidoPro</string>
+    <string name="title_activity_main">LidoPro</string>
+    <string name="package_name">it.lidopro.app</string>
+    <string name="custom_url_scheme">it.lidopro.app</string>
 </resources>

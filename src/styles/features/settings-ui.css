@@ -306,3 +306,169 @@
   grid-template-columns: 1fr;
   gap: 8px;
 }
+
+/* Registro misure: metric registry needs its own operational grammar. */
+.settings-measure-registry {
+  align-content: start;
+  gap: 14px;
+  width: min(100%, 1180px);
+}
+
+.settings-measure-registry .settings-modern-header {
+  margin-bottom: 0;
+}
+
+.map-studio-registry-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-line) 50%, transparent 50%);
+  border: 1px solid color-mix(in srgb, var(--color-line) 60%, transparent 40%);
+  border-radius: 8px;
+}
+
+.map-studio-registry-summary div {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 62px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--color-surface) 82%, var(--color-surface-soft) 18%);
+}
+
+.map-studio-registry-summary span,
+.map-studio-registry-table__head span {
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 860;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.map-studio-registry-summary strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.94rem;
+  font-weight: 930;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-studio-registry-table {
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent 18%);
+  border: 1px solid color-mix(in srgb, var(--color-line) 64%, transparent 36%);
+  border-radius: 8px;
+}
+
+.map-studio-registry-table [role='row'] {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(140px, 1.15fr) minmax(100px, 0.82fr) minmax(110px, 0.9fr) minmax(160px, 1.35fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 42%, transparent 58%);
+}
+
+.map-studio-registry-table [role='row']:first-child {
+  border-top: 0;
+}
+
+.map-studio-registry-table__head {
+  min-height: 34px !important;
+  background: color-mix(in srgb, var(--color-surface-soft) 82%, transparent 18%);
+}
+
+.map-studio-registry-table [role='row']:not(.map-studio-registry-table__head):hover {
+  background: color-mix(in srgb, var(--color-primary) 3%, transparent 97%);
+}
+
+.map-studio-registry-table span,
+.map-studio-registry-table strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-studio-registry-table strong {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 920;
+}
+
+.map-studio-registry-table span {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+.map-studio-registry-table--rules [role='row'] {
+  grid-template-columns: minmax(170px, 0.9fr) minmax(92px, 0.38fr) minmax(220px, 1.4fr);
+}
+
+.map-studio-registry-table--rules [role='row'] span:last-child {
+  white-space: normal;
+}
+
+@media (max-width: 980px) {
+  .map-studio-registry-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .map-studio-registry-table {
+    overflow-x: auto;
+  }
+
+  .map-studio-registry-table [role='row'] {
+    min-width: 760px;
+  }
+
+  .map-studio-registry-table--rules [role='row'] {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-measure-registry {
+    gap: 12px;
+  }
+
+  .map-studio-registry-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-registry-summary div {
+    min-height: 52px;
+  }
+
+  .map-studio-registry-table {
+    overflow: visible;
+  }
+
+  .map-studio-registry-table__head {
+    display: none !important;
+  }
+
+  .map-studio-registry-table [role='row'],
+  .map-studio-registry-table--rules [role='row'] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    min-width: 0;
+    min-height: 0;
+    padding: 10px 12px;
+  }
+
+  .map-studio-registry-table span,
+  .map-studio-registry-table strong,
+  .map-studio-registry-summary strong {
+    white-space: normal;
+  }
+}

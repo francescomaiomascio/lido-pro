@@ -1,6 +1,6 @@
-# Beach BDF local database
+# LidoPro local database
 
-Wave 3 uses SQLite schema version 2 for the metric beach layout and operational status workflow.
+LidoPro uses SQLite for local-first beach layout and operational workflows.
 
 - Native Android uses `@capacitor-community/sqlite`.
 - Browser development uses an in-memory fallback only so Vite can render the app locally.

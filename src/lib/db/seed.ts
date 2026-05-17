@@ -5,7 +5,7 @@ export const INITIAL_SEED_VERSION = 1
 
 export const defaultBeachLayout: BeachLayout = {
   id: DEFAULT_LAYOUT_ID,
-  name: 'Spiaggia BDF',
+  name: 'Lido Demo',
   widthM: BEACH_WIDTH_M,
   depthM: BEACH_DEPTH_M,
   isActive: true,

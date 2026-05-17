@@ -8,20 +8,37 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Dependencies
-node_modules
+node_modules/
 
 # Production builds and generated web assets
-dist
-dist-ssr
-asset-lab/output
-android/app/src/main/assets/public
+dist/
+dist-ssr/
+build/
+asset-lab/output/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
 android/app/src/main/assets/cordova*.js
 
 # Native build output
-android/.gradle
-android/**/.gradle
-android/**/build
+android/.gradle/
+android/**/.gradle/
+android/**/build/
+android/app/release/
 android/local.properties
+src-tauri/target/
+src-tauri/gen/schemas/
+target/
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.app
+*.AppImage
+*.deb
+*.rpm
+*.msi
+*.exe
+*.mobileprovision
 
 # Local environment and secrets
 .env
@@ -32,18 +49,31 @@ android/local.properties
 *.jks
 *.p12
 *.pem
+*.key
+*.crt
+
+# Local databases, backups and exports
+*.db
+*.sqlite
+*.sqlite3
+backups/
+local-backups/
+exports/
+local-exports/
 
 # Test and tool caches
-coverage
-.svelte-kit
-.vite
-.cache
+coverage/
+.svelte-kit/
+.vite/
+.vite-temp/
+.cache/
 
 # OS and editor files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj

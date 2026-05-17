@@ -1,7 +1,18 @@
 :root {
-  font-family:
-    Inter, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    sans-serif;
+  --font-display:
+    "New York", "Iowan Old Style", "Source Serif 4", Charter, Georgia, ui-serif, serif;
+  --font-body:
+    Aptos, Inter, "SF Pro Text", "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui:
+    Aptos, Inter, "SF Pro Text", "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-label:
+    "SF Pro Text", Aptos, Inter, "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-numeric:
+    "SF Mono", "Roboto Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+  font-family: var(--font-body);
   color: #223033;
   background: #dfe6df;
   --color-app-bg: #dfe6df;
@@ -25,6 +36,17 @@
   --color-line-strong: rgb(35 55 55 / 18%);
   --color-field-bg: rgb(255 255 250 / 66%);
   --color-field-border: rgb(35 55 55 / 16%);
+  --search-control-height: 34px;
+  --search-control-bg: color-mix(in srgb, var(--color-surface-elevated) 54%, transparent 46%);
+  --search-control-bg-focus: color-mix(in srgb, var(--color-surface-elevated) 68%, transparent 32%);
+  --search-control-border: color-mix(in srgb, var(--color-line-strong) 58%, transparent 42%);
+  --search-control-border-focus: color-mix(in srgb, var(--color-primary) 28%, var(--color-line-strong) 72%);
+  --search-control-text: var(--color-text-secondary);
+  --search-control-placeholder: color-mix(in srgb, var(--color-text-muted) 72%, transparent 28%);
+  --search-control-icon: color-mix(in srgb, var(--color-primary-strong) 72%, var(--color-text-muted) 28%);
+  --search-control-radius: 999px;
+  --search-control-font-size: 0.78rem;
+  --search-control-font-weight: 560;
   --color-muted: var(--color-text-muted);
   --color-sand: #d6c18a;
   --color-water: #6caeb8;
@@ -69,6 +91,13 @@
   --color-line-strong: rgb(35 55 55 / 18%);
   --color-field-bg: rgb(255 255 250 / 66%);
   --color-field-border: rgb(35 55 55 / 16%);
+  --search-control-bg: color-mix(in srgb, var(--color-surface-elevated) 54%, transparent 46%);
+  --search-control-bg-focus: color-mix(in srgb, var(--color-surface-elevated) 68%, transparent 32%);
+  --search-control-border: color-mix(in srgb, var(--color-line-strong) 58%, transparent 42%);
+  --search-control-border-focus: color-mix(in srgb, var(--color-primary) 28%, var(--color-line-strong) 72%);
+  --search-control-text: var(--color-text-secondary);
+  --search-control-placeholder: color-mix(in srgb, var(--color-text-muted) 72%, transparent 28%);
+  --search-control-icon: color-mix(in srgb, var(--color-primary-strong) 72%, var(--color-text-muted) 28%);
   --color-muted: var(--color-text-muted);
   --shadow-soft: 0 12px 30px rgb(28 45 43 / 10%);
   --shadow-raised: 0 10px 24px rgb(28 45 43 / 14%);
@@ -97,6 +126,13 @@
   --color-line-strong: rgb(255 255 247 / 18%);
   --color-field-bg: rgb(255 255 255 / 6%);
   --color-field-border: rgb(224 255 249 / 14%);
+  --search-control-bg: rgb(255 255 255 / 5%);
+  --search-control-bg-focus: rgb(255 255 255 / 8%);
+  --search-control-border: rgb(224 255 249 / 12%);
+  --search-control-border-focus: rgb(224 255 249 / 22%);
+  --search-control-text: var(--color-text-secondary);
+  --search-control-placeholder: color-mix(in srgb, var(--color-text-muted) 76%, transparent 24%);
+  --search-control-icon: color-mix(in srgb, var(--color-primary-strong) 72%, var(--color-text-muted) 28%);
   --color-muted: var(--color-text-muted);
   --color-sand: #6d6047;
   --color-water: #2d6872;

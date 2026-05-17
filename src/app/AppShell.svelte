@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Dialog } from '@capacitor/dialog'
   import { onMount } from 'svelte'
+  import type { Component } from 'svelte'
   import BeachItemList from '../components/beach/BeachItemList.svelte'
   import BeachMap from '../components/beach/BeachMap.svelte'
-  import AppMenuSheet from '../components/layout/AppMenuSheet.svelte'
   import AppTopBar from '../components/layout/AppTopBar.svelte'
   import FilterSheet from '../components/layout/FilterSheet.svelte'
   import ViewSwitcher from '../components/layout/ViewSwitcher.svelte'
@@ -73,6 +73,27 @@
   import type { AccountExtraItem, AccountExtraItemInput, ExtraItemCatalogEntry, TariffIncludedItem } from '../lib/types/extraItem'
   import type { AccountLedger, ReservationSummary } from '../lib/types/reservationSummary'
 
+  type AppMenuSheetProps = {
+    open: boolean
+    appDisplayName: string
+    activeSection: SettingsSection
+    directDetailOpen: boolean
+    layout: BeachLayout | null
+    summary: BeachStatusSummaryType
+    typeSummary: { palms: number; umbrellas: number; smallPalms: number }
+    items: BeachItem[]
+    runtime: DatabaseRuntime | null
+    theme: AppTheme
+    language: AppLanguage
+    registryOpenRequest: OpenRegistryRequest | null
+    extraCatalog: ExtraItemCatalogEntry[]
+    onClose: () => void
+    onSectionSelect: (section: SettingsSection) => void
+    onExtraCatalogChange: (catalog: ExtraItemCatalogEntry[]) => void
+    onThemeChange: (theme: AppTheme) => void
+    onLanguageChange: (language: AppLanguage) => void
+  }
+
   let viewState = $state(createBeachViewState())
   let operationalPanel = $state(createOperationalPanelState())
   let layout: BeachLayout | null = $state(null)
@@ -96,6 +117,8 @@
   let activeSettingsSection: SettingsSection = $state('beach-parametric-setup')
   let settingsDirectDetailOpen = $state(false)
   let registryOpenRequest: OpenRegistryRequest | null = $state(null)
+  let AppMenuSheetComponent = $state<Component<AppMenuSheetProps> | null>(null)
+  let settingsMenuLoad: Promise<Component<AppMenuSheetProps>> | null = null
   let settingsClosedAt = 0
   let loadingStepIndex = $state(0)
   const loadingSteps = [
@@ -263,9 +286,18 @@
     viewState.activeView = 'map'
   }
 
+  const loadSettingsMenu = () => {
+    settingsMenuLoad ??= import('../components/layout/AppMenuSheet.svelte').then((module) => {
+      AppMenuSheetComponent = module.default as Component<AppMenuSheetProps>
+      return AppMenuSheetComponent
+    })
+    return settingsMenuLoad
+  }
+
   const openSettingsSection = (section: SettingsSection, directDetail = true) => {
     activeSettingsSection = section
     settingsDirectDetailOpen = directDetail
+    void loadSettingsMenu()
     viewState.menuOpen = true
   }
 
@@ -717,7 +749,7 @@
         <div class="loading-panel" role="status" aria-live="polite">
           <div class="loading-panel__content">
             <div class="loading-panel__header">
-              <p class="loading-panel__eyebrow">Spiaggia BDF</p>
+              <p class="loading-panel__eyebrow">LidoPro</p>
               <h1>Preparazione mappa</h1>
               <p>{loadingStep}</p>
             </div>
@@ -885,32 +917,34 @@
 <AppToast />
 
 <div class="settings-host" data-theme={theme}>
-  <AppMenuSheet
-    open={viewState.menuOpen}
-    activeSection={activeSettingsSection}
-    {layout}
-    {summary}
-    {typeSummary}
-    {items}
-    {runtime}
-    appDisplayName={APP_DISPLAY_NAME}
-    {theme}
-    {language}
-    {registryOpenRequest}
-    directDetailOpen={settingsDirectDetailOpen}
-    {extraCatalog}
-    onClose={closeSettingsMenu}
-    onSectionSelect={(section) => {
-      activeSettingsSection = section
-      settingsDirectDetailOpen = true
-    }}
-    onExtraCatalogChange={(catalog) => (extraCatalog = catalog)}
-    onThemeChange={(nextTheme) => {
-      theme = setTheme(nextTheme)
-    }}
-    onLanguageChange={(nextLanguage) => {
-      language = setLanguage(nextLanguage)
-      saveLanguage(nextLanguage)
-    }}
-  />
+  {#if AppMenuSheetComponent}
+    <AppMenuSheetComponent
+      open={viewState.menuOpen}
+      activeSection={activeSettingsSection}
+      {layout}
+      {summary}
+      {typeSummary}
+      {items}
+      {runtime}
+      appDisplayName={APP_DISPLAY_NAME}
+      {theme}
+      {language}
+      {registryOpenRequest}
+      directDetailOpen={settingsDirectDetailOpen}
+      {extraCatalog}
+      onClose={closeSettingsMenu}
+      onSectionSelect={(section) => {
+        activeSettingsSection = section
+        settingsDirectDetailOpen = true
+      }}
+      onExtraCatalogChange={(catalog) => (extraCatalog = catalog)}
+      onThemeChange={(nextTheme) => {
+        theme = setTheme(nextTheme)
+      }}
+      onLanguageChange={(nextLanguage) => {
+        language = setLanguage(nextLanguage)
+        saveLanguage(nextLanguage)
+      }}
+    />
+  {/if}
 </div>

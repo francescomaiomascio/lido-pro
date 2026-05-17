@@ -1,6 +1,6 @@
 import { defaultMapCanvasConfig, type MapCanvasConfig } from './config'
 
-const storageKey = 'beach-bdf-map-canvas-preferences'
+const storageKey = 'lido-pro-map-canvas-preferences'
 
 export function loadMapCanvasPreferences(): MapCanvasConfig {
   if (typeof localStorage === 'undefined') {

@@ -152,36 +152,29 @@
     onReset={() => (resetSignal += 1)}
   />
 
-  <button
-    type="button"
-    class="canvas-studio-toggle"
-    class:active={canvasStudio.isOpen}
-    aria-label={canvasStudio.isOpen
-      ? 'Chiudi Canvas Studio'
-      : $mapCanvasConfigStore.interaction.mode === 'edit'
+  {#if !canvasStudio.isOpen}
+    <button
+      type="button"
+      class="canvas-studio-toggle"
+      aria-label={$mapCanvasConfigStore.interaction.mode === 'edit'
         ? 'Mostra Canvas Studio'
         : 'Attiva modalità modifica e apri Canvas Studio'}
-    aria-pressed={canvasStudio.isOpen}
-    onclick={toggleCanvasStudio}
-  >
-    {#if canvasStudio.isOpen}
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M18 6 6 18"></path>
-        <path d="m6 6 12 12"></path>
-      </svg>
-    {:else}
+      aria-pressed={canvasStudio.isOpen}
+      onclick={toggleCanvasStudio}
+    >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="m15 4 5 5"></path>
         <path d="M14 5 3 16l5 5L19 10"></path>
         <path d="m9 4 .6 1.6L11 6.2l-1.4.6L9 8.4l-.6-1.6L7 6.2l1.4-.6L9 4Z"></path>
         <path d="m19 14 .6 1.6 1.4.6-1.4.6-.6 1.6-.6-1.6-1.4-.6 1.4-.6L19 14Z"></path>
       </svg>
-    {/if}
-  </button>
+    </button>
+  {/if}
 
   {#if canvasStudio.isOpen}
     <CanvasStudioRail
       activeToolId={canvasStudio.activeToolId}
+      onClose={toggleCanvasStudio}
       onSelectTool={selectStudioTool}
     />
     {#if canvasStudio.activeToolId}

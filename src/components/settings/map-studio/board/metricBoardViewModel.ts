@@ -16,6 +16,8 @@ export interface BoardFrame {
   frameH: number
   scale: number
   seaH: number
+  widthM: number
+  depthM: number
 }
 
 export interface BoardArea {
@@ -191,6 +193,8 @@ export function buildMetricBoardViewModel(setup: ParametricSetupState, output: P
     frameH,
     scale,
     seaH: Math.min(108, frameH * 0.19),
+    widthM: setup.beach.widthM,
+    depthM: setup.beach.depthM,
   }
   const x = (value: number) => frameX + value * scale
   const y = (value: number) => frameY + value * scale

@@ -12,7 +12,7 @@
   <span>Cerca</span>
   <input
     type="search"
-    placeholder="Cerca posto o cliente"
+    placeholder="Cerca"
     value={value}
     oninput={(event) => onChange(event.currentTarget.value)}
   />

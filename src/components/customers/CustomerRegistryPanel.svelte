@@ -170,7 +170,7 @@
           <span>Cerca</span>
           <input
             value={query}
-            placeholder="Nome, telefono o email"
+            placeholder="Cerca"
             oninput={(event) => {
               query = event.currentTarget.value
               loadCustomers()

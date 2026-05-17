@@ -2,7 +2,7 @@
 
 ## Local-First Rule
 
-Beach BDF runs as a local Android app. The app must remain usable without network access and without remote services.
+LidoPro runs as a local Android app. The app must remain usable without network access and without remote services.
 
 ## Android Tablet And Phone Support
 

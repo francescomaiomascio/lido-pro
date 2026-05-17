@@ -83,9 +83,9 @@
   {#if activeSection === 'customers'}
     <CustomersSettingsPanel />
   {:else if activeSection === 'tariffs'}
-    <TariffsSettingsPanel onCatalogChange={onExtraCatalogChange} />
+    <TariffsSettingsPanel {items} onCatalogChange={onExtraCatalogChange} />
   {:else if activeSection === 'extras'}
-    <TariffsSettingsPanel onCatalogChange={onExtraCatalogChange} />
+    <TariffsSettingsPanel {items} onCatalogChange={onExtraCatalogChange} />
   {:else if activeSection === 'registry'}
     <RegistrySettingsPanel openRequest={registryOpenRequest} />
   {:else if activeSection === 'beach-parametric-setup'}

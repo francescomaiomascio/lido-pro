@@ -3,7 +3,7 @@ export type AppToastMessage = {
   message: string
 }
 
-const TOAST_EVENT = 'beach-bdf:toast'
+const TOAST_EVENT = 'lido-pro:toast'
 
 export const showToast = (message: string) => {
   window.dispatchEvent(

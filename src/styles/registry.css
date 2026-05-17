@@ -3272,3 +3272,261 @@
     padding: 10px 12px;
   }
 }
+
+/* REGISTRY.MASTER_DETAIL.R1 - selected movement opens a real side inspector, not an overlay above the ledger. */
+.registry-panel {
+  overflow: hidden !important;
+}
+
+.registry-workspace.has-detail {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 420px) !important;
+  align-items: start !important;
+  gap: 14px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.registry-workspace.has-detail .registry-workspace__records {
+  grid-column: 1 !important;
+  order: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.registry-workspace.has-detail .registry-detail {
+  grid-column: 2 !important;
+  order: 0 !important;
+  position: sticky !important;
+  top: 12px !important;
+  z-index: 2 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: calc(100dvh - 190px) !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: var(--color-surface) !important;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 58%, transparent) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 16px 34px rgb(24 44 42 / 10%) !important;
+  opacity: 1 !important;
+}
+
+.registry-workspace.has-detail .registry-detail__header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  min-height: 70px !important;
+  padding: 14px 14px 12px !important;
+  background: color-mix(in srgb, var(--color-surface-elevated) 72%, var(--color-surface) 28%) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent) !important;
+}
+
+.registry-workspace.has-detail .registry-detail__header span {
+  color: var(--color-muted) !important;
+  font-size: 0.62rem !important;
+  font-weight: 880 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+.registry-workspace.has-detail .registry-detail__header h3 {
+  margin: 2px 0 0 !important;
+  font-size: 1rem !important;
+  font-weight: 860 !important;
+  line-height: 1.12 !important;
+}
+
+.registry-workspace.has-detail .registry-detail__header p {
+  margin: 4px 0 0 !important;
+  color: var(--color-muted) !important;
+  font-size: 0.72rem !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+}
+
+.registry-workspace.has-detail .registry-detail__close {
+  min-height: 30px !important;
+  padding: 0 10px !important;
+  border-radius: 7px !important;
+  font-size: 0.72rem !important;
+}
+
+.registry-workspace.has-detail .registry-detail__body {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+  padding: 12px !important;
+  overflow: auto !important;
+  background: var(--color-surface) !important;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card,
+.registry-workspace.has-detail .registry-detail__activity,
+.registry-workspace.has-detail .registry-detail__timeline {
+  grid-column: 1 !important;
+  grid-row: auto !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+  background: color-mix(in srgb, var(--color-surface-elevated) 50%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--color-line) 54%, transparent) !important;
+  border-radius: 9px !important;
+  opacity: 1 !important;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card dl {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  gap: 6px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 48%, transparent) !important;
+}
+
+.registry-workspace.has-detail .registry-detail__booking-card dl div {
+  grid-template-columns: 86px minmax(0, 1fr) !important;
+}
+
+.registry-workspace.has-detail .registry-detail__activity-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+
+.registry-workspace.has-detail .registry-detail__timeline {
+  max-height: 240px !important;
+  overflow: auto !important;
+}
+
+.registry-workspace.has-detail .registry-table {
+  background: var(--color-surface) !important;
+  border-color: color-mix(in srgb, var(--color-line) 58%, transparent) !important;
+  opacity: 1 !important;
+}
+
+.registry-workspace.has-detail .registry-table__caption {
+  background: color-mix(in srgb, var(--color-surface-elevated) 68%, var(--color-surface) 32%) !important;
+}
+
+.registry-workspace.has-detail .registry-table__head,
+.registry-workspace.has-detail .registry-row button {
+  grid-template-columns:
+    minmax(128px, 1.2fr)
+    minmax(132px, 1.08fr)
+    minmax(132px, 1fr)
+    minmax(86px, 0.68fr)
+    minmax(110px, 0.78fr)
+    minmax(92px, 0.68fr) !important;
+  gap: 10px !important;
+}
+
+.registry-workspace.has-detail .registry-row button {
+  min-height: 62px !important;
+  padding: 9px 12px !important;
+}
+
+.registry-workspace.has-detail .registry-cell strong {
+  font-size: 0.82rem !important;
+}
+
+.registry-workspace.has-detail .registry-cell span {
+  font-size: 0.68rem !important;
+}
+
+.registry-workspace.has-detail .registry-row-progress {
+  width: min(104px, 100%) !important;
+}
+
+@media (max-width: 1180px) {
+  .registry-workspace.has-detail {
+    grid-template-columns: minmax(0, 1fr) 340px !important;
+  }
+
+  .registry-workspace.has-detail .registry-table__head,
+  .registry-workspace.has-detail .registry-row button {
+    grid-template-columns:
+      minmax(118px, 1.2fr)
+      minmax(116px, 1fr)
+      minmax(112px, 0.96fr)
+      minmax(86px, 0.7fr)
+      minmax(92px, 0.72fr) !important;
+  }
+
+  .registry-workspace.has-detail .registry-table__head span:nth-child(5),
+  .registry-workspace.has-detail .registry-cell--money:nth-child(5) {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .registry-workspace.has-detail {
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow: visible !important;
+  }
+
+  .registry-workspace.has-detail .registry-workspace__records,
+  .registry-workspace.has-detail .registry-detail {
+    grid-column: 1 !important;
+  }
+
+  .registry-workspace.has-detail .registry-detail {
+    position: relative !important;
+    top: auto !important;
+    max-height: none !important;
+  }
+}
+
+/* REGISTRY.MASTER_DETAIL.R2 - keep master/detail, but let the register page scroll. */
+.registry-panel {
+  overflow: visible !important;
+}
+
+.registry-workspace.has-detail {
+  overflow: visible !important;
+}
+
+.registry-workspace.has-detail .registry-workspace__records {
+  overflow: visible !important;
+}
+
+.registry-workspace.has-detail .registry-table,
+.registry-workspace.has-detail .registry-table__body {
+  overflow: visible !important;
+}
+
+.registry-workspace.has-detail .registry-detail {
+  align-self: start !important;
+}
+
+/* Search fields follow the shared compact translucent control language. */
+.registry-filters input {
+  min-height: var(--search-control-height) !important;
+  padding: 0 11px !important;
+  color: var(--search-control-text) !important;
+  background: var(--search-control-bg) !important;
+  border: 1px solid var(--search-control-border) !important;
+  border-radius: var(--search-control-radius) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%) !important;
+  font-size: var(--search-control-font-size) !important;
+  font-weight: var(--search-control-font-weight) !important;
+}
+
+.registry-filters input::placeholder {
+  color: var(--search-control-placeholder) !important;
+  opacity: 1 !important;
+}
+
+.registry-filters input:focus {
+  background: var(--search-control-bg-focus) !important;
+  border-color: var(--search-control-border-focus) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 7%, transparent) !important;
+}

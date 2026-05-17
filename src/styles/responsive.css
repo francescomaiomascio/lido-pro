@@ -51,14 +51,12 @@
   .brand {
     align-self: center;
     min-width: 0;
+    height: 38px;
   }
 
-  .brand span {
-    display: none;
-  }
-
-  .brand strong {
-    font-size: 0.88rem;
+  .brand__wordmark {
+    height: 36px;
+    max-width: min(164px, 38vw);
   }
 
   .topbar-nav {
@@ -78,7 +76,7 @@
   }
 
   .expandable-search.expanded {
-    width: min(300px, calc(100vw - 180px));
+    width: min(230px, calc(100vw - 180px));
   }
 
   .workspace-view-switcher {
@@ -169,6 +167,15 @@
     font-size: 0.8rem;
   }
 
+  .brand {
+    height: 34px;
+  }
+
+  .brand__wordmark {
+    height: 31px;
+    max-width: min(126px, 32vw);
+  }
+
   .topbar-actions {
     justify-self: end;
     gap: 10px;
@@ -181,7 +188,7 @@
   }
 
   .expandable-search.expanded {
-    width: min(260px, calc(100vw - 156px));
+    width: min(210px, calc(100vw - 156px));
   }
 
   .workspace-view-switcher {

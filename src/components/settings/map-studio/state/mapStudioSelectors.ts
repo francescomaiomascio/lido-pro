@@ -10,7 +10,9 @@ import type { MapStudioProjectState } from '../MapStudioProjectState'
 import type { MapStudioDomainId } from '../mapStudioDomains'
 import type { MapStudioLayerId } from '../mapStudioLayers'
 import { layersForDomain } from '../mapStudioLayers'
-import type { MapStudioAction } from './mapStudioActions'
+import { getMapStudioTool, type MapStudioAction } from './mapStudioActions'
+import { getMapStudioLifecycle } from './mapStudioLifecycle'
+import { formatHandleValue, manipulationStateLabel } from './mapStudioManipulation'
 import type { MapStudioRelations } from './mapStudioRelations'
 import type { MapStudioScopeId, MapStudioSelectedEntity } from './mapStudioScope'
 
@@ -39,6 +41,11 @@ export interface MapStudioDockModel {
   title: string
   subtitle: string
   scopeLabel: string
+  toolLabel: string
+  manipulationLabel: string
+  editingLabel?: string
+  currentValue?: string
+  proposedValue?: string
   hint?: string
   metrics: MapStudioMetricRow[]
   areaChips: MapStudioDockChip[]
@@ -205,46 +212,138 @@ const dockHint = (state: MapStudioProjectState, relations: MapStudioRelations) =
 }
 
 const primaryAction = (state: MapStudioProjectState, draftAvailable: boolean): MapStudioAction | undefined => {
+  const lifecycle = getMapStudioLifecycle(state, { draftAvailable, warningCount: 0 })
+  const { completeness } = lifecycle
   const layerAction = (layerId: MapStudioLayerId, visibleLabel: string, hiddenLabel: string): MapStudioAction => ({
     id: 'toggleLayer',
     label: state.activeLayerSet.includes(layerId) ? hiddenLabel : visibleLabel,
     tone: 'primary',
     layerId,
   })
+  if (state.draftTransaction) {
+    return {
+      id: state.draftTransaction.canCommit ? 'commitManipulation' : 'cancelManipulation',
+      label: state.draftTransaction.canCommit ? 'Conferma modifica' : 'Chiudi misura',
+      tone: 'primary',
+    }
+  }
+  if (state.activeDomain === 'perimeter' && !completeness.hasPerimeter) {
+    return { id: 'confirmPerimeter', label: 'Conferma perimetro', tone: 'primary' }
+  }
+  if (state.activeDomain === 'functionalAreas') {
+    if (!completeness.hasPerimeter) return { id: 'confirmPerimeter', label: 'Conferma prima il perimetro', tone: 'primary' }
+    if (!completeness.hasFunctionalAreas) return { id: 'initializeAreas', label: 'Crea aree base', tone: 'primary' }
+    return { id: 'switchDomain', label: 'Passa ai tracciati', tone: 'primary', domainId: 'tracks' }
+  }
+  if (state.activeDomain === 'tracks') {
+    if (!completeness.hasFunctionalAreas) return { id: 'initializeAreas', label: 'Crea prima le aree', tone: 'primary' }
+    if (!completeness.hasTracks) return { id: 'initializeTracks', label: 'Crea tracciati base', tone: 'primary' }
+    return { id: 'switchDomain', label: 'Passa agli ingombri', tone: 'primary', domainId: 'footprints' }
+  }
+  if (state.activeDomain === 'footprints') {
+    if (!completeness.hasTracks) return { id: 'initializeTracks', label: 'Crea prima i tracciati', tone: 'primary' }
+    if (!completeness.hasObjectParameters) return { id: 'initializeFootprints', label: 'Crea ingombri base', tone: 'primary' }
+    return { id: 'switchDomain', label: 'Passa ai vincoli', tone: 'primary', domainId: 'metricConstraints' }
+  }
+  if (state.activeDomain === 'metricConstraints' && !completeness.hasMetricConstraints) {
+    return { id: 'confirmConstraints', label: 'Conferma vincoli', tone: 'primary' }
+  }
+  if (state.activeTool === 'verify') {
+    return {
+      id: 'runVerification',
+      label: state.activeDomain === 'metricConstraints' ? 'Verifica vincoli' : 'Esegui verifica',
+      tone: 'primary',
+      disabledReason: completeness.canVerify ? undefined : 'Completa il modello prima della verifica.',
+    }
+  }
+  if (state.activeTool === 'preview') {
+    return {
+      id: 'openPreview',
+      label: 'Apri anteprima',
+      tone: 'primary',
+      disabledReason: draftAvailable ? undefined : "Esegui una verifica prima di aprire l'anteprima.",
+    }
+  }
+  if (state.activeTool === 'measure') {
+    return layerAction('metric.constraints', 'Mostra misure', 'Nascondi misure')
+  }
+  if (state.activeTool === 'areaEdit' && !state.projectModel.functionalAreas.some((area) => area.enabled)) {
+    return { id: 'initializeAreas', label: 'Crea aree base', tone: 'primary' }
+  }
+  if (state.activeTool === 'trackEdit' && !state.projectModel.tracks.some((track) => track.enabled)) {
+    return {
+      id: state.projectModel.functionalAreas.some((area) => area.enabled) ? 'initializeTracks' : 'initializeAreas',
+      label: state.projectModel.functionalAreas.some((area) => area.enabled) ? 'Crea tracciati base' : 'Crea prima le aree',
+      tone: 'primary',
+    }
+  }
+  if (state.activeTool === 'footprintEdit') {
+    return layerAction('object.footprints', 'Parametra ingombri', 'Nascondi ingombri')
+  }
+  if (state.activeTool === 'constraintEdit') {
+    return layerAction('metric.constraints', 'Mostra vincoli', 'Nascondi vincoli')
+  }
+  if (state.activeTool === 'trackEdit') {
+    return layerAction('tracks.rows', 'Mostra tracciati', 'Nascondi tracciati')
+  }
+  if (state.activeTool === 'areaEdit') {
+    return layerAction('functional.areas', 'Mostra aree', 'Nascondi aree')
+  }
+  if (state.activeTool === 'perimeterEdit') {
+    return { id: 'focusPerimeter', label: 'Mostra handle perimetro', tone: 'primary', layerId: 'usable.boundary' }
+  }
   if (state.activeDomain === 'verification') {
-    return { id: 'runVerification', label: 'Esegui verifica', tone: 'primary' }
+    return {
+      id: 'runVerification',
+      label: 'Esegui verifica',
+      tone: 'primary',
+      disabledReason: completeness.canVerify ? undefined : 'Completa il modello prima della verifica.',
+    }
   }
   if (state.activeDomain === 'versionsPublication') {
     return {
       id: 'openPreview',
       label: 'Apri anteprima',
       tone: 'primary',
-      disabledReason: draftAvailable ? undefined : 'Esegui una verifica prima di aprire l’anteprima.',
+      disabledReason: draftAvailable ? undefined : "Esegui una verifica prima di aprire l'anteprima.",
     }
   }
   if (state.activeDomain === 'metricConstraints') {
     return { id: 'runVerification', label: 'Verifica vincoli', tone: 'primary' }
-  }
-  if (state.activeDomain === 'footprints') {
-    return layerAction('object.footprints', 'Mostra ingombri', 'Nascondi ingombri')
-  }
-  if (state.activeDomain === 'tracks') {
-    return layerAction('tracks.rows', 'Evidenzia tracciato', 'Nascondi tracciati')
-  }
-  if (state.activeDomain === 'functionalAreas') {
-    return layerAction('functional.areas', 'Evidenzia area', 'Nascondi aree')
   }
   return { id: 'focusPerimeter', label: 'Aggiorna perimetro', tone: 'primary', layerId: 'usable.boundary' }
 }
 
 const secondaryActions = (state: MapStudioProjectState, draftAvailable: boolean): MapStudioAction[] => {
   const actions: MapStudioAction[] = []
+  const lifecycle = getMapStudioLifecycle(state, { draftAvailable, warningCount: 0 })
+  if (state.draftTransaction?.canCancel && state.draftTransaction.canCommit) actions.push({ id: 'cancelManipulation', label: 'Annulla' })
   if (state.activeScope !== 'project') actions.push({ id: 'clearScope', label: 'Cancella scope' })
-  if (state.activeDomain !== 'tracks') actions.push({ id: 'switchDomain', label: 'Vai a tracciati', domainId: 'tracks' })
-  if (state.activeDomain !== 'footprints') actions.push({ id: 'switchDomain', label: 'Vai a ingombri', domainId: 'footprints' })
-  if (state.activeDomain !== 'metricConstraints') actions.push({ id: 'switchDomain', label: 'Vai a vincoli', domainId: 'metricConstraints' })
+  const nextDomain =
+    state.activeDomain === 'perimeter'
+      ? 'functionalAreas'
+      : state.activeDomain === 'functionalAreas'
+        ? 'tracks'
+        : state.activeDomain === 'tracks'
+          ? 'footprints'
+          : state.activeDomain === 'footprints'
+            ? 'metricConstraints'
+            : state.activeDomain === 'metricConstraints'
+              ? 'verification'
+              : state.activeDomain === 'verification'
+                ? 'versionsPublication'
+                : undefined
+  if (nextDomain) {
+    const domainState = lifecycle.domainStates.find((domain) => domain.id === nextDomain)
+    actions.push({
+      id: 'switchDomain',
+      label: `Vai a ${domainState?.shortLabel ?? 'stage successivo'}`,
+      domainId: nextDomain,
+      disabledReason: domainState?.disabledReason,
+    })
+  }
   if (draftAvailable && state.activeDomain !== 'versionsPublication') actions.push({ id: 'openPreview', label: 'Apri anteprima' })
-  return actions.slice(0, 4)
+  return actions.slice(0, 2)
 }
 
 export const getDockModel = (input: {
@@ -262,6 +361,14 @@ export const getDockModel = (input: {
   const scopedItems = getScopedItems(state, relations)
   const scopedWarnings = getScopedWarnings(state, relations)
   const activeEntity = getEntityFromState(state, relations)
+  const handle = state.selectedHandle
+  const lastDraftParameter = state.projectDraft.changedParameters.slice(-1)[0]
+  const manipulationLabel = manipulationStateLabel({
+    activeManipulation: state.activeManipulation,
+    hasDraftTransaction: Boolean(state.draftTransaction),
+    hasProjectDraft: state.projectDraft.dirty,
+    previewState: state.previewState,
+  })
   const metricRows: MapStudioMetricRow[] =
     state.activeDomain === 'perimeter'
       ? [
@@ -311,6 +418,19 @@ export const getDockModel = (input: {
     title: scopeTitle(state, relations, setup),
     subtitle: dockSubtitle(state, relations, setup, output),
     scopeLabel: scopeLabel(state, relations),
+    toolLabel: getMapStudioTool(state.activeTool).label,
+    manipulationLabel,
+    editingLabel: handle?.label ?? lastDraftParameter?.label,
+    currentValue: handle
+      ? formatHandleValue(handle.currentValue, handle.unit)
+      : lastDraftParameter
+        ? formatHandleValue(lastDraftParameter.currentValue, lastDraftParameter.unit)
+        : undefined,
+    proposedValue: handle
+      ? formatHandleValue(handle.proposedValue, handle.unit)
+      : lastDraftParameter
+        ? formatHandleValue(lastDraftParameter.proposedValue, lastDraftParameter.unit)
+        : undefined,
     hint: dockHint(state, relations),
     metrics: metricRows,
     areaChips: relations.areas

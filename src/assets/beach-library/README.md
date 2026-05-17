@@ -1,4 +1,4 @@
-# Beach BDF Asset Library
+# LidoPro Asset Library
 
 Questa cartella contiene asset grafici importati per la libreria Canvas.
 

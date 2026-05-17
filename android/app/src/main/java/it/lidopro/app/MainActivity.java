@@ -1,4 +1,4 @@
-package it.beachbdf.app;
+package it.lidopro.app;
 
 import com.getcapacitor.BridgeActivity;
 

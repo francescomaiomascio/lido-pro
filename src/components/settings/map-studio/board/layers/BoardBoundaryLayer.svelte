@@ -17,5 +17,5 @@
   {#each ticksY as tick}
     <line x1={vm.frame.frameX - 7} x2={vm.frame.frameX} y1={vm.y(tick)} y2={vm.y(tick)} />
   {/each}
-  <text x={vm.frame.frameX + vm.frame.frameW - 78} y={vm.frame.frameY - 12}>31m × 28m</text>
+  <text x={vm.frame.frameX + vm.frame.frameW - 78} y={vm.frame.frameY - 12}>{vm.frame.widthM}m × {vm.frame.depthM}m</text>
 </g>

@@ -1,6 +1,6 @@
 import { getNextTheme, type AppTheme } from './themeTokens'
 
-const storageKey = 'beach-bdf-theme'
+const storageKey = 'lido-pro-theme'
 
 export const loadInitialTheme = (): AppTheme => {
   if (typeof localStorage === 'undefined') {

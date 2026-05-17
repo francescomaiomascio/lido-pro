@@ -1,6 +1,6 @@
 export type AppLanguage = 'it' | 'en' | 'es' | 'fr'
 
-const storageKey = 'beach-bdf-language'
+const storageKey = 'lido-pro-language'
 
 export const appLanguages: AppLanguage[] = ['it', 'en', 'es', 'fr']
 

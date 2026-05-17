@@ -1,6 +1,7 @@
 <script lang="ts">
   import { DATABASE_NAME, SCHEMA_VERSION } from '../../lib/db/schema'
   import { resetBrowserDatabaseForDevelopmentOnly } from '../../lib/db/beachRepository'
+  import { getRuntimeTarget, getRuntimeTargetLabel } from '../../lib/platform/runtimeTarget'
   import type { BeachLayout } from '../../lib/types/beach'
   import type { DatabaseRuntime } from '../../lib/types/db'
 
@@ -24,6 +25,8 @@
   const webStoreLabel = $derived(
     runtime === 'web-persistent-sqlite' ? 'Sì' : runtime === 'browser-memory-fallback' ? 'No' : 'N/D',
   )
+  const runtimeTarget = $derived(getRuntimeTarget())
+  const runtimeTargetLabel = $derived(getRuntimeTargetLabel(runtimeTarget))
 
   let resetError: string | null = $state(null)
   let resetInProgress = $state(false)
@@ -68,6 +71,10 @@
     <div>
       <dt>Adapter</dt>
       <dd>{adapterLabel}</dd>
+    </div>
+    <div>
+      <dt>Runtime</dt>
+      <dd>{runtimeTargetLabel}</dd>
     </div>
     <div>
       <dt>Web store initialized</dt>

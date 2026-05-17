@@ -2237,6 +2237,234 @@
   }
 }
 
+/* LISTINO.FIX.R5B - compact stable layout that works with the settings sidebar open. */
+.settings-shell__body > .settings-content:has(> .listino-panel) {
+  grid-template-rows: auto !important;
+  align-content: start !important;
+  overflow: auto !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel {
+  align-self: start !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  gap: 0 !important;
+  width: min(100%, 1320px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 20px 24px 28px !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-topbar {
+  min-height: 44px !important;
+  padding: 0 0 8px !important;
+  margin: 0 !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+  display: grid !important;
+  grid-template-columns: minmax(330px, auto) minmax(190px, 1fr) auto !important;
+  align-items: end !important;
+  gap: 10px !important;
+  min-height: 54px !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent) !important;
+  border-radius: 0 !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+  min-width: 0 !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-tabs button {
+  padding: 0 10px !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-search {
+  min-width: 0 !important;
+  align-self: end !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+  display: flex !important;
+  align-items: end !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-sync-action,
+.settings-shell__body > .settings-content > .listino-panel .listino-primary-action {
+  min-height: 34px !important;
+  padding-inline: 12px !important;
+  white-space: nowrap !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+  display: grid !important;
+  grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) minmax(220px, auto) !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent) !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-categories {
+  min-width: 0 !important;
+  overflow-x: auto !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-categories button {
+  min-height: 28px !important;
+  padding-inline: 8px !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-metrics {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-workbench {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0 !important;
+  min-height: 0 !important;
+  padding-top: 10px !important;
+}
+
+.settings-shell__body > .settings-content > .listino-panel .listino-price-grid,
+.settings-shell__body > .settings-content > .listino-panel .listino-grid {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      'tabs actions'
+      'search search' !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+    grid-area: tabs !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-search {
+    grid-area: search !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    grid-area: actions !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+    grid-template-columns: minmax(130px, 170px) minmax(0, 1fr) !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-metrics {
+    grid-column: 1 / -1 !important;
+    text-align: left !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-shell__body > .settings-content > .listino-panel {
+    padding: 14px 12px 18px !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'tabs'
+      'search'
+      'actions' !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+    width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    justify-content: stretch !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar button {
+    flex: 1 1 0 !important;
+  }
+
+  .settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* LISTINO.UI.R5 final overrides: keep the Listino shell stable after shared settings rules. */
+.settings-content > .listino-panel {
+  gap: 0;
+}
+
+.settings-content > .listino-panel .listino-topbar {
+  min-height: 70px;
+  padding-bottom: 14px;
+}
+
+.settings-content > .listino-panel .listino-command-band {
+  grid-template-columns: auto minmax(260px, 1fr) auto auto;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 0;
+}
+
+.settings-content > .listino-panel .listino-filter-rail {
+  display: grid;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 56px;
+}
+
+.settings-content > .listino-panel .listino-workbench {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding-top: 14px;
+}
+
+.settings-content > .listino-panel .listino-inspector {
+  position: fixed;
+  top: 118px;
+  right: 22px;
+  z-index: 80;
+  width: min(360px, calc(100vw - 32px));
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  box-shadow: 0 18px 45px rgba(18, 44, 43, 0.15);
+}
+
+@media (max-width: 860px) {
+  .settings-content > .listino-panel .listino-command-band,
+  .settings-content > .listino-panel .listino-filter-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-content > .listino-panel .listino-inspector {
+    inset: auto 12px 12px;
+    width: auto;
+    max-height: 72dvh;
+  }
+}
+
 @media (max-width: 560px) {
   .customer-registry-panel {
     gap: 10px;
@@ -3866,9 +4094,10 @@
 .settings-modern-header h2,
 .customer-registry-topbar h2 {
   margin: 0;
+  font-family: var(--font-display);
   color: var(--color-text);
   font-size: clamp(1.42rem, 1.55vw, 1.72rem);
-  font-weight: 900;
+  font-weight: 760;
   line-height: 1.05;
   letter-spacing: 0;
 }
@@ -4111,106 +4340,85 @@
   }
 }
 
-/* ACCOUNT.R1 - Listino as the editable source for tariffs, articles and included equipment. */
+/* LISTINO.UI.R5 - fixed top layout with compact filter rail. */
 .listino-panel {
-  gap: 16px;
+  gap: 0;
 }
 
-.listino-command-band {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
-  align-items: center;
-  gap: 18px;
-  padding: 12px 0 4px;
-}
-
-.listino-tabs {
+.listino-topbar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 4px;
-  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
-  border-radius: 10px;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 70px;
+  padding-bottom: 14px;
 }
 
-.listino-tabs button {
-  min-height: 34px;
-  padding: 0 14px;
-  color: var(--color-muted);
-  background: transparent;
-  border: 0;
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 760;
+.listino-panel .listino-command-band {
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+}
+
+.listino-panel .listino-sync-action,
+.listino-panel .listino-primary-action {
+  justify-self: end;
   white-space: nowrap;
 }
 
-.listino-tabs button.active {
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-surface) 92%, white 8%);
-  box-shadow: 0 7px 16px rgba(18, 44, 43, 0.07);
+.listino-panel .listino-search {
+  align-self: stretch;
 }
 
-.listino-search {
+.listino-filter-rail {
   display: grid;
-  gap: 5px;
-  min-width: 0;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 9px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 44%, transparent);
 }
 
-.listino-search span {
+.listino-filter-rail__control label {
+  display: grid;
+  gap: 4px;
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 760;
   text-transform: uppercase;
 }
 
-.listino-search input {
-  min-height: 38px;
-  padding: 0 14px;
+.listino-filter-rail__control select {
+  min-height: 32px;
+  padding: 0 10px;
   color: var(--color-text);
-  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
-  border-radius: 9px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 74%, transparent);
+  border-radius: 7px;
   font: inherit;
+  font-size: 0.8rem;
+  text-transform: none;
 }
 
-.listino-stats {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
-  border-radius: 10px;
-}
-
-.listino-stats div {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-  padding: 10px 12px;
-  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
-}
-
-.listino-stats span {
+.listino-metrics {
+  margin: 0;
   color: var(--color-muted);
-  font-size: 0.66rem;
-  font-weight: 760;
-  text-transform: uppercase;
-}
-
-.listino-stats strong {
-  color: var(--color-text);
-  font-size: 1rem;
-  font-weight: 760;
+  font-size: 0.74rem;
+  font-weight: 640;
+  white-space: nowrap;
 }
 
 .listino-workbench {
   display: grid;
-  grid-template-columns: minmax(160px, 190px) minmax(420px, 1fr) minmax(300px, 360px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   min-height: 0;
+  padding-top: 14px;
 }
 
 .listino-categories,
@@ -4220,57 +4428,55 @@
 }
 
 .listino-categories {
-  display: grid;
-  align-content: start;
-  gap: 6px;
-  padding: 10px 0 0;
-}
-
-.listino-categories header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 0 4px 8px;
-  color: var(--color-muted);
-  font-size: 0.7rem;
-  font-weight: 760;
-  text-transform: uppercase;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.listino-categories::-webkit-scrollbar {
+  display: none;
 }
 
 .listino-categories button {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto auto;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-height: 34px;
-  padding: 0 10px;
+  gap: 6px;
+  min-width: max-content;
+  min-height: 30px;
+  padding: 0 9px;
   color: var(--color-muted);
   text-align: left;
   background: transparent;
-  border: 0;
-  border-left: 2px solid transparent;
-  border-radius: 7px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 6px;
 }
 
 .listino-categories button.active {
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-primary) 5%, transparent);
-  border-left-color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border) 72%);
 }
 
-.listino-categories button span {
+.listino-categories button span,
+.listino-categories button strong {
   overflow: hidden;
-  font-size: 0.82rem;
-  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.listino-categories button span {
+  font-size: 0.76rem;
+  font-weight: 690;
+}
+
 .listino-categories button strong {
-  font-size: 0.74rem;
-  font-weight: 760;
+  color: inherit;
+  font-size: 0.72rem;
+  font-weight: 740;
 }
 
 .listino-grid {
@@ -4278,75 +4484,179 @@
   align-content: start;
   gap: 0;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-border) 66%, transparent);
-  border-radius: 10px;
+  border-radius: 8px;
+}
+
+.listino-price-grid {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 8px;
+}
+
+.listino-price-grid__head,
+.listino-price-row {
+  display: grid;
+  grid-template-columns: minmax(128px, 1fr) minmax(86px, 0.55fr) minmax(110px, 0.8fr) minmax(110px, 0.8fr) minmax(78px, 0.52fr) minmax(110px, 0.72fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.listino-price-grid__head {
+  min-height: 34px;
+  padding: 0 12px;
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 54%, transparent);
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.listino-price-grid__body {
+  display: grid;
+  max-height: min(58dvh, 660px);
+  overflow: auto;
+}
+
+.listino-price-row {
+  min-height: 48px;
+  padding: 7px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent);
+}
+
+.listino-price-row strong {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 730;
+}
+
+.listino-price-row button {
+  min-height: 32px;
+  padding: 0 10px;
+  color: var(--color-text);
+  text-align: right;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 64%, transparent);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 740;
+}
+
+.listino-price-row button:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-border) 62%);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface) 96%);
+}
+
+.listino-price-row button.empty {
+  color: var(--color-muted);
+  background: transparent;
+}
+
+.listino-price-row button.fallback {
+  color: color-mix(in srgb, var(--color-text) 76%, var(--color-muted) 24%);
+  font-weight: 620;
+}
+
+.listino-inline-price,
+.listino-inline-number {
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 9px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 42%, var(--color-border) 58%);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.listino-inline-price {
+  text-align: right;
+}
+
+.listino-inline-number {
+  text-align: center;
+}
+
+.listino-row-detail {
+  min-height: 30px;
+  padding: 0 9px;
+}
+
+.listino-price-row span,
+.listino-price-row em {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-style: normal;
+  font-weight: 620;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .listino-grid__head,
 .listino-row {
   display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) minmax(100px, 0.72fr) minmax(70px, 0.5fr) minmax(76px, 0.54fr) minmax(96px, 0.68fr) minmax(92px, 0.58fr) minmax(96px, 0.64fr) minmax(70px, 0.48fr) minmax(74px, 0.5fr) minmax(74px, 0.5fr);
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .listino-grid__head {
-  min-height: 36px;
-  padding: 0 12px;
+  min-height: 34px;
+  padding: 0 11px;
   color: var(--color-muted);
-  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
-  font-size: 0.66rem;
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
-}
-
-.listino-grid__head--tariffs,
-.listino-row--tariff {
-  grid-template-columns: minmax(160px, 1.3fr) minmax(90px, 0.7fr) minmax(90px, 0.65fr) minmax(95px, 0.7fr) minmax(84px, auto);
-}
-
-.listino-grid__head--articles,
-.listino-row--article {
-  grid-template-columns: minmax(150px, 1.2fr) minmax(90px, 0.7fr) minmax(80px, auto) minmax(48px, auto) minmax(56px, auto) minmax(72px, auto);
 }
 
 .listino-list {
   display: grid;
   gap: 0;
-  max-height: min(56dvh, 620px);
+  max-height: min(58dvh, 660px);
   overflow: auto;
 }
 
 .listino-row {
   width: 100%;
   min-width: 0;
-  min-height: 54px;
-  padding: 8px 12px;
+  min-height: 48px;
+  padding: 7px 11px;
   color: var(--color-text);
   text-align: left;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 44%, transparent);
   border-radius: 0;
 }
 
 .listino-row:hover {
-  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 3.5%, transparent);
 }
 
 .listino-row.active {
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
-  box-shadow: inset 3px 0 0 var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 76%, var(--color-text) 24%);
 }
 
-.listino-row span {
+.listino-row__name {
   display: grid;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
 .listino-row strong,
-.listino-row small {
+.listino-row small,
+.listino-row em {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4354,78 +4664,89 @@
 }
 
 .listino-row strong {
-  font-size: 0.94rem;
-  font-weight: 720;
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 730;
 }
 
 .listino-row small,
-.listino-row em,
-.listino-row i {
+.listino-row em {
   color: var(--color-muted);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-style: normal;
-  font-weight: 620;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 610;
 }
 
 .listino-row b {
-  color: var(--color-primary);
-  font-size: 0.88rem;
+  color: var(--color-text);
+  font-size: 0.8rem;
   font-weight: 760;
   white-space: nowrap;
 }
 
-.listino-row i {
-  width: fit-content;
-  padding: 2px 7px;
-  background: color-mix(in srgb, var(--color-success) 7%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);
-  border-radius: 999px;
+.listino-inspector {
+  position: fixed;
+  top: 118px;
+  right: 22px;
+  z-index: 80;
+  width: min(360px, calc(100vw - 32px));
+  min-height: 380px;
+  max-height: min(68dvh, 760px);
+  overflow: auto;
+  padding: 14px;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 68%, transparent);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(18, 44, 43, 0.15);
 }
 
-.listino-inspector {
-  align-self: start;
-  min-height: 360px;
-  padding: 16px;
-  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 64%, transparent);
-  border-radius: 10px;
+.listino-inspector__header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 54%, transparent);
 }
 
 .listino-form {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 9px;
   padding-top: 12px;
 }
 
 .listino-form label {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   color: var(--color-muted);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 720;
 }
 
 .listino-form input,
 .listino-form select {
   min-width: 0;
-  min-height: 42px;
-  padding: 0 12px;
+  min-height: 38px;
+  padding: 0 11px;
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
-  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  border-radius: 7px;
   font: inherit;
 }
 
-.listino-form .settings-form-actions {
-  display: flex;
-  flex-wrap: wrap;
+.listino-form input:disabled {
+  color: color-mix(in srgb, var(--color-text) 72%, var(--color-muted) 28%);
+  background: color-mix(in srgb, var(--color-surface) 68%, transparent);
+}
+
+.listino-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  padding-top: 4px;
+  padding-top: 6px;
+}
+
+.listino-actions .button-primary,
+.listino-actions .button-secondary {
+  width: 100%;
 }
 
 .listino-empty-detail {
@@ -4443,27 +4764,29 @@
 .listino-empty-detail p {
   margin: 0;
   color: var(--color-muted);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 560;
   line-height: 1.42;
 }
 
 .listino-empty-detail dl {
   display: grid;
-  gap: 8px;
+  gap: 7px;
   margin: 8px 0 0;
 }
 
 .listino-empty-detail dl div {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   gap: 10px;
+  padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
 }
 
 .listino-empty-detail dt,
 .listino-empty-detail dd {
   margin: 0;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
 }
 
 .listino-empty-detail dt {
@@ -4476,27 +4799,116 @@
   font-weight: 650;
 }
 
-@media (max-width: 1040px) {
-  .listino-command-band,
+@media (max-width: 1180px) {
+  .listino-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listino-inspector {
+    grid-column: auto;
+  }
+
+  .listino-grid__head,
+  .listino-row {
+    grid-template-columns: minmax(150px, 1.25fr) minmax(100px, 0.8fr) minmax(76px, 0.55fr) minmax(88px, 0.66fr) minmax(88px, 0.66fr) minmax(74px, 0.5fr);
+  }
+
+  .listino-grid__head span:nth-child(n+7),
+  .listino-row em:nth-of-type(5),
+  .listino-row em:nth-of-type(6),
+  .listino-row .listino-inline-number,
+  .listino-row .listino-row-detail {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .listino-panel .listino-command-band,
+  .listino-filter-rail,
   .listino-workbench {
     grid-template-columns: 1fr;
   }
 
-  .listino-stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .listino-panel .listino-primary-action,
+  .listino-panel .listino-sync-action,
+  .listino-inspector {
+    grid-column: auto;
+    justify-self: stretch;
+  }
+
+  .listino-metrics {
+    white-space: normal;
+  }
+
+  .listino-categories {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .listino-categories header {
+    display: none;
+  }
+
+  .listino-categories button {
+    grid-template-columns: auto auto;
+    width: auto;
+    min-width: max-content;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+  }
+
+  .listino-categories button.active {
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 70%, var(--color-text) 30%);
+    border-left-color: transparent;
+  }
+
+  .listino-price-grid__head,
+  .listino-price-row {
+    grid-template-columns: 1fr;
+  }
+
+  .listino-price-grid__head {
+    display: none;
+  }
+
+  .listino-price-row {
+    gap: 7px;
   }
 }
 
 @media (max-width: 620px) {
   .listino-tabs,
-  .listino-form,
-  .listino-grid__head,
-  .listino-row,
-  .listino-stats {
+  .listino-actions {
     grid-template-columns: 1fr;
   }
 
+  .listino-panel .listino-tabs {
+    display: grid;
+    width: 100%;
+  }
+
   .listino-grid__head {
+    display: none;
+  }
+
+  .listino-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3px 10px;
+    min-height: 0;
+    padding: 10px 11px;
+  }
+
+  .listino-row__name {
+    grid-column: 1 / -1;
+  }
+
+  .listino-row em {
+    white-space: normal;
+  }
+
+  .listino-row em:nth-of-type(n+5) {
     display: none;
   }
 }
@@ -4600,6 +5012,45 @@
 .settings-shell.settings-shell--nav-collapsed .settings-nav__subgroup summary {
   justify-content: center;
   padding: 8px;
+}
+
+/* LISTINO.UI.R5 final overrides: keep the Listino shell stable after shared settings rules. */
+.listino-panel .listino-command-band {
+  grid-template-columns: auto minmax(260px, 1fr) auto auto;
+  min-height: 58px;
+}
+
+.listino-filter-rail {
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) auto;
+  min-height: 56px;
+}
+
+.listino-workbench {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.listino-inspector {
+  position: fixed;
+  top: 118px;
+  right: 22px;
+  z-index: 80;
+  width: min(360px, calc(100vw - 32px));
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  box-shadow: 0 18px 45px rgba(18, 44, 43, 0.15);
+}
+
+@media (max-width: 860px) {
+  .listino-panel .listino-command-band,
+  .listino-filter-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .listino-inspector {
+    inset: auto 12px 12px;
+    width: auto;
+    max-height: 72dvh;
+  }
 }
 
 /* SETTINGS.UI.R1 - canonical admin shell grammar. */
@@ -5738,7 +6189,7 @@
   min-width: 0 !important;
   min-height: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
+  overflow: auto !important;
   isolation: auto !important;
   contain: none !important;
   container-type: normal !important;
@@ -5802,4 +6253,2637 @@
 .settings-shell.settings-shell--nav-collapsed .settings-shell__body > .settings-content {
   grid-area: settings-content !important;
   width: 100% !important;
+}
+
+/* SYSTEM.ADMIN.FIT.R1
+   Settings content is a full-height grid. Without an explicit align-content,
+   sparse system rows stretch across the whole shell and create the huge blank
+   bands visible in the Sistema panel. Keep this page packed at the top. */
+.settings-shell__body > .settings-content:has(> .system-admin-panel) {
+  align-content: start !important;
+  overflow: auto !important;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel {
+  align-self: start !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  gap: 12px !important;
+  width: min(100%, 1320px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 20px 24px 28px !important;
+  margin: 0 auto !important;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .system-admin-header {
+  min-height: 0;
+  padding-bottom: 6px;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .settings-toolbar-count {
+  align-self: center;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .system-admin-toolbar {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 3px;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .settings-admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+  margin: 0;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .settings-admin-section {
+  align-content: start;
+  min-height: 0;
+  padding: 14px 16px;
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row,
+.settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition div,
+.settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dl div {
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+}
+
+.settings-shell__body > .settings-content > .system-admin-panel .settings-inline-options {
+  justify-content: end;
+}
+
+@media (max-width: 760px) {
+  .settings-shell__body > .settings-content > .system-admin-panel {
+    padding: 14px 12px 18px !important;
+  }
+
+  .settings-shell__body > .settings-content > .system-admin-panel .system-admin-toolbar {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row,
+  .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition div,
+  .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dl div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-shell__body > .settings-content > .system-admin-panel .settings-inline-options {
+    justify-content: start;
+  }
+}
+
+/* SETTINGS.NAV.SEARCH.R1 - canonical sidebar search and local collapse affordance. */
+.settings-nav__toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.settings-nav__search {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-width: 0;
+}
+
+.settings-nav__search input {
+  width: 100%;
+  height: 38px;
+  min-width: 0;
+  padding: 0 34px 0 36px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-line) 72%, transparent);
+  border-radius: 9px;
+  outline: 0;
+  font-size: 0.82rem;
+  font-weight: 620;
+  letter-spacing: 0;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 48%);
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.settings-nav__search input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 78%, transparent);
+  font-weight: 600;
+}
+
+.settings-nav__search input:focus {
+  background: var(--color-surface);
+  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-line) 62%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 58%),
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.settings-nav__search-icon,
+.settings-nav__search-clear {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+}
+
+.settings-nav__search-icon {
+  left: 11px;
+  width: 17px;
+  height: 17px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+.settings-nav__search-icon svg,
+.settings-nav__search-clear svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.settings-nav__search-clear {
+  right: 7px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--color-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.settings-nav__search-clear:hover {
+  color: var(--color-primary-strong);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.settings-nav__toolbar .settings-nav__mode-toggle {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  margin: 0;
+  border-radius: 9px;
+}
+
+.settings-nav__toolbar + .settings-nav__group {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.settings-nav__empty {
+  display: grid;
+  gap: 4px;
+  margin: 2px 0 12px;
+  padding: 12px;
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-line) 60%, transparent);
+  border-radius: 9px;
+}
+
+.settings-nav__empty strong {
+  color: var(--color-text);
+  font-size: 0.82rem;
+  font-weight: 780;
+}
+
+.settings-nav__empty span {
+  font-size: 0.74rem;
+  font-weight: 580;
+  line-height: 1.25;
+}
+
+.settings-nav.settings-nav--compact .settings-nav__mode-toggle--compact {
+  width: 44px;
+  height: 40px;
+  min-height: 40px;
+  margin-bottom: 10px;
+  border-radius: 11px;
+}
+
+/* SETTINGS.NAV.SEARCH.R2 - tighter desktop sidebar: denser controls, less visual bulk. */
+.settings-shell.settings-shell--nav-expanded .settings-shell__body {
+  grid-template-columns: minmax(292px, min(var(--settings-nav-width, 304px), 324px)) minmax(0, 1fr) !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav {
+  padding: 12px 12px 14px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface-soft) 72%, var(--color-surface) 28%), color-mix(in srgb, var(--color-surface-soft) 86%, var(--color-surface) 14%));
+  border-right: 1px solid color-mix(in srgb, var(--color-line) 64%, transparent);
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar {
+  grid-template-columns: minmax(0, 1fr) 32px;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search input {
+  height: 34px;
+  padding: 0 30px 0 31px;
+  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  border-color: color-mix(in srgb, var(--color-line) 58%, transparent);
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 0.78rem;
+  font-weight: 640;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search input:focus {
+  background: var(--color-surface);
+  border-color: color-mix(in srgb, var(--color-primary) 42%, var(--color-line) 58%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-icon {
+  left: 10px;
+  width: 15px;
+  height: 15px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-icon svg,
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-clear svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.25;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-clear {
+  right: 5px;
+  width: 22px;
+  height: 22px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar .settings-nav__mode-toggle {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  color: var(--color-primary-strong);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--color-line) 56%, transparent);
+  border-radius: 8px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar .settings-nav__mode-toggle:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__mode-toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.6;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__group {
+  gap: 5px;
+  padding: 11px 0;
+  border-top-color: color-mix(in srgb, var(--color-line) 54%, transparent);
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__group h3 {
+  color: color-mix(in srgb, var(--color-muted) 86%, var(--color-text) 14%);
+  font-size: 0.68rem;
+  font-weight: 860;
+  letter-spacing: 0.035em;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows {
+  gap: 2px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row {
+  min-height: 38px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row-main {
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__icon svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.15;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy {
+  gap: 2px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy > span {
+  font-size: 0.78rem;
+  font-weight: 830;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy small {
+  font-size: 0.66rem;
+  font-weight: 610;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row.active {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface) 92%);
+  border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 82%, var(--color-text) 18%);
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup summary {
+  min-height: 31px;
+  padding: 4px 4px 4px 0;
+  gap: 7px;
+  font-size: 0.76rem;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-toggle {
+  width: 17px;
+  height: 22px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup summary small {
+  min-width: 20px;
+  height: 20px;
+  font-size: 0.64rem;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested {
+  gap: 1px;
+  padding: 2px 0 5px 24px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested .settings-nav__row {
+  min-height: 34px;
+  padding: 5px 7px;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested .settings-nav__copy > span {
+  font-size: 0.75rem;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested .settings-nav__copy small {
+  font-size: 0.64rem;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__empty {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* SETTINGS.NAV.R3 - stop the bloated settings drawer; make it behave like an app sidebar. */
+.settings-shell.settings-shell--nav-expanded {
+  --settings-nav-width: var(--settings-nav-expanded-width, 256px) !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-shell__body,
+.settings-shell.settings-shell--nav-expanded .settings-shell__body.settings-shell__body--nav-collapsed {
+  grid-template-columns: var(--settings-nav-width, 256px) minmax(0, 1fr) !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav {
+  width: var(--settings-nav-width, 256px) !important;
+  min-width: 0 !important;
+  max-width: 288px !important;
+  padding: 10px 9px 12px !important;
+  overflow-x: hidden !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar {
+  grid-template-columns: minmax(0, 1fr) 28px !important;
+  gap: 5px !important;
+  margin-bottom: 9px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search input {
+  height: 30px !important;
+  padding: 0 26px 0 28px !important;
+  background: color-mix(in srgb, var(--color-surface) 62%, transparent) !important;
+  border-color: color-mix(in srgb, var(--color-line) 46%, transparent) !important;
+  border-radius: 7px !important;
+  font-size: 0.75rem !important;
+  font-weight: 650 !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 74%, transparent) !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-icon {
+  left: 8px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-icon svg,
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-clear svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search-clear {
+  right: 4px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar .settings-nav__mode-toggle {
+  width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  border-radius: 7px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar .settings-nav__mode-toggle svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__group {
+  gap: 4px !important;
+  padding: 9px 0 !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__group h3 {
+  font-size: 0.62rem !important;
+  font-weight: 880 !important;
+  letter-spacing: 0.055em !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows {
+  gap: 1px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row {
+  min-height: 31px !important;
+  padding: 5px 7px !important;
+  border-radius: 7px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row-main {
+  grid-template-columns: 18px minmax(0, 1fr) !important;
+  gap: 7px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy {
+  display: block !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy > span {
+  display: block !important;
+  overflow: hidden !important;
+  font-size: 0.76rem !important;
+  font-weight: 820 !important;
+  line-height: 1.15 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__copy small {
+  display: none !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__row.active {
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent) !important;
+  border-color: color-mix(in srgb, var(--color-primary) 16%, transparent) !important;
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--color-primary) 86%, var(--color-text) 14%) !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__accordion {
+  gap: 4px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup summary {
+  grid-template-columns: 16px 18px minmax(0, 1fr) auto !important;
+  min-height: 29px !important;
+  padding: 3px 5px 3px 0 !important;
+  gap: 6px !important;
+  font-size: 0.75rem !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-toggle {
+  width: 16px !important;
+  height: 20px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-toggle svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-icon svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup-title {
+  overflow: hidden !important;
+  font-size: 0.76rem !important;
+  font-weight: 840 !important;
+  text-overflow: ellipsis !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__subgroup summary small {
+  min-width: 18px !important;
+  height: 18px !important;
+  font-size: 0.61rem !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested {
+  gap: 1px !important;
+  padding: 1px 0 4px 23px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested .settings-nav__row {
+  min-height: 29px !important;
+  padding: 4px 6px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__rows--nested .settings-nav__copy > span {
+  font-size: 0.73rem !important;
+  font-weight: 760 !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__compact-divider,
+.settings-shell.settings-shell--nav-expanded .settings-nav__compact-section {
+  display: none !important;
+}
+
+/* SETTINGS.ALIGN.FINAL - final shell/listino alignment after all legacy overrides. */
+.settings-shell .settings-shell__body {
+  align-items: stretch !important;
+  align-content: stretch !important;
+}
+
+.settings-shell .settings-shell__body > .settings-nav {
+  display: block !important;
+  align-self: stretch !important;
+  align-content: start !important;
+  justify-content: start !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding-top: 20px !important;
+  overflow-y: auto !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-shell__body > .settings-nav {
+  padding: 20px 10px 14px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content {
+  display: grid !important;
+  grid-template-rows: auto !important;
+  align-content: start !important;
+  justify-content: stretch !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel {
+  align-self: start !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto !important;
+  grid-auto-rows: max-content !important;
+  align-content: start !important;
+  gap: 0 !important;
+  width: min(100%, 1320px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 20px 24px 28px !important;
+  overflow: visible !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-topbar {
+  min-height: 40px !important;
+  padding: 0 0 8px !important;
+  margin: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+  display: grid !important;
+  grid-template-columns: minmax(300px, max-content) minmax(220px, 1fr) max-content !important;
+  align-items: end !important;
+  gap: 10px !important;
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent) !important;
+  border-radius: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-search {
+  min-width: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+  display: flex !important;
+  align-items: end !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  min-width: max-content !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+  display: grid !important;
+  grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) minmax(180px, auto) !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 36%, transparent) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-metrics {
+  overflow: hidden !important;
+  text-align: right !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-workbench {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0 !important;
+  padding-top: 10px !important;
+}
+
+@media (max-width: 1180px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) max-content !important;
+    grid-template-areas:
+      'tabs actions'
+      'search search' !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+    grid-area: tabs !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-search {
+    grid-area: search !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    grid-area: actions !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+    grid-template-columns: minmax(120px, 170px) minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-metrics {
+    grid-column: 1 / -1 !important;
+    text-align: left !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-shell .settings-shell__body > .settings-nav {
+    padding-top: 12px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel {
+    padding: 14px 12px 18px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-filter-rail {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-search,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    grid-area: auto !important;
+  }
+}
+
+/* LISTINO.PRO.R1 - professional control plane; no chip rail, no sidebar filters. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+  grid-template-columns: minmax(0, 1fr) max-content !important;
+  align-items: center !important;
+  min-height: 48px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+  align-items: center !important;
+}
+
+.listino-control-plane {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+}
+
+.listino-control-plane__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.listino-control-plane__head strong {
+  color: var(--color-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.listino-control-plane__head span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 620;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-control-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(118px, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.listino-control-field,
+.listino-control-plane__foot .listino-search {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 780;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.listino-control-field select,
+.listino-control-plane__foot .listino-search input {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 64%, transparent);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-transform: none;
+}
+
+.listino-control-field select:disabled {
+  color: color-mix(in srgb, var(--color-muted) 78%, var(--color-text) 22%);
+  background: color-mix(in srgb, var(--color-surface) 74%, transparent);
+}
+
+.listino-control-plane__foot {
+  display: grid;
+  grid-template-columns: minmax(240px, 420px) minmax(0, 1fr);
+  align-items: end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane__foot .listino-metrics {
+  align-self: center !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  color: var(--color-muted) !important;
+  font-size: 0.74rem !important;
+  font-weight: 640 !important;
+  text-align: right !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-workbench {
+  padding-top: 12px !important;
+}
+
+@media (max-width: 1180px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) max-content !important;
+    grid-template-areas: none !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    grid-area: auto !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    justify-content: flex-end !important;
+  }
+
+  .listino-control-grid {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .listino-control-plane__head {
+    display: grid;
+  }
+
+  .listino-control-plane__head span {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .listino-control-grid,
+  .listino-control-plane__foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane__foot .listino-metrics {
+    text-align: left !important;
+    white-space: normal !important;
+  }
+}
+
+/* SETTINGS.ALIGN.R4 - keep settings nav chrome and Listino top controls locked to one grid. */
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 34px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 10px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search {
+  min-width: 0 !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__search input {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 28px 0 30px !important;
+  border-radius: 8px !important;
+}
+
+.settings-shell.settings-shell--nav-expanded .settings-nav__toolbar .settings-nav__mode-toggle {
+  width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  align-self: center !important;
+  border-radius: 8px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+  grid-template-columns: minmax(0, 1fr) max-content !important;
+  grid-template-areas: none !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+  grid-area: auto !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+  justify-content: flex-end !important;
+  flex-wrap: nowrap !important;
+}
+
+@media (max-width: 760px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+/* LISTINO.PRO.R2 - item sheets first: place cards plus unified service catalog. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+  grid-template-columns: minmax(260px, max-content) minmax(0, 1fr) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tabs {
+  width: max-content !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-grid {
+  grid-template-columns: repeat(3, minmax(150px, 220px)) !important;
+  justify-content: start !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane {
+  gap: 9px !important;
+  padding: 10px 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane__foot {
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-grid {
+  gap: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-grid__head,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-row {
+  grid-template-columns:
+    minmax(128px, 1.1fr)
+    minmax(70px, 0.46fr)
+    minmax(86px, 0.54fr)
+    minmax(112px, 0.78fr)
+    minmax(112px, 0.78fr)
+    minmax(86px, 0.56fr) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-grid__body {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-quantity {
+  justify-self: start;
+  width: 72px;
+  text-align: center;
+}
+
+.listino-attachments {
+  display: grid;
+  gap: 0;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent);
+}
+
+.listino-attachments__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 34px;
+  color: var(--color-muted);
+}
+
+.listino-attachments__head strong {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 780;
+}
+
+.listino-attachments__head span {
+  overflow: hidden;
+  font-size: 0.74rem;
+  font-weight: 620;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-attachments__grid,
+.listino-attachment-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(88px, 0.44fr) minmax(88px, 0.44fr) minmax(120px, 0.56fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.listino-attachments__grid {
+  min-height: 32px;
+  padding: 0 12px;
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 44%, transparent);
+  font-size: 0.62rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
+.listino-attachment-row {
+  min-height: 46px;
+  padding: 7px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 36%, transparent);
+}
+
+.listino-attachment-row strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.84rem;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid .listino-grid__head,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid .listino-row {
+  grid-template-columns:
+    minmax(150px, 1.2fr)
+    minmax(70px, 0.42fr)
+    minmax(86px, 0.52fr)
+    minmax(112px, 0.64fr)
+    minmax(112px, 0.62fr)
+    minmax(86px, 0.48fr)
+    minmax(78px, 0.44fr)
+    minmax(72px, 0.44fr) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid .listino-list {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 1040px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-command-band {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-actions-bar {
+    justify-content: flex-start !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-grid,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid {
+    overflow-x: auto !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-grid__head,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-row,
+  .listino-attachments__grid,
+  .listino-attachment-row,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid .listino-grid__head,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid .listino-row {
+    min-width: 760px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-grid,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane__foot {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .listino-attachments__head {
+    display: grid;
+  }
+
+  .listino-attachments__head span {
+    text-align: left;
+    white-space: normal;
+  }
+}
+
+/* LISTINO.PRO.R3 - article sheet layout and polished editable matrix. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel {
+  width: min(100%, 1360px) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane--items {
+  padding: 8px 0 10px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane--items .listino-control-grid {
+  grid-template-columns: repeat(4, minmax(132px, 190px)) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-control-plane--items .listino-control-plane__foot {
+  grid-template-columns: minmax(220px, 360px) !important;
+}
+
+.listino-sheet-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 14px;
+  min-width: 0;
+}
+
+.listino-sheet-rail {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--color-surface) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 56%, transparent);
+  border-radius: 8px;
+}
+
+.listino-sheet-rail__title {
+  padding: 0 2px 5px;
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 840;
+  text-transform: uppercase;
+}
+
+.listino-sheet-rail button {
+  display: grid;
+  gap: 3px;
+  min-height: 54px;
+  padding: 9px 10px;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+
+.listino-sheet-rail button:hover {
+  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.listino-sheet-rail button.active {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface) 92%);
+  border-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 86%, var(--color-text) 14%);
+}
+
+.listino-sheet-rail button strong {
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.listino-sheet-rail button span {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  font-weight: 620;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-article-sheet {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 8px;
+}
+
+.listino-article-sheet__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 46%, transparent);
+}
+
+.listino-article-sheet__header h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 840;
+}
+
+.listino-article-sheet__header p {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 640;
+}
+
+.listino-article-sheet__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.listino-article-sheet__actions button {
+  min-height: 32px;
+  padding-inline: 11px;
+  white-space: nowrap;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-grid {
+  padding: 10px 12px 0;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-grid__head,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-row {
+  grid-template-columns:
+    minmax(112px, 1fr)
+    64px
+    92px
+    minmax(104px, 0.82fr)
+    minmax(104px, 0.82fr)
+    82px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-grid__head {
+  min-height: 30px;
+  background: transparent;
+  border-bottom-color: color-mix(in srgb, var(--color-border) 48%, transparent);
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-row {
+  min-height: 42px;
+  background: transparent;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-price-row button,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-price,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-number {
+  height: 30px;
+  min-height: 30px;
+  border-radius: 6px;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-price,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-number {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-number::-webkit-outer-spin-button,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-number::-webkit-inner-spin-button,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel input[type='number']::-webkit-outer-spin-button,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-inline-quantity {
+  width: 76px;
+  color: var(--color-text);
+  font-size: 0.76rem;
+  font-weight: 760;
+  text-align: center;
+}
+
+.listino-empty-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: max-content;
+  margin: 8px 12px 4px;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.listino-empty-toggle input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--color-primary);
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments {
+  margin: 10px 12px 12px;
+  padding: 10px 0 0;
+  border-top-color: color-mix(in srgb, var(--color-border) 48%, transparent);
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments__head {
+  min-height: 30px;
+  padding: 0 2px;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments__grid,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachment-row {
+  grid-template-columns: minmax(150px, 1fr) 82px 82px 112px;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments__grid {
+  background: transparent;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachment-row {
+  min-height: 40px;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid {
+  padding: 10px 12px 12px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 8px;
+}
+
+@media (max-width: 1120px) {
+  .listino-sheet-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listino-sheet-rail {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(150px, 1fr);
+    overflow-x: auto;
+  }
+
+  .listino-sheet-rail__title {
+    display: none;
+  }
+
+  .listino-article-sheet__header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listino-article-sheet__actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-grid,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-items-grid {
+    overflow-x: auto;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-grid__head,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-price-row,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachments__grid,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-article-sheet .listino-attachment-row {
+    min-width: 680px !important;
+  }
+}
+
+/* LISTINO.UI.R1 - canonical management catalog: categories, dense list, professional article sheet. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel > .listino-command-band,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel > .listino-control-plane,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel > .listino-workbench {
+  display: none !important;
+}
+
+.listino-catalog-shell {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.listino-catalog-toolbar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(140px, 180px) minmax(140px, 180px) max-content;
+  align-items: end;
+  gap: 9px;
+  padding: 8px 0 10px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+}
+
+.listino-catalog-toolbar label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.listino-catalog-toolbar input,
+.listino-catalog-toolbar select {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-transform: none;
+}
+
+.listino-catalog-toolbar button {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.listino-compact-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  min-height: 26px;
+  align-items: center;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 660;
+}
+
+.listino-catalog-layout {
+  display: grid;
+  grid-template-columns: 176px minmax(420px, 1fr) minmax(300px, 360px);
+  gap: 12px;
+  min-width: 0;
+}
+
+.listino-category-rail,
+.listino-catalog-list,
+.listino-catalog-detail {
+  min-width: 0;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 56%, transparent);
+  border-radius: 8px;
+}
+
+.listino-category-rail {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 8px;
+}
+
+.listino-category-rail button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 8px;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+
+.listino-category-rail button.active {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 80%, var(--color-text) 20%);
+}
+
+.listino-category-rail strong {
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 780;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-category-rail span {
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.listino-catalog-list {
+  overflow: hidden;
+}
+
+.listino-catalog-list__head,
+.listino-catalog-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1.15fr) minmax(110px, 0.76fr) minmax(150px, 1fr) minmax(120px, 0.82fr) minmax(72px, 0.48fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.listino-catalog-list__head {
+  min-height: 32px;
+  padding: 0 11px;
+  color: var(--color-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+  font-size: 0.62rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
+.listino-catalog-list__body {
+  display: grid;
+}
+
+.listino-catalog-row {
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 11px;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  border-radius: 0;
+}
+
+.listino-catalog-row:hover,
+.listino-catalog-row.active {
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.listino-catalog-row.active {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 82%, var(--color-text) 18%);
+}
+
+.listino-catalog-row__title {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.listino-catalog-row strong,
+.listino-catalog-row small,
+.listino-catalog-row span:not(.listino-catalog-row__title) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-catalog-row strong {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 780;
+}
+
+.listino-catalog-row small,
+.listino-catalog-row span:not(.listino-catalog-row__title) {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 640;
+}
+
+.listino-catalog-detail {
+  display: grid;
+  align-content: start;
+  overflow: hidden;
+}
+
+.listino-catalog-detail__header {
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+}
+
+.listino-catalog-detail__header span {
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
+.listino-catalog-detail__header h3 {
+  margin: 4px 0 2px;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 840;
+}
+
+.listino-catalog-detail__header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 630;
+}
+
+.listino-detail-section {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 38%, transparent);
+}
+
+.listino-detail-section h4 {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 840;
+  text-transform: uppercase;
+}
+
+.listino-detail-section label {
+  display: grid;
+  gap: 4px;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+  font-weight: 720;
+}
+
+.listino-detail-section input {
+  height: 32px;
+  min-width: 0;
+  padding: 0 9px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 660;
+}
+
+.listino-role-lines {
+  display: grid;
+  gap: 5px;
+  color: var(--color-text);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.listino-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 12px 14px;
+}
+
+.listino-detail-actions button {
+  min-height: 32px;
+}
+
+@media (max-width: 1160px) {
+  .listino-catalog-layout {
+    grid-template-columns: 154px minmax(0, 1fr);
+  }
+
+  .listino-catalog-detail {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 780px) {
+  .listino-catalog-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listino-catalog-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listino-category-rail {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(132px, 1fr);
+    overflow-x: auto;
+  }
+
+  .listino-catalog-list {
+    overflow-x: auto;
+  }
+
+  .listino-catalog-list__head,
+  .listino-catalog-row {
+    min-width: 720px;
+  }
+}
+
+/* LISTINO.UI.R2 - article sidebar plus wide article workspace, no report table. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-compact-metrics,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-category-rail,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__head {
+  display: none !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-shell {
+  gap: 12px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar {
+  grid-template-columns: minmax(260px, 1fr) minmax(140px, 180px) minmax(140px, 180px) minmax(130px, 160px) max-content !important;
+  padding: 8px 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) !important;
+  gap: 14px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list {
+  display: grid !important;
+  align-content: start !important;
+  overflow: hidden !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 0 12px;
+  color: var(--color-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 44%, transparent);
+  font-size: 0.72rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__title span {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 720;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__body {
+  display: grid !important;
+  max-height: min(68dvh, 760px);
+  overflow: auto;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 4px !important;
+  min-height: 58px !important;
+  padding: 9px 12px !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 34%, transparent) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row__title {
+  gap: 3px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row__title strong {
+  font-size: 0.88rem !important;
+  font-weight: 820 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row__title small,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row > span:not(.listino-catalog-row__title),
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-row > small {
+  color: var(--color-muted) !important;
+  font-size: 0.7rem !important;
+  font-weight: 640 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-content: start !important;
+  overflow: hidden !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-tariff-matrix-section,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-actions {
+  grid-column: 1 / -1 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) max-content !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 16px 18px !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > span,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > h3,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > p {
+  grid-column: 1;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+  grid-column: 2 !important;
+  grid-row: 1 / span 3 !important;
+  justify-content: flex-end !important;
+  padding: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header h3 {
+  font-size: 1.26rem !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-section {
+  padding: 14px 18px !important;
+}
+
+.listino-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.listino-section-heading h4 {
+  margin: 0;
+}
+
+.listino-tariff-matrix {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 44%, transparent);
+  border-radius: 8px;
+}
+
+.listino-tariff-matrix__head,
+.listino-tariff-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(160px, 1fr) minmax(120px, 0.7fr) minmax(90px, 0.5fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.listino-tariff-matrix__head {
+  min-height: 32px;
+  padding: 0 11px;
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 42%, transparent);
+  font-size: 0.62rem;
+  font-weight: 840;
+  text-transform: uppercase;
+}
+
+.listino-tariff-row {
+  min-height: 42px;
+  padding: 6px 11px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 32%, transparent);
+}
+
+.listino-tariff-row span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 660;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-tariff-row input {
+  height: 30px;
+  min-width: 0;
+  padding: 0 9px;
+  color: var(--color-text);
+  text-align: right;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 720;
+}
+
+@media (max-width: 1080px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(130px, 1fr) minmax(130px, 1fr) minmax(120px, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar button {
+    grid-column: 1 / -1;
+    width: max-content;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    justify-content: flex-start !important;
+  }
+
+  .listino-tariff-matrix {
+    overflow-x: auto;
+  }
+
+  .listino-tariff-matrix__head,
+  .listino-tariff-row {
+    min-width: 620px;
+  }
+}
+
+/* LISTINO.UI.R2.TABLET - keep the article sheet beside the article list on tablet. */
+@media (min-width: 821px) and (max-width: 1280px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel {
+    width: 100% !important;
+    padding-inline: 22px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar {
+    grid-template-columns:
+      minmax(220px, 1fr)
+      minmax(128px, 160px)
+      minmax(128px, 160px)
+      minmax(116px, 144px)
+      max-content !important;
+    align-items: end !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar button {
+    grid-column: auto !important;
+    width: auto !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+    grid-template-columns: minmax(270px, 330px) minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+    grid-column: auto !important;
+    min-height: min(68dvh, 760px) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__body {
+    max-height: min(68dvh, 760px) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    justify-content: flex-start !important;
+    padding-top: 8px !important;
+  }
+}
+
+/* LISTINO.UI.R3 - inventory pricing matrix as the main operational surface. */
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 420px) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list {
+  overflow-x: auto !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list__body {
+  max-height: none !important;
+}
+
+.listino-inventory-matrix__head,
+.listino-inventory-row {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 1.15fr)
+    minmax(128px, 0.82fr)
+    minmax(62px, 0.42fr)
+    minmax(112px, 0.72fr)
+    minmax(112px, 0.72fr)
+    minmax(100px, 0.64fr)
+    minmax(120px, 0.8fr)
+    minmax(76px, 0.5fr);
+  align-items: center;
+  gap: 10px;
+  min-width: 930px;
+}
+
+.listino-inventory-matrix__head {
+  min-height: 34px;
+  padding: 0 11px;
+  color: var(--color-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+  font-size: 0.62rem;
+  font-weight: 840;
+  text-transform: uppercase;
+}
+
+.listino-inventory-row {
+  min-height: 52px;
+  padding: 7px 11px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 36%, transparent);
+}
+
+.listino-inventory-row.active {
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary) 84%, var(--color-text) 16%);
+}
+
+.listino-inventory-row__article {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  color: var(--color-text);
+  text-align: left;
+  background: transparent;
+  border: 0;
+}
+
+.listino-inventory-thumb {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface) 93%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 46%, transparent);
+  border-radius: 7px;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 0.86rem;
+  font-weight: 820;
+}
+
+.listino-inventory-thumb img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+
+.listino-inventory-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.listino-inventory-row__article strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 0.92rem;
+  font-weight: 840;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-inventory-row__article small,
+.listino-inventory-cell {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 660;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listino-inventory-cell {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.listino-inventory-stock b {
+  color: var(--color-text);
+  font-weight: 820;
+}
+
+.listino-inventory-stock button {
+  min-height: 28px;
+  padding: 0 8px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 56%, transparent);
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 760;
+}
+
+.listino-inventory-cell input {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  color: var(--color-text);
+  text-align: right;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+.listino-inventory-stock input {
+  width: 66px;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+  grid-template-columns: minmax(0, 1fr) 74px max-content !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-identity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  grid-column: 1;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-identity span {
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-identity h3 {
+  margin: 2px 0 1px;
+  color: var(--color-text);
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 1.28rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-identity p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 630;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-asset {
+  display: grid;
+  place-items: center;
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  width: 64px;
+  height: 64px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface) 94%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+  border-radius: 10px;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 1.4rem;
+  font-weight: 820;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-asset img {
+  width: 84%;
+  height: 84%;
+  object-fit: contain;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > span,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > h3,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header > p {
+  display: none !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+  grid-column: 3 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-asset-panel {
+  grid-column: 1 / -1 !important;
+}
+
+.listino-asset-summary {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.listino-asset-summary > img,
+.listino-asset-summary > span {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin: 0;
+  object-fit: contain;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 48%, transparent);
+  border-radius: 10px;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: 1.4rem;
+  font-weight: 820;
+}
+
+.listino-asset-summary div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.listino-asset-summary strong {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 780;
+}
+
+.listino-asset-summary span {
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  font-weight: 640;
+}
+
+@media (min-width: 821px) and (max-width: 1280px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+    grid-column: 1 !important;
+    min-height: 0 !important;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1500px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel {
+    padding-inline: clamp(18px, 3vw, 34px) !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-shell {
+    gap: 10px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar {
+    grid-template-columns:
+      minmax(210px, 1.2fr)
+      minmax(130px, 0.72fr)
+      minmax(130px, 0.72fr)
+      minmax(124px, 0.64fr)
+      max-content !important;
+    gap: 10px !important;
+    align-items: end !important;
+    padding-block: 6px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list {
+    overflow-x: visible !important;
+  }
+
+  .listino-inventory-matrix__head,
+  .listino-inventory-row {
+    grid-template-columns:
+      minmax(150px, 1.18fr)
+      minmax(112px, 0.72fr)
+      minmax(98px, 0.58fr)
+      minmax(104px, 0.62fr)
+      minmax(82px, 0.46fr)
+      minmax(72px, 0.42fr);
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .listino-inventory-matrix__head > span:nth-child(3),
+  .listino-inventory-matrix__head > span:nth-child(7),
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(2),
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(6) {
+    display: none;
+  }
+
+  .listino-inventory-row {
+    min-height: 48px;
+    padding-block: 6px;
+  }
+
+  .listino-inventory-row__article strong {
+    font-size: 0.88rem;
+  }
+
+  .listino-inventory-row__article small,
+  .listino-inventory-cell {
+    font-size: 0.68rem;
+  }
+
+  .listino-inventory-cell input {
+    height: 28px;
+    padding-inline: 7px;
+    font-size: 0.72rem;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    min-height: 0 !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+    grid-template-columns: minmax(0, 1fr) 58px !important;
+    padding: 12px 14px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-asset {
+    grid-column: 2;
+    width: 54px;
+    height: 54px;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-section {
+    padding: 11px 14px !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel {
+    padding-inline: 12px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 0.8fr) !important;
+    gap: 8px !important;
+    padding-block: 4px 8px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar label {
+    min-width: 0;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar .listino-catalog-search {
+    grid-column: 1 / -1;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-toolbar button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-list {
+    overflow-x: visible !important;
+  }
+
+  .listino-inventory-matrix__head {
+    display: none;
+  }
+
+  .listino-inventory-row {
+    grid-template-columns: minmax(0, 1fr) minmax(92px, auto);
+    grid-template-areas:
+      'article state'
+      'stock off'
+      'daily seasonal'
+      'extra rules';
+    min-width: 0;
+    min-height: 0;
+    gap: 8px 10px;
+    padding: 10px;
+    border: 1px solid color-mix(in srgb, var(--color-border) 36%, transparent);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .listino-inventory-row__article {
+    grid-area: article;
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(1) {
+    grid-area: stock;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(2) {
+    grid-area: off;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(3) {
+    grid-area: daily;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(4) {
+    grid-area: seasonal;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(5) {
+    grid-area: extra;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(6) {
+    grid-area: rules;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(7) {
+    grid-area: state;
+    justify-content: flex-end;
+  }
+
+  .listino-inventory-row__article strong {
+    font-size: 0.96rem;
+  }
+
+  .listino-inventory-cell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-content: stretch;
+    gap: 3px 8px;
+    white-space: normal;
+  }
+
+  .listino-inventory-cell::before {
+    color: var(--color-muted);
+    font-size: 0.58rem;
+    font-weight: 860;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(1)::before {
+    content: 'Inv.';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(2)::before {
+    content: 'Fuori';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(3)::before {
+    content: 'Giorno';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(4)::before {
+    content: 'Stag.';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(5)::before {
+    content: 'Extra';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(6)::before {
+    content: 'Regole';
+  }
+
+  .listino-inventory-row > .listino-inventory-cell:nth-of-type(7)::before {
+    content: '';
+  }
+
+  .listino-inventory-cell input {
+    width: 100%;
+    max-width: none;
+    height: 30px;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail {
+    margin-top: 4px;
+    border-radius: 8px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header,
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-section {
+    padding-inline: 12px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header {
+    grid-template-columns: minmax(0, 1fr) 54px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-detail-asset {
+    width: 50px;
+    height: 50px;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-catalog-detail__header .listino-detail-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+
+  .listino-asset-summary {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  .listino-asset-summary > img,
+  .listino-asset-summary > span {
+    width: 54px;
+    height: 54px;
+  }
+}
+
+/* Search controls: shared compact translucent treatment. */
+.settings-nav__search input,
+.customer-list-search input,
+.customer-registry-search input,
+.listino-search input,
+.listino-catalog-search input,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-search input,
+.listino-control-plane__foot .listino-search input {
+  min-height: var(--search-control-height) !important;
+  height: var(--search-control-height) !important;
+  padding: 0 11px !important;
+  color: var(--search-control-text) !important;
+  background: var(--search-control-bg) !important;
+  border: 1px solid var(--search-control-border) !important;
+  border-radius: var(--search-control-radius) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%) !important;
+  font-size: var(--search-control-font-size) !important;
+  font-weight: var(--search-control-font-weight) !important;
+  letter-spacing: 0 !important;
+  outline: 0 !important;
+}
+
+.settings-nav__search input {
+  padding: 0 31px 0 32px !important;
+}
+
+.settings-nav__search input::placeholder,
+.customer-list-search input::placeholder,
+.customer-registry-search input::placeholder,
+.listino-search input::placeholder,
+.listino-catalog-search input::placeholder {
+  color: var(--search-control-placeholder) !important;
+  opacity: 1 !important;
+  font-weight: var(--search-control-font-weight) !important;
+}
+
+.settings-nav__search input:focus,
+.customer-list-search input:focus,
+.customer-registry-search input:focus,
+.listino-search input:focus,
+.listino-catalog-search input:focus,
+.settings-shell .settings-shell__body > .settings-content > .listino-panel .listino-search input:focus,
+.listino-control-plane__foot .listino-search input:focus {
+  background: var(--search-control-bg-focus) !important;
+  border-color: var(--search-control-border-focus) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 7%, transparent) !important;
+}
+
+.settings-nav__search-icon,
+.settings-nav__search-clear {
+  color: var(--search-control-icon) !important;
+}
+
+.settings-nav__search-icon svg,
+.settings-nav__search-clear svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.settings-nav__search-clear {
+  right: 5px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 999px !important;
+}
+
+.settings-nav__search-clear:hover {
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent) !important;
 }

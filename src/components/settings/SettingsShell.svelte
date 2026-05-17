@@ -57,9 +57,9 @@
 
   const mobileSettingsBreakpoint = 640
   const tabletSettingsBreakpoint = 1180
-  const navExpandedDefaultPx = 280
-  const navExpandedMinPx = 232
-  const navExpandedMaxPx = 340
+  const navExpandedDefaultPx = 256
+  const navExpandedMinPx = 224
+  const navExpandedMaxPx = 288
   const navCompactPx = 68
 
   let navMode = $state<SettingsNavMode>('expanded')

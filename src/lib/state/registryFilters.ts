@@ -30,7 +30,7 @@ export type OpenRegistryRequest = {
   requestedAt: number
 }
 
-export const OPEN_REGISTRY_EVENT = 'beach-bdf:open-registry'
+export const OPEN_REGISTRY_EVENT = 'lido-pro:open-registry'
 
 export const getCurrentRegistryYear = (): number => new Date().getFullYear()
 

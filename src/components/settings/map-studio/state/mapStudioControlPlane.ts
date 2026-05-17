@@ -2,6 +2,10 @@ import type { BeachDistanceRules } from '../../../../lib/map-canvas'
 import type { ParametricLayoutOutput } from '../../../../lib/map-canvas/parametric/parametricLayoutEngine'
 import type { ParametricSetupState } from '../../../../lib/map-canvas/parametric/parametricSetupState'
 import type { MapStudioProjectState } from '../MapStudioProjectState'
+import {
+  buildMapStudioElementParameters,
+  type MapStudioElementParameter,
+} from './mapStudioElementParameters'
 import { buildMapStudioRelations, type MapStudioRelations } from './mapStudioRelations'
 import {
   getActiveDomain,
@@ -32,6 +36,7 @@ export interface MapStudioControlPlane {
   scopedItems: ReturnType<typeof getScopedItems>
   scopedConstraints: ReturnType<typeof getScopedConstraints>
   scopedWarnings: ReturnType<typeof getScopedWarnings>
+  elementParameters: MapStudioElementParameter[]
 }
 
 export function buildMapStudioControlPlane(input: {
@@ -43,6 +48,7 @@ export function buildMapStudioControlPlane(input: {
 }): MapStudioControlPlane {
   const { setup, output, state, distanceRows, draftAvailable } = input
   const relations = buildMapStudioRelations({ setup, output, distanceRows })
+  const elementParameters = buildMapStudioElementParameters(setup, relations)
   return {
     activeScope: getActiveScope(state),
     activeDomain: getActiveDomain(state),
@@ -56,5 +62,6 @@ export function buildMapStudioControlPlane(input: {
     scopedItems: getScopedItems(state, relations),
     scopedConstraints: getScopedConstraints(state, relations),
     scopedWarnings: getScopedWarnings(state, relations),
+    elementParameters,
   }
 }

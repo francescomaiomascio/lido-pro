@@ -55,6 +55,34 @@ textarea::placeholder {
   color: var(--color-text-muted);
 }
 
+input[type='search'],
+.customer-picker > label input,
+.customer-list-search input {
+  min-height: var(--search-control-height);
+  padding: 0 11px;
+  color: var(--search-control-text);
+  background: var(--search-control-bg);
+  border: 1px solid var(--search-control-border);
+  border-radius: var(--search-control-radius);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%);
+  font-size: var(--search-control-font-size);
+  font-weight: var(--search-control-font-weight);
+}
+
+input[type='search']::placeholder,
+.customer-picker > label input::placeholder,
+.customer-list-search input::placeholder {
+  color: var(--search-control-placeholder);
+  opacity: 1;
+}
+
+input[type='search']:focus-visible,
+.customer-picker > label input:focus-visible,
+.customer-list-search input:focus-visible {
+  border-color: var(--search-control-border-focus);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 7%, transparent);
+}
+
 input:hover,
 textarea:hover,
 select:hover {

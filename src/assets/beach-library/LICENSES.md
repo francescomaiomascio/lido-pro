@@ -1,4 +1,4 @@
-# Beach BDF Asset Licenses
+# LidoPro Asset Licenses
 
 Tutti gli asset importati in MAP.R6.3 sono tracciati anche in `manifest.json`.
 

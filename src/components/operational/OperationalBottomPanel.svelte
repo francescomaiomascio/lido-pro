@@ -111,11 +111,18 @@
 
   const getDragLimits = () => {
     const viewportHeight = window.innerHeight || 760
+    const viewportWidth = window.innerWidth || 1024
+    const isPhone = viewportWidth <= 599
+    const isShortLandscape = viewportWidth > viewportHeight && viewportHeight <= 520
+    const mediumRatio = isPhone ? 0.55 : 0.36
+    const expandedRatio = isShortLandscape ? 0.64 : isPhone ? 0.72 : 0.66
+    const maxRatio = isShortLandscape ? 0.76 : isPhone ? 0.78 : 0.92
+
     return {
-      min: 44,
-      medium: Math.min(Math.max(260, viewportHeight * 0.36), 430),
-      expanded: Math.min(viewportHeight * 0.66, 760),
-      max: Math.min(viewportHeight * 0.92, 780),
+      min: isPhone ? 64 : 44,
+      medium: Math.min(Math.max(isPhone ? 300 : 260, viewportHeight * mediumRatio), isPhone ? 560 : 430),
+      expanded: Math.min(viewportHeight * expandedRatio, isPhone ? 680 : 760),
+      max: Math.min(viewportHeight * maxRatio, isPhone ? 720 : 780),
     }
   }
 

@@ -1,4 +1,4 @@
-export const APP_DISPLAY_NAME = 'Spiaggia BDF'
+export const APP_DISPLAY_NAME = 'LidoPro'
 
 export const businessConfig = {
   daily: {
@@ -14,7 +14,7 @@ export const businessConfig = {
 } as const
 
 export const appConfig = {
-  name: 'Beach BDF',
-  appId: 'it.beachbdf.app',
+  name: 'LidoPro',
+  appId: 'it.lidopro.app',
   webDir: 'dist',
 } as const

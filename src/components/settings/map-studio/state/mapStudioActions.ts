@@ -1,9 +1,24 @@
 import type { MapStudioDomainId } from '../mapStudioDomains'
 import type { MapStudioLayerId } from '../mapStudioLayers'
 import type { MapStudioScopeId } from './mapStudioScope'
+export {
+  defaultToolForDomain,
+  getMapStudioTool,
+  mapStudioTools,
+  toolsForDomain,
+  type MapStudioTool,
+  type MapStudioToolId,
+} from './mapStudioTools'
 
 export type MapStudioActionId =
   | 'clearScope'
+  | 'commitManipulation'
+  | 'cancelManipulation'
+  | 'confirmPerimeter'
+  | 'initializeAreas'
+  | 'initializeTracks'
+  | 'initializeFootprints'
+  | 'confirmConstraints'
   | 'focusScope'
   | 'focusPerimeter'
   | 'runVerification'

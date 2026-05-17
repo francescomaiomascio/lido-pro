@@ -20,9 +20,9 @@
 
 <section class="beach-library-overview" aria-label="Sintesi libreria asset">
   <div>
-    <span>Catalogo Canvas</span>
-    <strong>Asset proprietari e tassonomia controllata</strong>
-    <p>Vetrina read-only per famiglie grafiche approvate, asset pianificati e materiali futuri.</p>
+    <span>Studio Canvas</span>
+    <strong>Materiali tecnici e asset di costruzione</strong>
+    <p>Gli elementi vendibili stanno nel Listino; qui restano asset non contabili per costruzione e rendering.</p>
   </div>
   <dl>
     <div>
@@ -54,7 +54,7 @@
         <BeachLibraryPreviewIcon kind={category.previewKind} src={category.previewUrl} size="hero" />
       </div>
       <span>
-        <small>{category.status === 'available' ? 'Disponibile ora' : 'Roadmap'}</small>
+        <small>{category.status === 'available' ? 'Disponibile ora' : 'Da pianificare'}</small>
         <strong>{category.label}</strong>
         <em>{category.description}</em>
       </span>
