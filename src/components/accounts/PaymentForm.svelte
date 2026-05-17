@@ -3,6 +3,7 @@
   import { paymentMethodLabels, paymentMethodOptions } from '../../lib/format/accountLabels'
   import { parseEuroToCents } from '../../lib/format/money'
   import type { PaymentMethod } from '../../lib/types/account'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     balanceAmountCents,
@@ -81,7 +82,13 @@
   {/if}
 
   <div class="customer-form-actions">
-    <button type="submit" disabled={saving}>{saving ? 'Salvataggio' : 'Registra pagamento'}</button>
+    <button type="submit" disabled={saving}>
+      {#if saving}
+        <ActionActivity label="Registrazione" />
+      {:else}
+        Registra pagamento
+      {/if}
+    </button>
     {#if onCancel}
       <button type="button" disabled={saving} onclick={onCancel}>Annulla</button>
     {/if}

@@ -3,6 +3,7 @@
   import { formatEuroFromCents, parseEuroToCents } from '../../lib/format/money'
   import { reservationTypeLabels } from '../../lib/format/reservationLabels'
   import type { TariffRule, TariffRuleInput, TariffReservationType } from '../../lib/types/tariff'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     rule,
@@ -95,7 +96,13 @@
     <p class="form-error">{error}</p>
   {/if}
   <div class="customer-form-actions">
-    <button type="submit" disabled={saving}>Salva tariffa</button>
+    <button type="submit" disabled={saving}>
+      {#if saving}
+        <ActionActivity label="Salvataggio tariffa" />
+      {:else}
+        Salva tariffa
+      {/if}
+    </button>
     <button type="button" disabled={saving} onclick={onCancel}>Annulla</button>
   </div>
 </form>

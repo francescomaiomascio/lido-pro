@@ -3,6 +3,7 @@
   import { normalizeCustomerInput, validateCustomerInput } from '../../../lib/customers/customerValidation'
   import { createCustomer, searchCustomers } from '../../../lib/services/customerService'
   import type { BeachItemAssignedCustomer, Customer } from '../../../lib/types/customer'
+  import ActionActivity from '../../loading/ActionActivity.svelte'
 
   let {
     assignedCustomer: _assignedCustomer = null,
@@ -81,7 +82,13 @@
       <input bind:value={email} placeholder="Email" autocomplete="email" />
       {#if error}<p class="inline-editor__error">{error}</p>{/if}
       <div>
-        <button type="submit" disabled={saving}>Crea e assegna</button>
+        <button type="submit" disabled={saving}>
+          {#if saving}
+            <ActionActivity label="Assegnazione" />
+          {:else}
+            Crea e assegna
+          {/if}
+        </button>
         <button type="button" disabled={saving} onclick={() => (mode = 'search')}>Lista</button>
       </div>
     </form>

@@ -54,9 +54,9 @@ export const lidoproPrimaryModules: Array<LidoProModule & { id: LidoProPrimaryMo
   },
   {
     id: 'activeLayout',
-    label: 'Layout',
-    shortLabel: 'Layout',
-    description: 'Mappa operativa protetta usata durante il lavoro quotidiano.',
+    label: 'Spiaggia',
+    shortLabel: 'Spiaggia',
+    description: 'Spiaggia operativa protetta usata durante il lavoro quotidiano.',
   },
   {
     id: 'studioProjects',
@@ -82,10 +82,16 @@ export const lidoproModules: LidoProModule[] = [
 
 export const lidoproTopbarItems: LidoProTopbarItem[] = [
   {
+    id: 'dashboard',
+    label: 'Home',
+    shortLabel: 'Home',
+    description: 'Console operativa del lido.',
+  },
+  {
     id: 'activeLayout',
-    label: 'Layout',
-    shortLabel: 'Layout',
-    description: 'Mappa operativa protetta usata durante il lavoro quotidiano.',
+    label: 'Spiaggia',
+    shortLabel: 'Spiaggia',
+    description: 'Spiaggia operativa protetta usata durante il lavoro quotidiano.',
   },
   {
     id: 'bar',

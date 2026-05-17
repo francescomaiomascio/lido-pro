@@ -2,6 +2,7 @@
   import { paymentMethodLabels, paymentMethodOptions } from '../../../lib/format/accountLabels'
   import { parseEuroToCents } from '../../../lib/format/money'
   import type { Account, PaymentMethod } from '../../../lib/types/account'
+  import ActionActivity from '../../loading/ActionActivity.svelte'
 
   let { account, saving, onSave, onClose }: {
     account: Account
@@ -43,6 +44,12 @@
   </div>
   {#if error}<p class="inline-editor__error">{error}</p>{/if}
   <div class="inline-editor__actions">
-    <button type="button" disabled={saving} onclick={submit}>Registra pagamento</button>
+    <button type="button" disabled={saving} onclick={submit}>
+      {#if saving}
+        <ActionActivity label="Registrazione" />
+      {:else}
+        Registra pagamento
+      {/if}
+    </button>
   </div>
 </section>

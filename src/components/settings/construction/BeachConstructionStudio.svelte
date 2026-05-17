@@ -8,6 +8,7 @@
     ParametricSetupZone,
   } from '../../../lib/map-canvas/parametric/parametricSetupState'
   import type { BeachDistanceRules } from '../../../lib/map-canvas'
+  import SetupStatePanel from '../../loading/SetupStatePanel.svelte'
   import SettingsFieldRow from '../SettingsFieldRow.svelte'
   import ConstructionMaplet from './ConstructionMaplet.svelte'
 
@@ -96,8 +97,14 @@
 
 {#if !setup}
   <section class="construction-studio construction-studio--loading">
-    <div><strong>Setup non caricato</strong><span>{status}</span></div>
-    <button type="button" onclick={onReload}>Ricarica setup</button>
+    <SetupStatePanel
+      eyebrow="Studio costruzione"
+      title="Setup non caricato"
+      message={status}
+      actionLabel="Ricarica setup"
+      tone="attention"
+      onAction={onReload}
+    />
   </section>
 {:else}
   <section class="construction-studio construction-studio--map-first" aria-label="Map Studio">

@@ -36,6 +36,10 @@
     }
     onModuleSelect(id)
   }
+
+  const openSystem = () => {
+    onOpenSystem()
+  }
 </script>
 
 <header class="app-topbar" class:search-expanded={searchExpanded}>
@@ -58,8 +62,8 @@
         class:disabled={module.disabled}
         aria-current={module.id === activeModule ? 'page' : undefined}
         aria-disabled={module.disabled ? 'true' : undefined}
+        aria-label={module.disabled ? `${module.label}: ${module.disabledReason}` : module.label}
         disabled={module.disabled}
-        title={module.disabled ? module.disabledReason : module.description}
         onclick={() => selectTopbarItem(module.id)}
       >
         <span class="topbar-module-nav__icon" aria-hidden="true">
@@ -137,6 +141,31 @@
       onChange={onSearchChange}
       onExpandedChange={(expanded) => (searchExpanded = expanded)}
     />
+    <button
+      type="button"
+      class="topbar-action topbar-utility-button"
+      aria-label="Apri stato e avvisi locali"
+      title="Stato e avvisi locali"
+      onclick={openSystem}
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="topbar-action topbar-utility-button"
+      aria-label="Apri guida e informazioni app"
+      title="Guida e informazioni"
+      onclick={openSystem}
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M9.7 9a2.4 2.4 0 0 1 4.6 1.1c0 1.8-2.3 2-2.3 3.7"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+    </button>
     <AppAccountMenu {workspaceName} {runtimeLabel} {onOpenSystem} />
   </div>
 </header>

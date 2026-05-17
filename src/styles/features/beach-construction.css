@@ -6,10 +6,10 @@
 }
 
 .construction-studio--loading {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   padding: 18px;
   border: 1px solid var(--color-line);
-  border-radius: 18px;
+  border-radius: 8px;
 }
 
 .construction-studio__params {

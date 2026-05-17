@@ -7,6 +7,8 @@
   import AppTopBar from '../components/layout/AppTopBar.svelte'
   import FilterSheet from '../components/layout/FilterSheet.svelte'
   import ViewSwitcher from '../components/layout/ViewSwitcher.svelte'
+  import AppLoadingScreen from '../components/loading/AppLoadingScreen.svelte'
+  import SetupStatePanel from '../components/loading/SetupStatePanel.svelte'
   import OperationalBottomPanel from '../components/operational/OperationalBottomPanel.svelte'
   import CustomersSettingsPanel from '../components/settings/panels/CustomersSettingsPanel.svelte'
   import MapStudioSettingsPanel from '../components/settings/panels/MapStudioSettingsPanel.svelte'
@@ -77,6 +79,7 @@
   import type { DatabaseRuntime } from '../lib/types/db'
   import type { AccountExtraItem, AccountExtraItemInput, ExtraItemCatalogEntry, TariffIncludedItem } from '../lib/types/extraItem'
   import type { AccountLedger, ReservationSummary } from '../lib/types/reservationSummary'
+  import type { LoadingStep } from '../components/loading/loadingTypes'
 
   let viewState = $state(createBeachViewState())
   let activeModule: LidoProModuleId = $state('dashboard')
@@ -101,13 +104,35 @@
   let language: AppLanguage = $state(loadInitialLanguage())
   let registryOpenRequest: OpenRegistryRequest | null = $state(null)
   let loadingStepIndex = $state(0)
-  const loadingSteps = [
-    'Apertura database locale',
-    'Verifica persistenza browser',
-    'Caricamento layout attivo',
-    'Preparazione dashboard',
+  let loadingTimer: number | null = null
+  const MIN_BOOT_SCREEN_MS = 620
+  const loadingSteps: LoadingStep[] = [
+    {
+      owner: 'Runtime',
+      label: 'Avvio interfaccia',
+      detail: 'Preparazione shell, tema e superficie operativa.',
+    },
+    {
+      owner: 'Database',
+      label: 'Apertura locale',
+      detail: 'Apertura database locale e selezione runtime disponibile.',
+    },
+    {
+      owner: 'Persistenza',
+      label: 'Verifica storage',
+      detail: 'Controllo dello storage persistente e fallback browser.',
+    },
+    {
+      owner: 'Layout',
+      label: 'Layout attivo',
+      detail: 'Caricamento configurazione spiaggia e elementi operativi.',
+    },
+    {
+      owner: 'Workspace',
+      label: 'Dashboard pronta',
+      detail: 'Preparazione indicatori, moduli e viste di lavoro.',
+    },
   ]
-  const loadingStep = $derived(loadingSteps[loadingStepIndex] ?? loadingSteps.at(-1)!)
 
   const selectedItem = $derived(
     items.find((item) => item.id === viewState.selectedItemId) ?? null,
@@ -161,6 +186,53 @@
     layout = state.layout
     items = state.items
     runtime = state.runtime
+  }
+
+  const startLoadingTimer = () => {
+    if (loadingTimer) {
+      window.clearInterval(loadingTimer)
+    }
+    loadingStepIndex = 0
+    loadingTimer = window.setInterval(() => {
+      loadingStepIndex = Math.min(loadingStepIndex + 1, loadingSteps.length - 1)
+    }, 1100)
+  }
+
+  const stopLoadingTimer = () => {
+    if (!loadingTimer) {
+      return
+    }
+    window.clearInterval(loadingTimer)
+    loadingTimer = null
+  }
+
+  const shouldHoldBootScreen = () =>
+    import.meta.env.DEV && new URLSearchParams(window.location.search).has('holdBoot')
+
+  const bootWorkspace = async () => {
+    isLoading = true
+    errorMessage = null
+    const bootStartedAt = window.performance.now()
+    startLoadingTimer()
+    try {
+      await loadState()
+      loadingStepIndex = loadingSteps.length - 1
+    } catch (error: unknown) {
+      errorMessage = error instanceof Error ? error.message : 'Errore caricamento spiaggia.'
+    } finally {
+      const remainingBootTime = MIN_BOOT_SCREEN_MS - (window.performance.now() - bootStartedAt)
+      if (remainingBootTime > 0) {
+        await new Promise((resolve) => window.setTimeout(resolve, remainingBootTime))
+      }
+      stopLoadingTimer()
+      if (!shouldHoldBootScreen()) {
+        isLoading = false
+      }
+    }
+  }
+
+  const retryBootstrap = () => {
+    void bootWorkspace()
   }
 
   const loadSelectedAccountPayments = async (item: BeachItem | null) => {
@@ -670,18 +742,8 @@
     window.addEventListener(OPEN_REGISTRY_EVENT, handleOpenRegistryRequest)
     window.addEventListener(BEACH_LAYOUT_VIEW_CHANGED_EVENT, loadState)
     window.addEventListener(PARAMETRIC_LAYOUT_CHANGED_EVENT, loadState)
-    const loadingTimer = window.setInterval(() => {
-      loadingStepIndex = Math.min(loadingStepIndex + 1, loadingSteps.length - 1)
-    }, 1400)
 
-    loadState()
-      .catch((error: unknown) => {
-        errorMessage = error instanceof Error ? error.message : 'Errore caricamento spiaggia.'
-      })
-      .finally(() => {
-        window.clearInterval(loadingTimer)
-        isLoading = false
-      })
+    void bootWorkspace()
     loadExtraItemCatalog()
       .then((catalog) => {
         extraCatalog = catalog
@@ -691,7 +753,7 @@
       })
 
     return () => {
-      window.clearInterval(loadingTimer)
+      stopLoadingTimer()
       window.removeEventListener(OPEN_REGISTRY_EVENT, handleOpenRegistryRequest)
       window.removeEventListener(BEACH_LAYOUT_VIEW_CHANGED_EVENT, loadState)
       window.removeEventListener(PARAMETRIC_LAYOUT_CHANGED_EVENT, loadState)
@@ -700,6 +762,9 @@
 </script>
 
 <div class="app-shell" data-theme={theme}>
+  {#if isLoading}
+    <AppLoadingScreen steps={loadingSteps} activeIndex={loadingStepIndex} {runtimeLabel} />
+  {:else}
   <AppTopBar
     searchQuery={viewState.searchQuery}
     {activeModule}
@@ -721,59 +786,20 @@
       class:filters-open={viewState.filtersOpen}
       aria-label="Area principale"
     >
-      {#if isLoading}
-        <div class="loading-panel" role="status" aria-live="polite">
-          <div class="loading-panel__content">
-            <div class="loading-panel__header">
-              <p class="loading-panel__eyebrow">LidoPro</p>
-              <h1>Preparazione workspace</h1>
-              <p>{loadingStep}</p>
-            </div>
-
-            <div class="loading-map-preview" aria-hidden="true">
-              <div class="loading-map-preview__shore"></div>
-              <div class="loading-map-preview__stage">
-                <span class="loading-map-preview__path path-a"></span>
-                <span class="loading-map-preview__path path-b"></span>
-                <span class="loading-map-preview__row row-a"></span>
-                <span class="loading-map-preview__row row-b"></span>
-                <span class="loading-map-preview__row row-c"></span>
-                <span class="loading-map-preview__item item-a"></span>
-                <span class="loading-map-preview__item item-b"></span>
-                <span class="loading-map-preview__item item-c"></span>
-                <span class="loading-map-preview__item item-d"></span>
-                <span class="loading-map-preview__item item-e"></span>
-                <span class="loading-map-preview__item item-f"></span>
-                <span class="loading-map-preview__scan"></span>
-              </div>
-            </div>
-
-            <div class="loading-panel__status">
-              <div class="loading-progress" aria-hidden="true">
-                <span></span>
-              </div>
-              <span>{loadingStepIndex + 1}/{loadingSteps.length}</span>
-            </div>
-
-            <ol class="loading-steps" aria-label="Avanzamento caricamento">
-              {#each loadingSteps as step, index}
-                <li class:active={index === loadingStepIndex} class:done={index < loadingStepIndex}>
-                  <span></span>
-                  {step}
-                </li>
-              {/each}
-            </ol>
-          </div>
-        </div>
-      {:else if errorMessage}
-        <div class="loading-panel">
-          <h1>Serve attenzione</h1>
-          <p>{errorMessage}</p>
-        </div>
+      {#if errorMessage}
+        <SetupStatePanel
+          eyebrow="Bootstrap locale"
+          title="Serve attenzione"
+          message={errorMessage}
+          actionLabel="Riprova"
+          tone="danger"
+          onAction={retryBootstrap}
+        />
       {:else if layout}
         {#if activeModule === 'dashboard'}
           <LidoProDashboard
             {layout}
+            {items}
             {summary}
             {typeSummary}
             {workspaceSummary}
@@ -940,6 +966,7 @@
       onAddExtraItem={addExtraItemForSelection}
       onRemoveExtraItem={removeExtraItemForSelection}
     />
+  {/if}
   {/if}
 
 </div>

@@ -4,6 +4,7 @@
   import { getRuntimeTarget, getRuntimeTargetLabel } from '../../lib/platform/runtimeTarget'
   import type { BeachLayout } from '../../lib/types/beach'
   import type { DatabaseRuntime } from '../../lib/types/db'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     layout,
@@ -98,7 +99,11 @@
 
   {#if import.meta.env.DEV && runtime !== 'native-sqlite'}
     <button class="button-danger" type="button" onclick={handleDevelopmentReset} disabled={resetInProgress}>
-      {resetInProgress ? 'Reset in corso...' : 'Reset database browser dev'}
+      {#if resetInProgress}
+        <ActionActivity label="Reset in corso" />
+      {:else}
+        Reset database browser dev
+      {/if}
     </button>
     {#if resetError}
       <p class="diagnostic-warning">{resetError}</p>

@@ -1,4 +1,4 @@
-import { getNextTheme, type AppTheme } from './themeTokens'
+import { appThemes, getNextTheme, type AppTheme } from './themeTokens'
 
 const storageKey = 'lido-pro-theme'
 
@@ -8,7 +8,7 @@ export const loadInitialTheme = (): AppTheme => {
   }
 
   const stored = localStorage.getItem(storageKey)
-  return stored === 'dark' || stored === 'neutral' ? stored : 'neutral'
+  return appThemes.includes(stored as AppTheme) ? (stored as AppTheme) : 'neutral'
 }
 
 export const saveTheme = (theme: AppTheme) => {

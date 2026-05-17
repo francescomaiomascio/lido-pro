@@ -7,6 +7,7 @@
   import { formatEuroFromCents } from '../../lib/format/money'
   import { reservationStatusLabels, reservationTypeLabels } from '../../lib/format/reservationLabels'
   import { getAccountLedger, getReservationSummary } from '../../lib/services/reservationSummaryService'
+  import InlineLoadingState from '../loading/InlineLoadingState.svelte'
   import type {
     AccountLedger,
     LedgerExtraRow,
@@ -83,10 +84,13 @@
       <p>Seleziona una riga per vedere il dettaglio.</p>
     </div>
   {:else if loading}
-    <div class="registry-detail__empty">
-      <h3>Caricamento dettaglio</h3>
-      <p>Preparazione riepilogo operativo.</p>
-    </div>
+    <InlineLoadingState
+      compact
+      eyebrow="Dettaglio"
+      title="Caricamento scheda"
+      message="Preparazione riepilogo operativo, ledger e timeline."
+      rows={3}
+    />
   {:else}
     <header class="registry-detail__header">
       <div>

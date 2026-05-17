@@ -8915,3 +8915,270 @@
 .settings-nav__search-clear:hover {
   background: color-mix(in srgb, var(--color-primary) 7%, transparent) !important;
 }
+
+/* System settings: enterprise settings list, not decorative cards. */
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: clamp(20px, 2.8vw, 32px) !important;
+  width: 100% !important;
+  max-width: 1120px !important;
+  min-height: auto !important;
+  padding: clamp(22px, 3vw, 38px) !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .system-admin-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .system-admin-header h2 {
+  margin: 0 !important;
+  font-size: clamp(1.8rem, 2.4vw, 2.4rem) !important;
+  line-height: 1 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .system-admin-header p {
+  max-width: 620px !important;
+  margin: 10px 0 0 !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 0.96rem !important;
+  font-weight: 720 !important;
+  line-height: 1.35 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-toolbar-count {
+  flex: 0 0 auto !important;
+  min-height: 36px !important;
+  padding: 0 16px !important;
+  align-self: flex-start !important;
+}
+
+.system-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(26px, 4vw, 52px);
+}
+
+.system-settings-index {
+  position: sticky;
+  top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: 2px 0 2px 14px;
+  border-left: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+}
+
+.system-settings-index a {
+  display: block;
+  min-width: 0;
+  padding: 8px 0;
+  color: var(--color-text-secondary);
+  font-size: 0.84rem;
+  font-weight: 820;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.system-settings-index a:hover {
+  color: var(--color-primary-strong);
+}
+
+.system-settings-stack {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent);
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-grid,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-grid--single {
+  display: contents !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-section {
+  display: grid !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: clamp(18px, 2.2vw, 26px) 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line) 58%, transparent) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-section > header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 5px !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-section > header strong {
+  color: var(--color-text) !important;
+  font-size: 1rem !important;
+  font-weight: 920 !important;
+  line-height: 1.1 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-section > header span {
+  color: var(--color-text-muted) !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-rows,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition {
+  display: grid !important;
+  gap: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition div {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 260px) minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 16px !important;
+  min-height: 44px !important;
+  padding: 9px 0 !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 36%, transparent) !important;
+  border-bottom: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row:last-child,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition div:last-child {
+  border-bottom: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row > div:first-child,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition dt {
+  min-width: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row strong,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition dt {
+  color: var(--color-text) !important;
+  font-size: 0.9rem !important;
+  font-weight: 880 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row span,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition dd,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-muted {
+  color: var(--color-text-secondary) !important;
+  font-size: 0.84rem !important;
+  font-weight: 720 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-inline-options {
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-inline-options button {
+  min-height: 34px !important;
+  padding: 0 13px !important;
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dl {
+  display: grid !important;
+  gap: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dl div {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 260px) minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 16px !important;
+  min-height: 44px !important;
+  padding: 9px 0 !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-line) 36%, transparent) !important;
+  border-bottom: 0 !important;
+}
+
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dt,
+.settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dd {
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 1024px) {
+  .system-settings-layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .system-settings-index {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 16px;
+    padding: 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 62%, transparent);
+    border-left: 0;
+  }
+
+  .system-settings-index a {
+    padding: 9px 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel {
+    padding: 16px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel .system-admin-header {
+    display: grid !important;
+  }
+
+  .system-settings-index {
+    grid-template-columns: 1fr;
+  }
+
+  .system-settings-stack {
+    border-top: 0;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-row,
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-admin-definition div,
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel .diagnostics-panel dl div {
+    grid-template-columns: 1fr !important;
+    align-items: start !important;
+    gap: 8px !important;
+  }
+
+  .settings-shell .settings-shell__body > .settings-content > .system-admin-panel .settings-inline-options {
+    justify-content: flex-start !important;
+  }
+}

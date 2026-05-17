@@ -10,6 +10,7 @@
   import type { BeachItem } from '../../lib/types/beach'
   import type { ExtraItemCatalogEntry, ExtraItemCatalogInput } from '../../lib/types/extraItem'
   import type { TariffItemType, TariffReservationType, TariffRule, TariffRuleInput } from '../../lib/types/tariff'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     items,
@@ -987,7 +988,9 @@
             </figure>
             <div class="listino-detail-actions">
               {#if selectedCatalogItem.article}
-                <button type="button" class="button-primary" disabled={saving} onclick={saveArticle}>Salva modifiche</button>
+                <button type="button" class="button-primary" disabled={saving} onclick={saveArticle}>
+                  {#if saving}<ActionActivity label="Salvataggio" />{:else}Salva modifiche{/if}
+                </button>
                 <button type="button" class="button-secondary" disabled={saving} onclick={() => startNewArticle(articleIncludedQuantity > 0)}>Duplica</button>
                 <button type="button" class="button-secondary" disabled={saving} onclick={archiveArticle}>Disattiva</button>
               {:else}
@@ -1416,7 +1419,9 @@
           <label>Categoria di applicazione<input value={getDisplayRowLabel(tariffRowLabel)} disabled /></label>
           <label>Note<input bind:value={tariffNotes} /></label>
           <div class="settings-form-actions listino-actions">
-            <button type="submit" class="button-primary" disabled={saving}>Salva</button>
+            <button type="submit" class="button-primary" disabled={saving}>
+              {#if saving}<ActionActivity label="Salvataggio" />{:else}Salva{/if}
+            </button>
             {#if selectedRule}<button type="button" class="button-secondary" disabled={saving} onclick={duplicateTariff}>Duplica</button>{/if}
             {#if selectedRule}<button type="button" class="button-secondary" disabled={saving} onclick={archiveTariff}>Disattiva</button>{/if}
             <button type="button" class="button-secondary" disabled={saving} onclick={clearSelection}>Annulla</button>
@@ -1443,7 +1448,9 @@
           <label>Inclusa nel posto<input value={articleIncludedQuantity > 0 ? 'Si' : 'No'} disabled /></label>
           <label>Note<input bind:value={articleNotes} /></label>
           <div class="settings-form-actions listino-actions">
-            <button type="submit" class="button-primary" disabled={saving}>Salva</button>
+            <button type="submit" class="button-primary" disabled={saving}>
+              {#if saving}<ActionActivity label="Salvataggio" />{:else}Salva{/if}
+            </button>
             {#if selectedArticle}<button type="button" class="button-secondary" disabled={saving} onclick={() => startNewArticle(articleIncludedQuantity > 0)}>Duplica</button>{/if}
             {#if selectedArticle}<button type="button" class="button-secondary" disabled={saving} onclick={archiveArticle}>Disattiva</button>{/if}
             <button type="button" class="button-secondary" disabled={saving} onclick={clearSelection}>Annulla</button>

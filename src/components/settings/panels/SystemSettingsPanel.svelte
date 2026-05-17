@@ -31,15 +31,14 @@
   } = $props()
 
   type SystemSection =
+    | 'general'
     | 'interface'
     | 'local-data'
-    | 'account'
+    | 'account-provider'
     | 'integrations'
     | 'diagnostics'
     | 'application'
-    | 'backup'
-
-  let activeSection: SystemSection = $state('interface')
+    | 'security-backup'
 
   const persistenceLabel = $derived(
     runtime === 'browser-memory-fallback'
@@ -50,145 +49,147 @@
           ? 'SQLite nativo'
           : 'Non disponibile',
   )
-  const systemTabs: Array<{ id: SystemSection; label: string }> = [
+  const layoutSizeLabel = $derived(layout ? `${layout.widthM}m x ${layout.depthM}m` : 'Non disponibile')
+
+  const systemSections: Array<{ id: SystemSection; label: string }> = [
+    { id: 'general', label: 'Generale' },
     { id: 'interface', label: 'Interfaccia' },
     { id: 'local-data', label: 'Dati locali' },
-    { id: 'account', label: 'Account / Provider' },
+    { id: 'account-provider', label: 'Account e provider' },
     { id: 'integrations', label: 'Integrazioni' },
     { id: 'diagnostics', label: 'Diagnostica' },
     { id: 'application', label: 'Applicazione' },
-    { id: 'backup', label: 'Sicurezza / Backup' },
+    { id: 'security-backup', label: 'Sicurezza e backup' },
   ]
 </script>
 
 <section class="settings-panel system-admin-panel" aria-label="Sistema">
   <div class="settings-view-header settings-panel__header system-admin-header">
-    <h2>Sistema</h2>
+    <div>
+      <h2>Sistema</h2>
+      <p>Impostazioni locali, interfaccia, dati, diagnostica e confini applicativi.</p>
+    </div>
     <span class="settings-toolbar-count">{persistenceLabel}</span>
   </div>
 
-  <div class="system-admin-toolbar" role="tablist" aria-label="Sezioni sistema">
-    {#each systemTabs as tab}
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeSection === tab.id}
-        class:active={activeSection === tab.id}
-        onclick={() => (activeSection = tab.id)}
-      >
-        {tab.label}
-      </button>
-    {/each}
-  </div>
+  <div class="system-settings-layout">
+    <nav class="system-settings-index" aria-label="Categorie sistema">
+      {#each systemSections as section}
+        <a href={`#system-${section.id}`}>{section.label}</a>
+      {/each}
+    </nav>
 
-  <div class="settings-admin-grid settings-admin-grid--single">
-    {#if activeSection === 'interface'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Interfaccia</strong></header>
-      <div class="settings-admin-rows">
-        <div class="settings-admin-row">
-          <div><strong>Lingua</strong><span>{languageLabels[language]}</span></div>
-          <div class="settings-inline-options">
-            {#each appLanguages as entry}
-              <button type="button" class:active={entry === language} onclick={() => onLanguageChange(entry)}>
-                {entry.toUpperCase()}
-              </button>
-            {/each}
+    <div class="system-settings-stack">
+      <section id="system-general" class="settings-admin-section">
+        <header>
+          <strong>Generale</strong>
+          <span>Stato operativo locale della sessione corrente.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Runtime</dt><dd>{runtimeLabel}</dd></div>
+          <div><dt>Persistenza</dt><dd>{persistenceLabel}</dd></div>
+          <div><dt>Layout attivo</dt><dd>{layoutSizeLabel}</dd></div>
+          <div><dt>Elementi caricati</dt><dd>{itemCount}</dd></div>
+        </dl>
+      </section>
+
+      <section id="system-interface" class="settings-admin-section">
+        <header>
+          <strong>Interfaccia</strong>
+          <span>Lingua e tema dell’applicazione.</span>
+        </header>
+        <div class="settings-admin-rows">
+          <div class="settings-admin-row">
+            <div><strong>Lingua</strong><span>{languageLabels[language]}</span></div>
+            <div class="settings-inline-options" aria-label="Lingua applicazione">
+              {#each appLanguages as entry}
+                <button type="button" class:active={entry === language} onclick={() => onLanguageChange(entry)}>
+                  {entry.toUpperCase()}
+                </button>
+              {/each}
+            </div>
+          </div>
+          <div class="settings-admin-row">
+            <div><strong>Tema</strong><span>{getThemeLabel(theme)}</span></div>
+            <div class="settings-inline-options" aria-label="Tema applicazione">
+              {#each appThemes as entry}
+                <button type="button" class:active={entry === theme} onclick={() => onThemeChange(entry)}>
+                  {getThemeLabel(entry)}
+                </button>
+              {/each}
+            </div>
           </div>
         </div>
-        <div class="settings-admin-row">
-          <div><strong>Tema</strong><span>{getThemeLabel(theme)}</span></div>
-          <div class="settings-inline-options">
-            {#each appThemes as entry}
-              <button type="button" class:active={entry === theme} onclick={() => onThemeChange(entry)}>
-                {getThemeLabel(entry)}
-              </button>
-            {/each}
-          </div>
-        </div>
-      </div>
-    </section>
-    {/if}
+      </section>
 
-    {#if activeSection === 'local-data'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Dati locali</strong></header>
-      <dl class="settings-admin-definition">
-        <div><dt>Runtime</dt><dd>{runtimeLabel}</dd></div>
-        <div><dt>Database</dt><dd>beach_bdf.db</dd></div>
-        <div><dt>Adapter</dt><dd>{runtime ?? 'non disponibile'}</dd></div>
-        <div><dt>Elementi caricati</dt><dd>{itemCount}</dd></div>
-        <div><dt>Dimensioni</dt><dd>{layout ? `${layout.widthM}m x ${layout.depthM}m` : 'Non disponibili'}</dd></div>
-        <div><dt>Stato persistenza</dt><dd>{persistenceLabel}</dd></div>
-      </dl>
-    </section>
-    {/if}
+      <section id="system-local-data" class="settings-admin-section">
+        <header>
+          <strong>Dati locali</strong>
+          <span>Database, adapter e layout locale caricato.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Database</dt><dd>beach_bdf.db</dd></div>
+          <div><dt>Adapter</dt><dd>{runtime ?? 'Non disponibile'}</dd></div>
+          <div><dt>Stato persistenza</dt><dd>{persistenceLabel}</dd></div>
+          <div><dt>Dimensioni layout</dt><dd>{layout ? `${layout.widthM}m x ${layout.depthM}m` : 'Non disponibili'}</dd></div>
+        </dl>
+      </section>
 
-    {#if activeSection === 'account'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Account / Provider</strong></header>
-      <div class="settings-admin-rows">
-        <div class="settings-admin-row">
-          <div><strong>Account locale</strong><span>Profilo operativo locale</span></div>
-          <span class="settings-admin-muted">Nessun provider esterno connesso.</span>
-        </div>
-        <div class="settings-admin-row">
-          <div><strong>Google / Apple</strong><span>Previsto</span></div>
-          <span class="settings-admin-muted">Accesso provider non configurato in questa build.</span>
-        </div>
-      </div>
-    </section>
-    {/if}
+      <section id="system-account-provider" class="settings-admin-section">
+        <header>
+          <strong>Account e provider</strong>
+          <span>Profilo locale e provider esterni non attivi.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Account locale</dt><dd>Profilo operativo locale</dd></div>
+          <div><dt>Provider esterni</dt><dd>Non configurati</dd></div>
+          <div><dt>Google / Apple</dt><dd>Previsti, non attivi</dd></div>
+        </dl>
+      </section>
 
-    {#if activeSection === 'integrations'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Integrazioni</strong></header>
-      <div class="settings-admin-rows">
-        <div class="settings-admin-row">
-          <div><strong>Lido Cloud</strong><span>Non attivo</span></div>
-          <span class="settings-admin-muted">Sync e account multi-device sono confini futuri.</span>
-        </div>
-        <div class="settings-admin-row">
-          <div><strong>Lido Pay</strong><span>Non attivo</span></div>
-          <span class="settings-admin-muted">Provider pagamento non implementati ne configurati.</span>
-        </div>
-      </div>
-    </section>
-    {/if}
+      <section id="system-integrations" class="settings-admin-section">
+        <header>
+          <strong>Integrazioni</strong>
+          <span>Confini futuri non attivi in questa build.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Lido Cloud</dt><dd>Non attivo</dd></div>
+          <div><dt>Lido Pay</dt><dd>Non attivo</dd></div>
+          <div><dt>Portale clienti</dt><dd>Non attivo</dd></div>
+        </dl>
+      </section>
 
-    {#if activeSection === 'diagnostics'}
-    <section class="settings-admin-section system-admin-section--wide">
-      <header><strong>Diagnostica</strong></header>
-      <DiagnosticsPanel {layout} {itemCount} {runtime} />
-    </section>
-    {/if}
+      <section id="system-diagnostics" class="settings-admin-section">
+        <header>
+          <strong>Diagnostica</strong>
+          <span>Stato tecnico e strumenti di sviluppo confinati.</span>
+        </header>
+        <DiagnosticsPanel {layout} {itemCount} {runtime} />
+      </section>
 
-    {#if activeSection === 'application'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Applicazione</strong></header>
-      <dl class="settings-admin-definition">
-        <div><dt>Nome prodotto</dt><dd>{APP_DISPLAY_NAME}</dd></div>
-        <div><dt>Package Android</dt><dd>{appConfig.appId}</dd></div>
-        <div><dt>Canale</dt><dd>Locale</dd></div>
-        <div><dt>Database</dt><dd>beach_bdf.db</dd></div>
-      </dl>
-    </section>
-    {/if}
+      <section id="system-application" class="settings-admin-section">
+        <header>
+          <strong>Applicazione</strong>
+          <span>Identita prodotto e configurazione package.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Nome prodotto</dt><dd>{APP_DISPLAY_NAME}</dd></div>
+          <div><dt>Package Android</dt><dd>{appConfig.appId}</dd></div>
+          <div><dt>Canale</dt><dd>Locale</dd></div>
+          <div><dt>Database</dt><dd>beach_bdf.db</dd></div>
+        </dl>
+      </section>
 
-    {#if activeSection === 'backup'}
-    <section class="settings-admin-section settings-admin-section--wide">
-      <header><strong>Sicurezza / Backup</strong></header>
-      <div class="settings-admin-rows">
-        <div class="settings-admin-row">
-          <div><strong>Backup operativo</strong><span>Non ancora configurato</span></div>
-          <span class="settings-admin-muted">Previsto in una wave dedicata.</span>
-        </div>
-        <div class="settings-admin-row">
-          <div><strong>Azioni distruttive</strong><span>Solo diagnostica sviluppo</span></div>
-          <span class="settings-admin-muted">Il reset resta isolato nella sezione Diagnostica.</span>
-        </div>
-      </div>
-    </section>
-    {/if}
+      <section id="system-security-backup" class="settings-admin-section">
+        <header>
+          <strong>Sicurezza e backup</strong>
+          <span>Stato backup e azioni protette.</span>
+        </header>
+        <dl class="settings-admin-definition">
+          <div><dt>Backup operativo</dt><dd>Non configurato</dd></div>
+          <div><dt>Azioni protette</dt><dd>Solo diagnostica sviluppo</dd></div>
+        </dl>
+      </section>
+    </div>
   </div>
 </section>

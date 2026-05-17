@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatEuroFromCents, parseEuroToCents } from '../../lib/format/money'
   import type { ExtraItemCatalogEntry } from '../../lib/types/extraItem'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     entry,
@@ -37,5 +38,11 @@
     Prezzo unitario
     <input bind:value={amount} inputmode="decimal" />
   </label>
-  <button type="submit" disabled={saving}>Aggiungi</button>
+  <button type="submit" disabled={saving}>
+    {#if saving}
+      <ActionActivity label="Aggiunta" />
+    {:else}
+      Aggiungi
+    {/if}
+  </button>
 </form>

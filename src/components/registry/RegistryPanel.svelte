@@ -7,6 +7,7 @@
   } from '../../lib/state/registryFilters'
   import { calculateRegistrySummary, getRegistryRecords } from '../../lib/services/registryService'
   import type { RegistryRecord, RegistrySummary } from '../../lib/types/registry'
+  import InlineLoadingState from '../loading/InlineLoadingState.svelte'
   import RegistryFiltersPanel from './RegistryFilters.svelte'
   import RegistryInsights from './RegistryInsights.svelte'
   import RegistryRecordDetail from './RegistryRecordDetail.svelte'
@@ -164,7 +165,12 @@
   <div class="registry-workspace" class:has-detail={Boolean(selectedRecord)}>
     <div class="registry-workspace__records">
       {#if loading}
-        <p class="registry-empty">Caricamento registro.</p>
+        <InlineLoadingState
+          eyebrow="Registro"
+          title="Caricamento movimenti"
+          message="Lettura conti, prenotazioni e incassi filtrati."
+          rows={4}
+        />
       {:else}
         <RegistryTable
           records={viewRecords}

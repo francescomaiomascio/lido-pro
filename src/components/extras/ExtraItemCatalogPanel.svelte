@@ -2,6 +2,7 @@
   import { formatEuroFromCents, parseEuroToCents } from '../../lib/format/money'
   import { loadExtraItemCatalog, saveExtraItemCatalogEntry } from '../../lib/services/extraItemService'
   import type { ExtraItemCatalogEntry, ExtraItemCatalogInput } from '../../lib/types/extraItem'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     catalog,
@@ -160,7 +161,13 @@
           <input name="amount" inputmode="decimal" value={initialAmount} />
         </label>
         <span>{entry.active ? 'Attivo' : 'Non attivo'}</span>
-        <button type="submit" disabled={savingId === entry.id}>Salva</button>
+        <button type="submit" disabled={savingId === entry.id}>
+          {#if savingId === entry.id}
+            <ActionActivity label="Salvataggio" />
+          {:else}
+            Salva
+          {/if}
+        </button>
       </form>
     {:else}
       <p class="empty-customer">Nessun extra configurato.</p>

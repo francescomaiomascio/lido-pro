@@ -1,6 +1,7 @@
 <script lang="ts">
   import { normalizeCustomerInput, validateCustomerInput } from '../../lib/customers/customerValidation'
   import type { Customer, CustomerInput } from '../../lib/types/customer'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     customer = null,
@@ -81,7 +82,13 @@
   {/if}
 
   <div class="customer-form-actions">
-    <button type="submit" disabled={saving}>{saving ? 'Salvataggio' : 'Salva'}</button>
+    <button type="submit" disabled={saving}>
+      {#if saving}
+        <ActionActivity label="Salvataggio cliente" />
+      {:else}
+        Salva
+      {/if}
+    </button>
     <button type="button" disabled={saving} onclick={onCancel}>Annulla</button>
   </div>
 </form>

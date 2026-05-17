@@ -4,6 +4,7 @@
   import { businessConfig } from '../../../lib/config/appConfig'
   import type { BeachItemAssignedCustomer } from '../../../lib/types/customer'
   import type { Reservation, ReservationInput, ReservationType } from '../../../lib/types/reservation'
+  import ActionActivity from '../../loading/ActionActivity.svelte'
 
   let { itemId, assignedCustomer, reservation, accountId, saving, onSave, onClose }: {
     itemId: string
@@ -242,7 +243,13 @@
       <p class="inline-editor__hint">Il dovuto viene calcolato nel conto e resta modificabile.</p>
       {#if error}<p class="inline-editor__error">{error}</p>{/if}
       <div class="inline-editor__actions">
-        <button type="button" disabled={saving} onclick={submit}>{saving ? 'Salvataggio' : 'Salva periodo'}</button>
+        <button type="button" disabled={saving} onclick={submit}>
+          {#if saving}
+            <ActionActivity label="Salvataggio periodo" />
+          {:else}
+            Salva periodo
+          {/if}
+        </button>
       </div>
     </aside>
   </div>

@@ -4,6 +4,7 @@
   import type { ParametricSetupState } from '../../../lib/map-canvas/parametric/parametricSetupState'
   import type { SeaSide } from '../../../lib/map-canvas/types'
   import type { BeachDistanceRules } from '../../../lib/map-canvas'
+  import SetupStatePanel from '../../loading/SetupStatePanel.svelte'
   import MapStudioDashboard from './dashboard/MapStudioDashboard.svelte'
   import MapStudioSketchCanvas from './MapStudioSketchCanvas.svelte'
   import {
@@ -369,8 +370,14 @@
 
 {#if !setup}
   <section class="map-studio-shell map-studio-shell--loading">
-    <div><strong>Setup mappa non caricato</strong><span>{status}</span></div>
-    <button type="button" onclick={onReload}>Ricarica setup</button>
+    <SetupStatePanel
+      eyebrow="Map Studio"
+      title="Setup mappa non caricato"
+      message={status}
+      actionLabel="Ricarica setup"
+      tone="attention"
+      onAction={onReload}
+    />
   </section>
 {:else if !projectState}
   <MapStudioDashboard {setup} {output} {draftAvailable} onStart={startProject} {onShowDraft} />

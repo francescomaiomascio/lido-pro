@@ -6,6 +6,7 @@
     isDateRangeValid,
   } from '../../lib/reservations/periodRules'
   import type { Reservation, ReservationInput, ReservationType } from '../../lib/types/reservation'
+  import ActionActivity from '../loading/ActionActivity.svelte'
 
   let {
     reservation = null,
@@ -147,7 +148,13 @@
   {/if}
 
   <div class="customer-form-actions">
-    <button type="submit" disabled={saving}>{saving ? 'Salvataggio' : 'Salva prenotazione'}</button>
+    <button type="submit" disabled={saving}>
+      {#if saving}
+        <ActionActivity label="Salvataggio prenotazione" />
+      {:else}
+        Salva prenotazione
+      {/if}
+    </button>
     <button type="button" disabled={saving} onclick={onCancel}>Annulla</button>
   </div>
 </form>

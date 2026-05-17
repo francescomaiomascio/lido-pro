@@ -3,6 +3,7 @@
   import { formatEuroFromCents, parseEuroToCents } from '../../lib/format/money'
   import type { Account, AccountInput, AccountType } from '../../lib/types/account'
   import type { PriceSuggestion } from '../../lib/types/tariff'
+  import ActionActivity from '../loading/ActionActivity.svelte'
   import PriceSuggestionCard from '../tariffs/PriceSuggestionCard.svelte'
 
   let {
@@ -126,7 +127,13 @@
   {/if}
 
   <div class="customer-form-actions">
-    <button type="submit" disabled={saving}>{saving ? 'Salvataggio' : 'Salva conto'}</button>
+    <button type="submit" disabled={saving}>
+      {#if saving}
+        <ActionActivity label="Salvataggio conto" />
+      {:else}
+        Salva conto
+      {/if}
+    </button>
     {#if onCancel}
       <button type="button" disabled={saving} onclick={onCancel}>Annulla</button>
     {/if}

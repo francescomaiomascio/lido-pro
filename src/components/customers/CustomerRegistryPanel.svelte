@@ -13,6 +13,7 @@
     CustomerReservationSummary,
     CustomerSearchSummary,
   } from '../../lib/types/customerProfile'
+  import InlineLoadingState from '../loading/InlineLoadingState.svelte'
   import CustomerAnagraficaForm from './CustomerAnagraficaForm.svelte'
   import CustomerProfilePanel from './CustomerProfilePanel.svelte'
 
@@ -242,10 +243,13 @@
           onToggleHistory={() => (historyExpanded = !historyExpanded)}
         />
       {:else if loading}
-        <div class="settings-empty-detail customer-detail-empty">
-          <h3>Caricamento cliente</h3>
-          <p>Preparazione scheda anagrafica.</p>
-        </div>
+        <InlineLoadingState
+          compact
+          eyebrow="Cliente"
+          title="Caricamento profilo"
+          message="Preparazione scheda anagrafica, storico e riepilogo conto."
+          rows={3}
+        />
       {:else}
         <div class="settings-empty-detail customer-detail-empty">
           <h3>Seleziona un cliente</h3>

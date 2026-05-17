@@ -6,6 +6,7 @@
   import type { BeachItemAssignedCustomer } from '../../../lib/types/customer'
   import type { Reservation } from '../../../lib/types/reservation'
   import type { PriceSuggestion } from '../../../lib/types/tariff'
+  import ActionActivity from '../../loading/ActionActivity.svelte'
 
   let { itemId, assignedCustomer, reservation, account, priceSuggestion, saving, onSave, onClose }: {
     itemId: string
@@ -81,6 +82,12 @@
   </div>
   {#if error}<p class="inline-editor__error">{error}</p>{/if}
   <div class="inline-editor__actions">
-    <button type="button" disabled={saving} onclick={submit}>Modifica importo conto</button>
+    <button type="button" disabled={saving} onclick={submit}>
+      {#if saving}
+        <ActionActivity label="Salvataggio conto" />
+      {:else}
+        Modifica importo conto
+      {/if}
+    </button>
   </div>
 </section>

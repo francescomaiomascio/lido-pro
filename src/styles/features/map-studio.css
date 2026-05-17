@@ -17,6 +17,10 @@
   padding: 28px;
 }
 
+.map-studio-shell--loading > .setup-state-panel {
+  max-width: 720px;
+}
+
 .map-studio-shell--loading > div {
   display: grid;
   gap: 4px;

@@ -56,15 +56,13 @@ The current implementation is local-first and operator-focused. The broader prod
 
 ## Operational Layout Model
 
-The operational map is not just a drawing layer. It is the published working projection used by staff. Studio drafts can be edited and verified, but daily operations continue to rely on the protected active layout until a controlled publication step promotes a new layout.
+LidoPro separates design work from daily operations. Studio drafts can be edited and reviewed, while the active layout remains the protected operational surface used by staff.
 
-| Concept | Meaning |
-| --- | --- |
-| Studio project draft | Editable planning state prepared in Lido Studio. |
-| Layout preview | Verifiable proposal generated before publication. |
-| Active layout | Protected operational projection used by staff during daily work. |
+<p align="center">
+  <img src="public/brand/readme/lidopro-readme-operational-flow.svg" alt="LidoPro operational layout flow from design to publication to daily operations" width="920">
+</p>
 
-Studio drafts must not mutate operational, customer, reservation, or account data directly.
+The publication step is the boundary between planning and operations: drafts do not directly mutate customer, reservation, account, or daily workflow data.
 
 ## Current Status
 
@@ -86,16 +84,6 @@ Repository access does not provide production deployment rights, commercial use 
 Commercial use, pilots, deployments, partnerships, licensing, reseller activity, agency delivery, hosted operation, or customer evaluation require prior written permission.
 
 See [LICENSE.md](LICENSE.md), [COMMERCIAL.md](COMMERCIAL.md), [NOTICE.md](NOTICE.md), [TRADEMARK.md](TRADEMARK.md), [SECURITY.md](SECURITY.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Runtime Architecture
-
-```text
-Svelte/Vite application
-  |- Tauri Desktop        macOS / Linux desktop runtime
-  |- Capacitor Android    Android phone/tablet native shell
-  |- Capacitor iOS        iPad/iPhone target when intentionally enabled
-  `- Browser/Vite         development preview only
-```
 
 The product source lives primarily in `src/`. Tauri and Capacitor are native shells around the same product application, not separate product codebases.
 
