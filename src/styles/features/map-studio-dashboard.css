@@ -13,6 +13,12 @@
   box-shadow: 0 18px 42px rgb(28 45 43 / 12%);
 }
 
+.settings-content > .map-studio-dashboard {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
 .map-studio-dashboard-nav {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr) auto;
@@ -126,12 +132,23 @@
 }
 
 .map-studio-dashboard__body {
-  display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   min-height: 0;
   padding: 14px;
   overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.map-studio-dashboard-summary,
+.map-studio-dashboard-actions,
+.map-studio-dashboard-bands {
+  flex: 0 0 auto;
+}
+
+.map-studio-dashboard__workbench {
+  flex: 1 1 auto;
 }
 
 .map-studio-dashboard-summary {
@@ -817,7 +834,7 @@
   font-weight: 900;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1500px) {
   .map-studio-dashboard-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -856,7 +873,7 @@
 @media (max-width: 760px) {
   .map-studio-dashboard {
     height: calc(100dvh - 58px);
-    min-height: 680px;
+    min-height: 0;
     border-radius: 0;
   }
 
@@ -970,4 +987,201 @@
   .map-studio-dashboard-bands article:first-child {
     border-top: 0;
   }
+}
+
+@media (max-width: 900px) {
+  .map-studio-dashboard {
+    height: calc(100dvh - 56px);
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  .map-studio-dashboard-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    min-height: 52px;
+    padding: 8px 10px;
+  }
+
+  .map-studio-dashboard-nav__brand {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .map-studio-dashboard-nav__brand strong {
+    max-width: 34ch;
+    overflow: hidden;
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+  }
+
+  .map-studio-dashboard-nav__views {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    order: 3;
+    padding-top: 4px;
+  }
+
+  .map-studio-dashboard-nav__meta button {
+    display: none;
+  }
+
+  .map-studio-dashboard__body {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .map-studio-dashboard-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .map-studio-dashboard-summary__card {
+    min-height: 112px;
+    padding: 11px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .map-studio-dashboard-summary__card:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .map-studio-dashboard-summary__card:nth-child(odd) {
+    border-left: 0;
+  }
+
+  .map-studio-dashboard-summary__card strong {
+    white-space: normal;
+  }
+
+  .map-studio-dashboard-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .map-studio-dashboard-actions button {
+    min-height: 58px;
+  }
+
+  .map-studio-project-list > header {
+    grid-template-columns: minmax(0, 1fr) minmax(132px, auto) auto;
+  }
+
+  .map-studio-project-list__table {
+    overflow-x: visible;
+  }
+
+  .map-studio-project-list__head {
+    display: none;
+  }
+
+  .map-studio-project-list__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-width: 0;
+    gap: 6px 10px;
+  }
+
+  .map-studio-project-list__row > span:nth-child(3),
+  .map-studio-project-list__row > span:nth-child(5),
+  .map-studio-project-list__row > span:nth-child(6) {
+    display: none;
+  }
+
+  .map-studio-project-list__actions {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .map-studio-project-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-project-detail__preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-dashboard-bands {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-dashboard-bands article {
+    border-left: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .map-studio-dashboard-bands article:first-child {
+    border-top: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .map-studio-dashboard-nav__brand strong {
+    max-width: 20ch;
+  }
+
+  .map-studio-dashboard-summary,
+  .map-studio-dashboard-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-dashboard-summary__card {
+    min-height: 0;
+    border-left: 0;
+  }
+
+  .map-studio-dashboard-summary__card:nth-child(n) {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .map-studio-dashboard-summary__card:first-child {
+    border-top: 0;
+  }
+
+  .map-studio-dashboard-actions button {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .map-studio-project-list > header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .map-studio-project-list__view-actions {
+    display: none;
+  }
+
+  .map-studio-project-detail__diff > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.settings-content > .map-studio-dashboard {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  box-sizing: border-box;
+}
+
+/* LINUX.OPACITY.R1
+   Avoid Linux/WebKitGTK over-transparency: keep the layered dashboard look
+   without letting desktop windows show through the Tauri surface. */
+.map-studio-dashboard {
+  background:
+    linear-gradient(180deg, rgb(248 251 248), rgb(235 242 236)),
+    var(--color-app-bg) !important;
+}
+
+.map-studio-dashboard-nav {
+  background: rgb(248 251 248) !important;
+}
+
+.map-studio-dashboard-summary,
+.map-studio-dashboard-actions button,
+.map-studio-project-list,
+.map-studio-project-detail,
+.map-studio-dashboard-bands {
+  background: rgb(255 255 255 / 96%) !important;
+}
+
+.map-studio-dashboard-summary__card button,
+.map-studio-project-detail__preview svg,
+.map-studio-project-detail__diff span {
+  background: color-mix(in srgb, var(--color-surface) 96%, white 4%) !important;
 }

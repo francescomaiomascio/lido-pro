@@ -80,8 +80,7 @@
       return
     }
 
-    const coarsePointer = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
-    isMobile = window.innerWidth <= mobileSettingsBreakpoint && coarsePointer
+    isMobile = window.innerWidth <= mobileSettingsBreakpoint
     if (!isMobile) {
       mobileDetailOpen = true
       if (!navTouchedByUser) {
@@ -326,7 +325,6 @@
             onSelect={handleSelect}
           />
         {/if}
-
 
         {#if !isMobile || mobileDetailOpen}
           <SettingsContent

@@ -6889,6 +6889,34 @@
   overflow: auto !important;
 }
 
+/* LINUX.OPACITY.R1
+   WebKitGTK/NVIDIA renders backdrop translucency more aggressively than macOS.
+   Keep the shell elevated, but make operational surfaces opaque enough that the
+   desktop behind the Tauri window cannot bleed through the settings workspace. */
+.settings-shell {
+  background: var(--color-surface) !important;
+  backdrop-filter: none !important;
+}
+
+.settings-shell-backdrop {
+  background: rgb(15 28 31 / 56%) !important;
+}
+
+.settings-shell__header,
+.settings-shell .settings-shell__body > .settings-nav,
+.settings-shell .settings-shell__body > .settings-content {
+  background: var(--color-surface) !important;
+}
+
+.settings-shell__header {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface-elevated) 96%, white 4%), var(--color-surface-soft)) !important;
+}
+
+.settings-shell .settings-shell__body > .settings-nav {
+  background: var(--color-surface-soft) !important;
+}
+
 .settings-shell .settings-shell__body > .settings-content > .listino-panel {
   align-self: start !important;
   display: grid !important;
