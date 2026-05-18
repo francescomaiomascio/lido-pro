@@ -13,6 +13,11 @@ import type {
   BookingCustomerPayload,
   BookingRequestedExtra,
 } from './bookingDomain.types'
+import type {
+  CustomerPairingCandidate,
+  CustomerPairingStatus,
+  PairingDecision,
+} from './customerPairing.types'
 
 export type { BookingRequestStatus } from './bookingDomain.types'
 
@@ -22,6 +27,9 @@ export type BookingRequestRecord = {
   source: BookingRequestSource
   status: BookingRequestStatus
   pairingStatus: BookingPairingStatus
+  matchedCustomerId?: string | null
+  pairingDecision?: PairingDecision | null
+  pairingResolvedAt?: string | null
   customerPayload: BookingCustomerPayload
   requestedPeriod: BookingPeriod
   requestedItemId?: string | null
@@ -48,6 +56,10 @@ export type BookingRequestInput = {
   requestedItemType?: string | null
   requestedExtras?: BookingRequestedExtra[]
 }
+
+export type BookingCustomerPairingCandidateRecord = CustomerPairingCandidate
+export type BookingCustomerPairingStatus = CustomerPairingStatus
+export type BookingCustomerPairingDecision = PairingDecision
 
 export type BookingStatusEventRecord = {
   id: string

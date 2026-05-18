@@ -8,6 +8,8 @@ LidoPro runs as a local Android app. The app must remain usable without network 
 
 The primary target is Android tablet in landscape orientation. Android phone is supported with a simplified layout, full-width beach stage, and bottom action bar.
 
+The canonical Android development and validation workflow is documented in [Android Capacitor workflow](../platform/android-capacitor-workflow.md).
+
 ## SQLite Future Role
 
 SQLite will become the source of truth for local beach data in Wave 1. It will store beach items, coordinates, status, codes, and later customer and booking records.

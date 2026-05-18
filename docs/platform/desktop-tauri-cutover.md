@@ -10,7 +10,7 @@ The frontend remains Svelte and Vite. Tauri v2 provides the desktop shell for ma
 - Primary local command: `npm run app:dev`.
 - Single Vite endpoint: `http://localhost:5173`.
 - Browser/server command: `npm run dev:server`, retained as a preview/fallback for fast UI inspection.
-- Android command path: Capacitor remains active through `npm run cap:sync:android`.
+- Android command path: Capacitor remains active through `npm run cap:sync:android`, `npm run cap:open:android`, and `npm run cap:run:android`.
 - Linux desktop: prepared in scripts and docs, but validation must run on Linux or CI before claiming Linux packages are tested.
 
 Browser mode must not be described as the product runtime. Browser storage fallback is only a development fallback and is not production persistence.
@@ -34,7 +34,7 @@ Collected on macOS development machine during DESKTOP.R1.
 | Capacitor app id | `it.lidopro.app` |
 | Capacitor web dir | `dist` |
 
-Current frontend dependencies require a newer Node line than the default shell Node. Use Node 24 or a compatible Node release before running validation and packaging commands.
+Current frontend dependencies require a newer Node line than the default shell Node. Use the repository Node version from `.nvmrc` before running validation and packaging commands.
 
 ## Tauri Configuration
 

@@ -558,6 +558,47 @@
   font-weight: 660;
 }
 
+.period-editor__availability {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 7px 8px;
+  background: color-mix(in srgb, var(--color-surface-elevated) 74%, transparent 26%);
+  border: 1px solid color-mix(in srgb, var(--booking-line) 58%, transparent 42%);
+  border-radius: 7px;
+}
+
+.period-editor__availability strong {
+  font-size: 0.72rem;
+  font-weight: 780;
+}
+
+.period-editor__availability span {
+  color: var(--booking-muted);
+  font-size: 0.64rem;
+  font-weight: 620;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.period-editor__availability--available {
+  background: color-mix(in srgb, var(--color-success, #15803d) 8%, var(--color-surface) 92%);
+  border-color: color-mix(in srgb, var(--color-success, #15803d) 24%, var(--booking-line) 76%);
+}
+
+.period-editor__availability--available strong {
+  color: var(--color-success-strong, #166534);
+}
+
+.period-editor__availability--conflict {
+  background: color-mix(in srgb, var(--color-danger, #b42318) 6%, var(--color-surface) 94%);
+  border-color: color-mix(in srgb, var(--color-danger, #b42318) 22%, var(--booking-line) 78%);
+}
+
+.period-editor__availability--conflict strong {
+  color: var(--color-danger, #b42318);
+}
+
 .period-editor__summary .inline-editor__actions {
   justify-content: stretch;
   padding-top: 4px;
@@ -3343,6 +3384,25 @@
   .booking-command-strip {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+}
+
+@media (max-width: 920px) {
+  .booking-sheet__body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .booking-overview {
+    padding-right: 0;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--booking-line) 56%, transparent 44%);
+  }
+
+  .booking-workspace .period-editor__body {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 420px;
   }
 }
 

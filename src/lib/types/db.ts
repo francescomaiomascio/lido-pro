@@ -42,6 +42,9 @@ import type {
   BookingFolioLinkRecord,
   BookingRegistryEventLinkInput,
   BookingRegistryEventLinkRecord,
+  BookingCustomerPairingCandidateRecord,
+  BookingCustomerPairingDecision,
+  BookingCustomerPairingStatus,
   BookingRequestInput,
   BookingRequestRecord,
   BookingRequestStatus,
@@ -53,9 +56,55 @@ import type {
 
 export type DatabaseRuntime = 'native-sqlite' | 'web-persistent-sqlite' | 'browser-memory-fallback'
 
+export type DatabaseTableCategory =
+  | 'layout'
+  | 'booking'
+  | 'clienti'
+  | 'conti'
+  | 'pagamenti'
+  | 'articoli'
+  | 'registro'
+  | 'staff'
+  | 'sync-dev'
+  | 'system'
+
+export type DatabaseTableSummary = {
+  name: string
+  category: DatabaseTableCategory
+  rowCount: number
+}
+
+export type DatabaseTableReadOptions = {
+  limit?: number
+  offset?: number
+}
+
+export type DatabaseTableRows = {
+  tableName: string
+  category: DatabaseTableCategory
+  rowCount: number
+  limit: number
+  offset: number
+  rows: Record<string, unknown>[]
+  refreshedAt: string
+}
+
+export type DatabaseDiagnostics = {
+  runtime: DatabaseRuntime
+  databaseName: string
+  schemaVersion: number
+  tables: DatabaseTableSummary[]
+  totalVisibleRows: number
+  refreshedAt: string
+}
+
 export type BeachDatabaseAdapter = {
   runtime: DatabaseRuntime
   initialize(): Promise<void>
+  getDatabaseDiagnostics(): Promise<DatabaseDiagnostics>
+  listDatabaseTables(): Promise<DatabaseTableSummary[]>
+  getTableRowCount(tableName: string): Promise<number>
+  readTableRows(tableName: string, options?: DatabaseTableReadOptions): Promise<DatabaseTableRows>
   getActiveLayout(): Promise<BeachLayout>
   getBeachItems(layoutId: string): Promise<BeachItem[]>
   updateBeachItemStatus(itemId: string, status: BeachItemStatus): Promise<void>
@@ -125,9 +174,22 @@ export type BeachDatabaseAdapter = {
   getUpcomingReservationsForItem(itemId: string, limit?: number): Promise<Reservation[]>
   listBookingRequests(): Promise<BookingRequestRecord[]>
   createBookingRequest(input: BookingRequestInput): Promise<BookingRequestRecord>
+  getBookingRequestById(requestId: string): Promise<BookingRequestRecord | null>
   updateBookingRequestStatus(
     requestId: string,
     status: BookingRequestStatus,
+  ): Promise<BookingRequestRecord>
+  listPairingCandidates(requestId: string): Promise<BookingCustomerPairingCandidateRecord[]>
+  replacePairingCandidates(
+    requestId: string,
+    candidates: BookingCustomerPairingCandidateRecord[],
+  ): Promise<BookingCustomerPairingCandidateRecord[]>
+  updateBookingRequestPairingStatus(
+    requestId: string,
+    pairingStatus: BookingCustomerPairingStatus,
+  ): Promise<BookingRequestRecord>
+  resolveBookingRequestPairing(
+    decision: BookingCustomerPairingDecision,
   ): Promise<BookingRequestRecord>
   listBookingStatusEvents(filters?: {
     reservationId?: string

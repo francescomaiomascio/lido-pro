@@ -7,6 +7,7 @@
   import type { TariffIncludedItem } from '../../lib/types/extraItem'
   import type { ReservationInput } from '../../lib/types/reservation'
   import type { SavePeriodAndEnsureAccountInput } from '../../lib/services/bookingFlowService'
+  import type { OperatorBookingValidationResult } from '../../lib/booking/operatorBookingService'
   import type { AccountLedger, ReservationSummary } from '../../lib/types/reservationSummary'
   import type { PriceSuggestion } from '../../lib/types/tariff'
   import BookingPanelHeader from './BookingPanelHeader.svelte'
@@ -54,6 +55,7 @@
     onCreateReservation,
     onUpdateReservation,
     onSavePeriodAndEnsureAccount,
+    onValidatePeriod,
     onCancelReservation,
     onAddExtraItem,
     onRemoveExtraItem,
@@ -97,6 +99,7 @@
     onCreateReservation: (input: ReservationInput) => void | Promise<void>
     onUpdateReservation: (reservationId: string, input: ReservationInput) => void | Promise<void>
     onSavePeriodAndEnsureAccount: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => void | Promise<void>
+    onValidatePeriod: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => Promise<OperatorBookingValidationResult>
     onCancelReservation: (reservationId: string) => void | Promise<void>
     onAddExtraItem: (accountId: string, input: AccountExtraItemInput) => void | Promise<void>
     onRemoveExtraItem: (extraItemId: string) => void | Promise<void>
@@ -239,6 +242,7 @@
       {onUpdateAccountTotal}
       {onAddPayment}
       {onSavePeriodAndEnsureAccount}
+      {onValidatePeriod}
       {onAddExtraItem}
       {onRemoveExtraItem}
     />

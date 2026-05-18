@@ -7,6 +7,9 @@ import type {
   BookingFolioLinkRecord,
   BookingRegistryEventLinkInput,
   BookingRegistryEventLinkRecord,
+  BookingCustomerPairingCandidateRecord,
+  BookingCustomerPairingDecision,
+  BookingCustomerPairingStatus,
   BookingRequestInput,
   BookingRequestRecord,
   BookingRequestStatus,
@@ -27,11 +30,43 @@ export const createBookingRequest = async (
   return getBeachDatabase().createBookingRequest(input)
 }
 
+export const getBookingRequestById = async (
+  requestId: string,
+): Promise<BookingRequestRecord | null> => {
+  return getBeachDatabase().getBookingRequestById(requestId)
+}
+
 export const updateBookingRequestStatus = async (
   requestId: string,
   status: BookingRequestStatus,
 ): Promise<BookingRequestRecord> => {
   return getBeachDatabase().updateBookingRequestStatus(requestId, status)
+}
+
+export const listPairingCandidates = async (
+  requestId: string,
+): Promise<BookingCustomerPairingCandidateRecord[]> => {
+  return getBeachDatabase().listPairingCandidates(requestId)
+}
+
+export const replacePairingCandidates = async (
+  requestId: string,
+  candidates: BookingCustomerPairingCandidateRecord[],
+): Promise<BookingCustomerPairingCandidateRecord[]> => {
+  return getBeachDatabase().replacePairingCandidates(requestId, candidates)
+}
+
+export const updateBookingRequestPairingStatus = async (
+  requestId: string,
+  pairingStatus: BookingCustomerPairingStatus,
+): Promise<BookingRequestRecord> => {
+  return getBeachDatabase().updateBookingRequestPairingStatus(requestId, pairingStatus)
+}
+
+export const resolveBookingRequestPairing = async (
+  decision: BookingCustomerPairingDecision,
+): Promise<BookingRequestRecord> => {
+  return getBeachDatabase().resolveBookingRequestPairing(decision)
 }
 
 export const listBookingStatusEvents = async (filters?: {

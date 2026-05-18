@@ -19,6 +19,13 @@ This map describes ownership by folder and expected change scope. It is a reposi
 | `android/` | Capacitor Android native shell and Android build configuration. Keep Android source/config; ignore build output. |
 | `src-tauri/` | Tauri Desktop shell, Rust entrypoint, Tauri configuration, permissions, and desktop icons. Keep source/config/icons; ignore generated `target/` and schema output. |
 
+## Local Tooling Scripts
+
+| Path | Ownership |
+| --- | --- |
+| `scripts/tauri-dev.sh` | Tauri desktop development launcher used by `npm run app:dev`. Extend this script for local Linux WebKitGTK or shell environment fixes instead of changing the product runtime. |
+| `scripts/cap-open-android.sh` | Android Studio launcher resolver used by `npm run cap:open:android`. Extend this script for Android Studio path detection instead of duplicating launcher logic. |
+
 ## Generated And Runtime Output
 
 | Path or Pattern | Policy |

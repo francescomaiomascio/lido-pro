@@ -2,16 +2,24 @@
   import { reservationTypeLabels } from '../../../lib/format/reservationLabels'
   import { getDefaultDailyPeriod, getDefaultSeasonalPeriod, isDateRangeValid } from '../../../lib/reservations/periodRules'
   import { businessConfig } from '../../../lib/config/appConfig'
+  import type { OperatorBookingValidationResult } from '../../../lib/booking/operatorBookingService'
   import type { BeachItemAssignedCustomer } from '../../../lib/types/customer'
   import type { Reservation, ReservationInput, ReservationType } from '../../../lib/types/reservation'
   import ActionActivity from '../../loading/ActionActivity.svelte'
 
-  let { itemId, assignedCustomer, reservation, accountId, saving, onSave, onClose }: {
+  let { itemId, assignedCustomer, reservation, accountId, saving, onValidate, onSave, onClose }: {
     itemId: string
     assignedCustomer: BeachItemAssignedCustomer
     reservation: Reservation | null
     accountId: string | null
     saving: boolean
+    onValidate: (input: {
+      reservationId?: string | null
+      reservationType: ReservationType
+      startDate: string
+      endDate: string
+      manualAmountCents?: number | null
+    }) => Promise<OperatorBookingValidationResult>
     onSave: (reservationId: string | null, input: ReservationInput) => void | Promise<void>
     onClose: () => void
   } = $props()
@@ -23,6 +31,9 @@
   let calendarMonth = $state('')
   let dailySelectionPhase = $state<'start' | 'end'>('start')
   let error: string | null = $state(null)
+  let validation: OperatorBookingValidationResult | null = $state(null)
+  let validationLoading = $state(false)
+  let validationToken = 0
 
   const monthNames = [
     'gennaio',
@@ -106,6 +117,29 @@
     })
   })
 
+  const availabilityTone = $derived.by(() => {
+    if (validationLoading) return 'checking'
+    if (!validation) return 'unknown'
+    return validation.valid ? 'available' : 'conflict'
+  })
+
+  const availabilityLabel = $derived.by(() => {
+    if (validationLoading) return 'Verifica disponibilità'
+    if (!validation) return 'Verifica disponibilità'
+    if (validation.valid) return 'Disponibile'
+    if (validation.errors.includes('unavailable_period')) return 'Conflitto disponibilità'
+    return 'Verifica disponibilità'
+  })
+
+  const availabilityDetail = $derived.by(() => {
+    const conflict = validation?.confirmability?.conflicts[0] ?? validation?.availability?.conflicts[0]
+    if (!conflict) return validation?.valid ? 'Periodo libero per questo posto.' : 'Controllo locale sul periodo selezionato.'
+    if (conflict.type === 'overlapping_reservation') return 'Periodo già occupato.'
+    if (conflict.type === 'maintenance') return 'Posto in manutenzione.'
+    if (conflict.type === 'active_lock') return 'Periodo bloccato da una richiesta attiva.'
+    return conflict.message
+  })
+
   const moveCalendarMonth = (delta: number) => {
     const base = calendarMonth ? toDate(`${calendarMonth}-01`) : toDate(startDate || getDefaultDailyPeriod().startDate)
     base.setMonth(base.getMonth() + delta)
@@ -155,9 +189,62 @@
     error = null
   })
 
+  $effect(() => {
+    itemId
+    assignedCustomer.customer.id
+    reservation?.id
+    reservationType
+    startDate
+    endDate
+
+    if (!isDateRangeValid(startDate, endDate)) {
+      validation = null
+      return
+    }
+
+    const token = ++validationToken
+    validationLoading = true
+    onValidate({
+      reservationId: reservation?.id ?? null,
+      reservationType,
+      startDate,
+      endDate,
+      manualAmountCents: null,
+    })
+      .then((result) => {
+        if (token === validationToken) {
+          validation = result
+        }
+      })
+      .catch(() => {
+        if (token === validationToken) {
+          validation = null
+        }
+      })
+      .finally(() => {
+        if (token === validationToken) {
+          validationLoading = false
+        }
+      })
+  })
+
   const submit = async () => {
     if (!isDateRangeValid(startDate, endDate)) {
       error = 'Periodo non valido'
+      return
+    }
+    const validationResult = await onValidate({
+      reservationId: reservation?.id ?? null,
+      reservationType,
+      startDate,
+      endDate,
+      manualAmountCents: null,
+    })
+    validation = validationResult
+    if (!validationResult.valid) {
+      error = validationResult.errors.includes('unavailable_period')
+        ? 'Periodo già occupato'
+        : 'Verifica disponibilità non superata'
       return
     }
     await onSave(reservation?.id ?? null, {
@@ -241,9 +328,13 @@
         <small>Stagionale</small>
       {/if}
       <p class="inline-editor__hint">Il dovuto viene calcolato nel conto e resta modificabile.</p>
+      <p class={`period-editor__availability period-editor__availability--${availabilityTone}`}>
+        <strong>{availabilityLabel}</strong>
+        <span>{availabilityDetail}</span>
+      </p>
       {#if error}<p class="inline-editor__error">{error}</p>{/if}
       <div class="inline-editor__actions">
-        <button type="button" disabled={saving} onclick={submit}>
+        <button type="button" disabled={saving || validation?.valid === false} onclick={submit}>
           {#if saving}
             <ActionActivity label="Salvataggio periodo" />
           {:else}

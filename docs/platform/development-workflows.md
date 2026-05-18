@@ -28,8 +28,13 @@ Tauri and the optional browser preview use the same endpoint. Browser preview is
 | `npm run dev:server` | Vite server only on `http://localhost:5173`. |
 | `npm run web:dev` | Alias for server-only web preview. |
 | `npm run dev` | Backward-compatible alias for `npm run dev:server`. |
+| `npm run cap:sync:android` | Build and sync the Vite output into the Capacitor Android shell. |
+| `npm run cap:open:android` | Open the Android shell through the repository Android Studio launcher resolver. |
+| `npm run cap:run:android` | Build, sync, install, and run on an available Android device or emulator. |
 
 Do not run `npm run dev` and `npm run desktop:dev` separately for normal app development. Use `npm run app:dev` so there is one Vite server and one Tauri desktop shell attached to it.
+
+On Linux, `npm run app:dev` runs through `scripts/tauri-dev.sh`. The helper preserves the normal Tauri workflow while applying local WebKitGTK/Wayland runtime environment fixes when needed.
 
 ## Browser Preview
 
@@ -58,8 +63,20 @@ Then restart:
 npm run app:dev
 ```
 
+## Linux Wayland / WebKitGTK
+
+If Tauri exits with a WebKitGTK internal error or a Wayland protocol dispatch error, use the canonical command:
+
+```sh
+npm run app:dev
+```
+
+The repository launcher sets `WEBKIT_DISABLE_DMABUF_RENDERER=1` on Linux and uses `GDK_BACKEND=x11` under Wayland when an X display is available. To debug without the wrapper, run `npm run tauri:dev` directly.
+
 ## Validation Notes
 
 Use `npm run dev:server` only when debugging the frontend server itself. Use `npm run app:dev` for the real desktop development loop.
 
 Responsive browser inspection can use `http://localhost:5173`, but final native validation must happen in Tauri Desktop, Android Studio/device, and Xcode/iOS Simulator or device where applicable.
+
+For Android-specific setup, launcher resolution, tablet emulator use, and module troubleshooting, see [Android Capacitor workflow](android-capacitor-workflow.md).

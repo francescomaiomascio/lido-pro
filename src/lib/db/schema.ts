@@ -1,5 +1,5 @@
 export const DATABASE_NAME = 'beach_bdf.db'
-export const SCHEMA_VERSION = 13
+export const SCHEMA_VERSION = 14
 
 export const CREATE_SCHEMA_SQL = `
 PRAGMA foreign_keys = ON;
@@ -167,6 +167,9 @@ CREATE TABLE IF NOT EXISTS booking_requests (
   source TEXT NOT NULL,
   status TEXT NOT NULL,
   pairing_status TEXT NOT NULL,
+  matched_customer_id TEXT,
+  pairing_decision_json TEXT,
+  pairing_resolved_at TEXT,
   customer_payload_json TEXT NOT NULL,
   requested_period_json TEXT NOT NULL,
   requested_item_id TEXT,
@@ -179,6 +182,19 @@ CREATE TABLE IF NOT EXISTS booking_requests (
   sync_state TEXT,
   remote_id TEXT,
   version INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS booking_customer_pairing_candidates (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL,
+  existing_customer_id TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  confidence TEXT NOT NULL,
+  reasons_json TEXT NOT NULL,
+  matched_fields_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY(request_id) REFERENCES booking_requests(id),
+  FOREIGN KEY(existing_customer_id) REFERENCES customers(id)
 );
 
 CREATE TABLE IF NOT EXISTS booking_status_events (

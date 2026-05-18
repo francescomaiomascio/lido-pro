@@ -17,9 +17,12 @@ This directory contains product, platform, repository, legal, commercial, archit
 
 ## Platform References
 
+- [Android Capacitor workflow](platform/android-capacitor-workflow.md)
 - [Responsive device matrix](platform/responsive-device-matrix.md)
 - [UI responsive checklist](platform/ui-responsive-checklist.md)
 - [Development workflows](platform/development-workflows.md)
+- [Booking customer pairing](architecture/booking-customer-pairing.md)
+- [Operator booking flow](architecture/operator-booking-flow.md)
 - [Language policy](repo/language-policy.md)
 
 ## Canonical Product Language

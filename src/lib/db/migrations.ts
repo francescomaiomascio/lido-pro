@@ -442,4 +442,23 @@ CREATE INDEX IF NOT EXISTS idx_beach_layout_asset_metrics_version ON beach_layou
       );
     `,
   },
+  {
+    version: 14,
+    sql: `
+      -- Runtime-safe booking request ALTERs are also guarded in sqliteAdapter.ensureRuntimeColumns.
+
+      CREATE TABLE IF NOT EXISTS booking_customer_pairing_candidates (
+        id TEXT PRIMARY KEY,
+        request_id TEXT NOT NULL,
+        existing_customer_id TEXT NOT NULL,
+        score INTEGER NOT NULL,
+        confidence TEXT NOT NULL,
+        reasons_json TEXT NOT NULL,
+        matched_fields_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(request_id) REFERENCES booking_requests(id),
+        FOREIGN KEY(existing_customer_id) REFERENCES customers(id)
+      );
+    `,
+  },
 ] as const

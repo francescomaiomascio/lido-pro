@@ -2,6 +2,7 @@
   import { getBeachItemStatusLabel, getBeachItemTypeLabel } from '../../lib/format/beachLabels'
   import { buildOperationalRows } from '../../lib/operational/operationalRows'
   import type { SavePeriodAndEnsureAccountInput } from '../../lib/services/bookingFlowService'
+  import type { OperatorBookingValidationResult } from '../../lib/booking/operatorBookingService'
   import { requestOpenRegistry } from '../../lib/state/registryFilters'
   import type { OperationalPanelTab } from '../../lib/state/operationalPanelState'
   import type { AccountInput, Payment, PaymentMethod } from '../../lib/types/account'
@@ -20,7 +21,7 @@
   let {
     item, activeTab, saving, confirmation: _confirmation, events, payments, priceSuggestion, reservationSummary, operationalError, extraCatalog, accountExtras, includedEquipment,
     onTabChange, onToggleExpand, onAssignCustomer, onUnassignCustomer, onCreateAccount, onUpdateAccountTotal,
-    onAddPayment, onCreateReservation, onUpdateReservation, onSavePeriodAndEnsureAccount, onAddExtraItem, onRemoveExtraItem,
+    onAddPayment, onCreateReservation, onUpdateReservation, onSavePeriodAndEnsureAccount, onValidatePeriod, onAddExtraItem, onRemoveExtraItem,
   }: {
     item: BeachItem
     activeTab: OperationalPanelTab
@@ -44,6 +45,7 @@
     onCreateReservation: (input: ReservationInput) => void | Promise<void>
     onUpdateReservation: (reservationId: string, input: ReservationInput) => void | Promise<void>
     onSavePeriodAndEnsureAccount: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => void | Promise<void>
+    onValidatePeriod: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => Promise<OperatorBookingValidationResult>
     onAddExtraItem: (accountId: string, input: AccountExtraItemInput) => void | Promise<void>
     onRemoveExtraItem: (id: string) => void | Promise<void>
   } = $props()
@@ -80,7 +82,7 @@
       {#if row.key === 'customer'}
         <CustomerInlineEditor assignedCustomer={item.assignedCustomer ?? null} {saving} onAssign={onAssignCustomer} onRemove={onUnassignCustomer} onClose={() => onTabChange('overview')} />
       {:else if row.key === 'period' && item.assignedCustomer}
-        <PeriodInlineEditor itemId={item.id} assignedCustomer={item.assignedCustomer} reservation={effectiveReservation} accountId={item.activeAccount?.id ?? null} {saving} onSave={async (reservationId, input) => {
+        <PeriodInlineEditor itemId={item.id} assignedCustomer={item.assignedCustomer} reservation={effectiveReservation} accountId={item.activeAccount?.id ?? null} {saving} onValidate={onValidatePeriod} onSave={async (reservationId, input) => {
           await onSavePeriodAndEnsureAccount({
             reservationId,
             reservationType: input.reservationType,

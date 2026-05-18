@@ -226,19 +226,19 @@ Current reality:
 
 - Runtime has `Reservation`, `reservationService`, `bookingFlowService`, item/date availability, and operator flow selected item -> customer -> period -> account.
 - Booking is not yet centralized.
-- No BookingRequest runtime.
-- No customer pairing runtime.
-- No pricing snapshot persistence.
-- No folio/registry event link tables.
+- `BookingRequest` persistence exists as a local-first foundation for future inbox/web/client/import flows.
+- Customer pairing runtime exists for deterministic request-to-customer candidate scoring and explicit operator decisions.
+- Pricing snapshot, folio link, registry link, conflict, status event, and availability lock persistence exists as additive BOOKING.2 tables.
+- Confirmation flow still uses existing `reservations`; request inbox and conversion are not active yet.
 
 Consegne:
 
 - [DONE] BOOKING.1 - Domain Contract / Usage Modes.
 - [DONE] BOOKING.2 - SQLite Tables / Local-first Schema. Existing `reservations` remain current booking persistence; supplementary request/event/conflict/lock/snapshot/link tables are additive.
 - [DONE] BOOKING.3 - Availability Engine. Local-first service evaluates availability from existing `reservations` and `availability_locks`; no UI/web/client flow yet.
-- [CURRENT] BOOKING.4 - Customer Pairing.
-- [TODO] BOOKING.5 - Operator Booking Flow.
-- [TODO] BOOKING.6 - Client-first Booking Flow.
+- [DONE] BOOKING.4 - Customer Pairing. Local-first engine scores request payloads against existing customers, stores pairing candidates, and records explicit operator decisions without silent customer creation.
+- [DONE] BOOKING.5 - Operator Booking Flow. Existing Spiaggia selected-item workflow is backed by `operatorBookingService`, validates availability before writes, and preserves current reservation/account/payment/extras behavior.
+- [CURRENT] BOOKING.6 - Client-first Booking Flow.
 - [TODO] BOOKING.7 - Articoli Pricing Snapshot.
 - [TODO] BOOKING.8 - Folio / Conto Engine.
 - [TODO] BOOKING.9 - Registro Event Integration.
@@ -262,7 +262,7 @@ Current reality:
 - Customer create/update/search exists.
 - Assignment exists.
 - Customer profile aggregates assignment, reservation, account, payments, extras, and history.
-- No request pairing/merge workflow yet.
+- Request pairing foundation exists in Booking; no customer-facing merge UI or inbox workflow exists yet.
 
 Consegne:
 

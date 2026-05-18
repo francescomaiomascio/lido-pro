@@ -41,9 +41,14 @@
   import {
     assignCustomerAndAdvance,
     calculateIncludedEquipmentForItem,
-    savePeriodAndEnsureAccount,
     type SavePeriodAndEnsureAccountInput,
   } from '../lib/services/bookingFlowService'
+  import {
+    cancelOperatorBooking,
+    confirmOperatorBooking,
+    validateOperatorBookingDraft,
+    type OperatorBookingValidationResult,
+  } from '../lib/booking/operatorBookingService'
   import {
     addPaymentAndReload,
     closeAccountAndReload,
@@ -51,11 +56,6 @@
     loadPaymentsForAccount,
     updateAccountTotalAndReload,
   } from '../lib/services/accountService'
-  import {
-    cancelReservationAndReload,
-    createReservationAndReload,
-    updateReservationAndReload,
-  } from '../lib/services/reservationService'
   import { suggestPriceForBeachItem } from '../lib/services/tariffService'
   import {
     addAccountExtraItemAndReload,
@@ -632,12 +632,22 @@
     confirmation = null
 
     try {
-      const state = await createReservationAndReload(input)
-      layout = state.layout
-      items = state.items
-      runtime = state.runtime
+      if (!selectedItem.assignedCustomer) {
+        throw new Error('Cliente richiesto prima della prenotazione.')
+      }
+      const result = await confirmOperatorBooking({
+        item: selectedItem,
+        assignedCustomer: selectedItem.assignedCustomer,
+        reservationType: input.reservationType,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        manualAmountCents: null,
+      })
+      layout = result.state.layout
+      items = result.state.items
+      runtime = result.state.runtime
       showToast('Prenotazione creata')
-      const nextItem = state.items.find((item) => item.id === selectedItem.id) ?? null
+      const nextItem = result.state.items.find((item) => item.id === selectedItem.id) ?? null
       await loadSelectedPriceSuggestion(nextItem)
       await loadSelectedOperationalReadModels(nextItem)
       await loadSelectedIncludedEquipment(nextItem)
@@ -661,12 +671,23 @@
     confirmation = null
 
     try {
-      const state = await updateReservationAndReload(reservationId, input)
-      layout = state.layout
-      items = state.items
-      runtime = state.runtime
+      if (!selectedItem.assignedCustomer) {
+        throw new Error('Cliente richiesto prima della prenotazione.')
+      }
+      const result = await confirmOperatorBooking({
+        item: selectedItem,
+        assignedCustomer: selectedItem.assignedCustomer,
+        reservationId,
+        reservationType: input.reservationType,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        manualAmountCents: null,
+      })
+      layout = result.state.layout
+      items = result.state.items
+      runtime = result.state.runtime
       showToast('Prenotazione aggiornata')
-      const nextItem = state.items.find((item) => item.id === selectedItem.id) ?? null
+      const nextItem = result.state.items.find((item) => item.id === selectedItem.id) ?? null
       await loadSelectedPriceSuggestion(nextItem)
       await loadSelectedOperationalReadModels(nextItem)
       await loadSelectedIncludedEquipment(nextItem)
@@ -699,12 +720,12 @@
     confirmation = null
 
     try {
-      const state = await cancelReservationAndReload(reservationId)
-      layout = state.layout
-      items = state.items
-      runtime = state.runtime
+      const result = await cancelOperatorBooking(reservationId)
+      layout = result.state.layout
+      items = result.state.items
+      runtime = result.state.runtime
       confirmation = 'Prenotazione annullata'
-      const nextItem = state.items.find((item) => item.id === selectedItemId) ?? null
+      const nextItem = result.state.items.find((item) => item.id === selectedItemId) ?? null
       await loadSelectedPriceSuggestion(nextItem)
       await loadSelectedOperationalReadModels(nextItem)
     } catch (error: unknown) {
@@ -726,7 +747,7 @@
     confirmation = null
 
     try {
-      const result = await savePeriodAndEnsureAccount({
+      const result = await confirmOperatorBooking({
         ...input,
         item: selectedItem,
         assignedCustomer: selectedItem.assignedCustomer,
@@ -747,6 +768,19 @@
     } finally {
       isSaving = false
     }
+  }
+
+  const validatePeriodForSelection = async (
+    input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>,
+  ): Promise<OperatorBookingValidationResult> => {
+    return validateOperatorBookingDraft({
+      item: selectedItem,
+      assignedCustomer: selectedItem?.assignedCustomer ?? null,
+      reservationId: input.reservationId,
+      reservationType: input.reservationType,
+      startDate: input.startDate,
+      endDate: input.endDate,
+    })
   }
 
   onMount(() => {
@@ -979,6 +1013,7 @@
       onCreateReservation={createReservationForSelection}
       onUpdateReservation={updateReservationForSelection}
       onSavePeriodAndEnsureAccount={savePeriodAndAccountForSelection}
+      onValidatePeriod={validatePeriodForSelection}
       onCancelReservation={cancelReservationForSelection}
       onAddExtraItem={addExtraItemForSelection}
       onRemoveExtraItem={removeExtraItemForSelection}

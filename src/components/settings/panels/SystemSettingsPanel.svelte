@@ -12,6 +12,7 @@
   import type { BeachLayout } from '../../../lib/types/beach'
   import type { DatabaseRuntime } from '../../../lib/types/db'
   import ActionActivity from '../../loading/ActionActivity.svelte'
+  import LocalDatabaseInspector from '../dev/LocalDatabaseInspector.svelte'
 
   let {
     language,
@@ -41,6 +42,7 @@
     | 'local-data'
     | 'backup'
     | 'diagnostics'
+    | 'database-inspector'
     | 'application'
 
   type SystemRow = {
@@ -83,6 +85,15 @@
     { id: 'local-data', label: 'Dati locali', description: 'Database, schema e storage locale.' },
     { id: 'backup', label: 'Backup e sicurezza', description: 'Backup, export e azioni protette.' },
     { id: 'diagnostics', label: 'Diagnostica', description: 'Stato tecnico della sessione.' },
+    ...(import.meta.env.DEV
+      ? [
+          {
+            id: 'database-inspector' as const,
+            label: 'Database locale',
+            description: 'Inspector temporaneo di sviluppo.',
+          },
+        ]
+      : []),
     { id: 'application', label: 'Applicazione', description: 'Package, versione e canale.' },
   ]
 
@@ -251,6 +262,17 @@
         { label: 'Canale', value: 'Locale' },
       ],
       note: 'Diagnostica tecnica locale, non monitoraggio cloud.',
+    },
+    'database-inspector': {
+      eyebrow: 'Dev read-only',
+      title: 'Database locale',
+      summary: 'Inspector temporaneo per leggere tabelle locali durante lo sviluppo.',
+      facts: [
+        { label: 'Modalità', value: 'Sola lettura', tone: 'warning' },
+        { label: 'Adapter', value: runtime ?? 'Non disponibile' },
+        { label: 'Schema', value: `v${SCHEMA_VERSION}` },
+      ],
+      note: 'Non espone SQL libero, reset, seed o azioni distruttive.',
     },
     application: {
       eyebrow: 'Applicazione',
@@ -440,6 +462,8 @@
         {@render dangerZone()}
       {:else if activeSection === 'diagnostics'}
         {@render settingsGroup('Diagnostica tecnica', diagnosticsRows)}
+      {:else if activeSection === 'database-inspector'}
+        <LocalDatabaseInspector />
       {:else if activeSection === 'application'}
         {@render settingsGroup('Applicazione', applicationRows)}
       {/if}
@@ -485,7 +509,11 @@
       </div>
     </aside>
 
-    <main class="native-system-content" aria-label={activeSectionMeta.label}>
+    <main
+      class="native-system-content"
+      class:native-system-content--database-inspector={activeSection === 'database-inspector'}
+      aria-label={activeSectionMeta.label}
+    >
       <button type="button" class="native-system-back" onclick={showSectionList}>
         Sistema
       </button>

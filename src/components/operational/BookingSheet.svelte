@@ -6,6 +6,7 @@
   import { paymentMethodLabels } from '../../lib/format/accountLabels'
   import { reservationTypeLabels } from '../../lib/format/reservationLabels'
   import type { SavePeriodAndEnsureAccountInput } from '../../lib/services/bookingFlowService'
+  import type { OperatorBookingValidationResult } from '../../lib/booking/operatorBookingService'
   import { requestOpenRegistry } from '../../lib/state/registryFilters'
   import type { OperationalPanelTab } from '../../lib/state/operationalPanelState'
   import type { OperationalPanelSize } from '../../lib/state/operationalPanelState'
@@ -45,6 +46,7 @@
     onUpdateAccountTotal,
     onAddPayment,
     onSavePeriodAndEnsureAccount,
+    onValidatePeriod,
     onAddExtraItem,
     onRemoveExtraItem,
   }: {
@@ -69,6 +71,7 @@
     onUpdateAccountTotal: (accountId: string, totalAmountCents: number) => void | Promise<void>
     onAddPayment: (accountId: string, amountCents: number, paymentMethod: PaymentMethod, note: string) => void | Promise<void>
     onSavePeriodAndEnsureAccount: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => void | Promise<void>
+    onValidatePeriod: (input: Omit<SavePeriodAndEnsureAccountInput, 'item' | 'assignedCustomer'>) => Promise<OperatorBookingValidationResult>
     onAddExtraItem: (accountId: string, input: AccountExtraItemInput) => void | Promise<void>
     onRemoveExtraItem: (id: string) => void | Promise<void>
   } = $props()
@@ -292,6 +295,7 @@
           reservation={effectiveReservation}
           accountId={item.activeAccount?.id ?? null}
           {saving}
+          onValidate={onValidatePeriod}
           onSave={async (reservationId, input) => {
             await onSavePeriodAndEnsureAccount({
               reservationId,

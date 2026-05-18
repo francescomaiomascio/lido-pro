@@ -43,6 +43,13 @@ import type {
 } from '../types/extraItem'
 import type { BeachDatabaseAdapter } from '../types/db'
 import type {
+  DatabaseDiagnostics,
+  DatabaseTableCategory,
+  DatabaseTableReadOptions,
+  DatabaseTableRows,
+  DatabaseTableSummary,
+} from '../types/db'
+import type {
   AvailabilityLockInput,
   AvailabilityLockRecord,
   BookingConflictInput,
@@ -51,6 +58,9 @@ import type {
   BookingFolioLinkRecord,
   BookingRegistryEventLinkInput,
   BookingRegistryEventLinkRecord,
+  BookingCustomerPairingCandidateRecord,
+  BookingCustomerPairingDecision,
+  BookingCustomerPairingStatus,
   BookingRequestInput,
   BookingRequestRecord,
   BookingRequestStatus,
@@ -342,6 +352,9 @@ type BookingRequestRow = {
   source: BookingRequestRecord['source']
   status: BookingRequestRecord['status']
   pairing_status: BookingRequestRecord['pairingStatus']
+  matched_customer_id: string | null
+  pairing_decision_json: string | null
+  pairing_resolved_at: string | null
   customer_payload_json: string
   requested_period_json: string
   requested_item_id: string | null
@@ -354,6 +367,17 @@ type BookingRequestRow = {
   sync_state: BookingRequestRecord['syncState']
   remote_id: string | null
   version: number
+}
+
+type BookingCustomerPairingCandidateRow = {
+  id: string
+  request_id: string
+  existing_customer_id: string
+  score: number
+  confidence: BookingCustomerPairingCandidateRecord['confidence']
+  reasons_json: string
+  matched_fields_json: string
+  created_at: string
 }
 
 type BookingStatusEventRow = {
@@ -453,6 +477,60 @@ type TariffRuleRow = {
 const nowIso = () => new Date().toISOString()
 const SQLITE_STORE_NAME = DATABASE_NAME.endsWith('.db') ? DATABASE_NAME.slice(0, -3) : DATABASE_NAME
 type PersistentSQLiteRuntime = 'native-sqlite' | 'web-persistent-sqlite'
+
+const DATABASE_TABLES: { name: string; category: DatabaseTableCategory }[] = [
+  { name: 'app_meta', category: 'system' },
+  { name: 'beach_layouts', category: 'layout' },
+  { name: 'layout_versions', category: 'layout' },
+  { name: 'beach_items', category: 'layout' },
+  { name: 'beach_item_status_events', category: 'layout' },
+  { name: 'beach_layout_versions', category: 'layout' },
+  { name: 'beach_layout_elements', category: 'layout' },
+  { name: 'beach_layout_rows', category: 'layout' },
+  { name: 'beach_layout_zones', category: 'layout' },
+  { name: 'beach_layout_distance_rules', category: 'layout' },
+  { name: 'beach_layout_asset_metrics', category: 'layout' },
+  { name: 'customers', category: 'clienti' },
+  { name: 'beach_item_customer_assignments', category: 'clienti' },
+  { name: 'accounts', category: 'conti' },
+  { name: 'payments', category: 'pagamenti' },
+  { name: 'payment_schedules', category: 'pagamenti' },
+  { name: 'payment_installments', category: 'pagamenti' },
+  { name: 'reservations', category: 'booking' },
+  { name: 'booking_requests', category: 'booking' },
+  { name: 'booking_customer_pairing_candidates', category: 'booking' },
+  { name: 'booking_status_events', category: 'booking' },
+  { name: 'booking_conflicts', category: 'booking' },
+  { name: 'availability_locks', category: 'booking' },
+  { name: 'pricing_snapshots', category: 'booking' },
+  { name: 'booking_folio_links', category: 'booking' },
+  { name: 'booking_registry_event_links', category: 'registro' },
+  { name: 'tariff_rules', category: 'articoli' },
+  { name: 'tariff_included_items', category: 'articoli' },
+  { name: 'extra_item_catalog', category: 'articoli' },
+  { name: 'account_extra_items', category: 'articoli' },
+]
+
+const DATABASE_TABLE_BY_NAME = new Map(DATABASE_TABLES.map((table) => [table.name, table]))
+
+const requireKnownDatabaseTable = (tableName: string) => {
+  const table = DATABASE_TABLE_BY_NAME.get(tableName)
+  if (!table) {
+    throw new Error('Tabella diagnostica non consentita.')
+  }
+  return table
+}
+
+const normalizeTableLimit = (limit?: number) => {
+  const normalized = Number(limit)
+  if (normalized === 250 || normalized === 500) return normalized
+  return 100
+}
+
+const normalizeTableOffset = (offset?: number) => Math.max(0, Math.trunc(offset ?? 0))
+
+const toDiagnosticRows = <T extends object>(rows: T[]): Record<string, unknown>[] =>
+  rows.map((row) => ({ ...row }) as Record<string, unknown>)
 
 const toLayout = (row: BeachLayoutRow): BeachLayout => ({
   id: row.id,
@@ -727,6 +805,9 @@ const toBookingRequest = (row: BookingRequestRow): BookingRequestRecord => ({
   source: row.source,
   status: row.status,
   pairingStatus: row.pairing_status,
+  matchedCustomerId: row.matched_customer_id,
+  pairingDecision: parseJsonField(row.pairing_decision_json, null),
+  pairingResolvedAt: row.pairing_resolved_at,
   customerPayload: parseJsonField(row.customer_payload_json, {}),
   requestedPeriod: parseJsonField(row.requested_period_json, {
     id: '',
@@ -744,6 +825,19 @@ const toBookingRequest = (row: BookingRequestRow): BookingRequestRecord => ({
   syncState: row.sync_state,
   remoteId: row.remote_id,
   version: row.version,
+})
+
+const toBookingCustomerPairingCandidate = (
+  row: BookingCustomerPairingCandidateRow,
+): BookingCustomerPairingCandidateRecord => ({
+  id: row.id,
+  requestId: row.request_id,
+  existingCustomerId: row.existing_customer_id,
+  score: row.score,
+  confidence: row.confidence,
+  reasons: parseJsonField(row.reasons_json, []),
+  matchedFields: parseJsonField(row.matched_fields_json, []),
+  createdAt: row.created_at,
 })
 
 const toBookingStatusEvent = (row: BookingStatusEventRow): BookingStatusEventRecord => ({
@@ -963,6 +1057,17 @@ const calculateAccountStatus = (
   return 'open'
 }
 
+const getPragmaTableColumnNames = (values: unknown[] | undefined): Set<string> => {
+  return new Set(
+    (values ?? [])
+      .map((row) => {
+        const record = row as Record<string, unknown>
+        return record.name ?? record.Name ?? record['1']
+      })
+      .filter((name): name is string => typeof name === 'string' && name.length > 0),
+  )
+}
+
 class NativeSQLiteAdapter implements BeachDatabaseAdapter {
   runtime: PersistentSQLiteRuntime
   private connection: SQLiteDBConnection | null = null
@@ -987,6 +1092,64 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await this.seedInitialExtraItemsIfMissing()
     await this.seedInitialIncludedItemsIfMissing()
     await this.persistWebStore()
+  }
+
+  async getDatabaseDiagnostics(): Promise<DatabaseDiagnostics> {
+    const tables = await this.listDatabaseTables()
+    return {
+      runtime: this.runtime,
+      databaseName: DATABASE_NAME,
+      schemaVersion: SCHEMA_VERSION,
+      tables,
+      totalVisibleRows: tables.reduce((sum, table) => sum + table.rowCount, 0),
+      refreshedAt: nowIso(),
+    }
+  }
+
+  async listDatabaseTables(): Promise<DatabaseTableSummary[]> {
+    const db = await this.getConnection()
+    const result = await db.query("SELECT name FROM sqlite_master WHERE type = 'table'")
+    const existingNames = new Set((result.values ?? []).map((row) => String((row as Record<string, unknown>).name)))
+    const tables = await Promise.all(
+      DATABASE_TABLES
+        .filter((table) => existingNames.has(table.name))
+        .map(async (table) => ({
+          ...table,
+          rowCount: await this.getTableRowCount(table.name),
+        })),
+    )
+    return tables
+  }
+
+  async getTableRowCount(tableName: string): Promise<number> {
+    requireKnownDatabaseTable(tableName)
+    const db = await this.getConnection()
+    const result = await db.query(`SELECT COUNT(*) AS count FROM "${tableName}"`)
+    return Number(result.values?.[0]?.count ?? 0)
+  }
+
+  async readTableRows(
+    tableName: string,
+    options: DatabaseTableReadOptions = {},
+  ): Promise<DatabaseTableRows> {
+    const table = requireKnownDatabaseTable(tableName)
+    const db = await this.getConnection()
+    const limit = normalizeTableLimit(options.limit)
+    const offset = normalizeTableOffset(options.offset)
+    const [rowCount, rowsResult] = await Promise.all([
+      this.getTableRowCount(tableName),
+      db.query(`SELECT * FROM "${tableName}" LIMIT ? OFFSET ?`, [limit, offset]),
+    ])
+
+    return {
+      tableName,
+      category: table.category,
+      rowCount,
+      limit,
+      offset,
+      rows: (rowsResult.values ?? []) as Record<string, unknown>[],
+      refreshedAt: nowIso(),
+    }
   }
 
   async getActiveLayout(): Promise<BeachLayout> {
@@ -2452,6 +2615,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     const db = await this.getConnection()
     const result = await db.query(
       `SELECT id, workspace_id, source, status, pairing_status, customer_payload_json,
+        matched_customer_id, pairing_decision_json, pairing_resolved_at,
         requested_period_json, requested_item_id, requested_item_type, requested_extras_json,
         converted_reservation_id, created_at, updated_at, deleted_at, sync_state, remote_id, version
        FROM booking_requests
@@ -2467,10 +2631,11 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     const id = input.id ?? createEntityId('booking-request')
     await db.run(
       `INSERT INTO booking_requests
-       (id, workspace_id, source, status, pairing_status, customer_payload_json,
+       (id, workspace_id, source, status, pairing_status, matched_customer_id,
+        pairing_decision_json, pairing_resolved_at, customer_payload_json,
         requested_period_json, requested_item_id, requested_item_type, requested_extras_json,
         converted_reservation_id, created_at, updated_at, deleted_at, sync_state, remote_id, version)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, NULL, 'local', NULL, 1)`,
+       VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?, ?, ?, NULL, ?, ?, NULL, 'local', NULL, 1)`,
       [
         id,
         input.workspaceId ?? null,
@@ -2490,6 +2655,11 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     return this.requireBookingRequest(requests, id)
   }
 
+  async getBookingRequestById(requestId: string): Promise<BookingRequestRecord | null> {
+    const requests = await this.listBookingRequests()
+    return requests.find((request) => request.id === requestId) ?? null
+  }
+
   async updateBookingRequestStatus(
     requestId: string,
     status: BookingRequestStatus,
@@ -2500,6 +2670,104 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
       [status, nowIso(), requestId],
     )
     return this.requireBookingRequest(await this.listBookingRequests(), requestId)
+  }
+
+  async listPairingCandidates(
+    requestId: string,
+  ): Promise<BookingCustomerPairingCandidateRecord[]> {
+    const db = await this.getConnection()
+    const result = await db.query(
+      `SELECT id, request_id, existing_customer_id, score, confidence, reasons_json,
+        matched_fields_json, created_at
+       FROM booking_customer_pairing_candidates
+       WHERE request_id = ?
+       ORDER BY score DESC, created_at ASC`,
+      [requestId],
+    )
+    return (result.values ?? []).map((row) =>
+      toBookingCustomerPairingCandidate(row as BookingCustomerPairingCandidateRow),
+    )
+  }
+
+  async replacePairingCandidates(
+    requestId: string,
+    candidates: BookingCustomerPairingCandidateRecord[],
+  ): Promise<BookingCustomerPairingCandidateRecord[]> {
+    const db = await this.getConnection()
+    await db.run('DELETE FROM booking_customer_pairing_candidates WHERE request_id = ?', [requestId])
+    if (candidates.length > 0) {
+      await db.executeSet(
+        candidates.map((candidate) => ({
+          statement: `INSERT INTO booking_customer_pairing_candidates
+            (id, request_id, existing_customer_id, score, confidence, reasons_json,
+             matched_fields_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          values: [
+            candidate.id,
+            requestId,
+            candidate.existingCustomerId,
+            candidate.score,
+            candidate.confidence,
+            serializeJsonField(candidate.reasons),
+            serializeJsonField(candidate.matchedFields),
+            candidate.createdAt,
+          ],
+        })),
+      )
+    }
+    return this.listPairingCandidates(requestId)
+  }
+
+  async updateBookingRequestPairingStatus(
+    requestId: string,
+    pairingStatus: BookingCustomerPairingStatus,
+  ): Promise<BookingRequestRecord> {
+    const db = await this.getConnection()
+    await db.run(
+      'UPDATE booking_requests SET pairing_status = ?, updated_at = ?, version = version + 1 WHERE id = ?',
+      [pairingStatus, nowIso(), requestId],
+    )
+    return this.requireBookingRequest(await this.listBookingRequests(), requestId)
+  }
+
+  async resolveBookingRequestPairing(
+    decision: BookingCustomerPairingDecision,
+  ): Promise<BookingRequestRecord> {
+    const db = await this.getConnection()
+    const decidedAt = decision.decidedAt ?? nowIso()
+    const pairingStatus: BookingCustomerPairingStatus =
+      decision.decision === 'match_existing'
+        ? 'matched_existing'
+        : decision.decision === 'create_new'
+          ? 'manually_resolved'
+          : decision.decision === 'reject'
+            ? 'rejected'
+            : 'unpaired'
+    const status: BookingRequestStatus | null = decision.decision === 'reject' ? 'rejected' : null
+
+    await db.run(
+      `UPDATE booking_requests
+       SET pairing_status = ?,
+           matched_customer_id = ?,
+           pairing_decision_json = ?,
+           pairing_resolved_at = ?,
+           status = COALESCE(?, status),
+           updated_at = ?,
+           version = version + 1
+       WHERE id = ?`,
+      [
+        pairingStatus,
+        decision.decision === 'match_existing' || decision.decision === 'create_new'
+          ? decision.existingCustomerId ?? null
+          : null,
+        serializeJsonField({ ...decision, decidedAt }),
+        decidedAt,
+        status,
+        nowIso(),
+        decision.requestId,
+      ],
+    )
+    return this.requireBookingRequest(await this.listBookingRequests(), decision.requestId)
   }
 
   async listBookingStatusEvents(filters: {
@@ -3582,7 +3850,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
 
   private async ensureRuntimeColumns(db: SQLiteDBConnection): Promise<void> {
     const tableInfo = await db.query('PRAGMA table_info(beach_items)')
-    const columns = new Set((tableInfo.values ?? []).map((row) => String(row.name)))
+    const columns = getPragmaTableColumnNames(tableInfo.values)
 
     if (!columns.has('operational_note')) {
       await db.execute('ALTER TABLE beach_items ADD COLUMN operational_note TEXT;')
@@ -3597,7 +3865,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     }
 
     const accountInfo = await db.query('PRAGMA table_info(accounts)')
-    const accountColumns = new Set((accountInfo.values ?? []).map((row) => String(row.name)))
+    const accountColumns = getPragmaTableColumnNames(accountInfo.values)
 
     if (!accountColumns.has('base_amount_cents')) {
       await db.execute('ALTER TABLE accounts ADD COLUMN base_amount_cents INTEGER NOT NULL DEFAULT 0;')
@@ -3609,7 +3877,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     }
 
     const extraCatalogInfo = await db.query('PRAGMA table_info(extra_item_catalog)')
-    const extraCatalogColumns = new Set((extraCatalogInfo.values ?? []).map((row) => String(row.name)))
+    const extraCatalogColumns = getPragmaTableColumnNames(extraCatalogInfo.values)
     const addExtraCatalogColumn = async (name: string, definition: string) => {
       if (!extraCatalogColumns.has(name)) {
         await db.execute(`ALTER TABLE extra_item_catalog ADD COLUMN ${name} ${definition};`)
@@ -3620,7 +3888,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await addExtraCatalogColumn('included_quantity_default', 'INTEGER NOT NULL DEFAULT 0')
 
     const layoutVersionsInfo = await db.query('PRAGMA table_info(beach_layout_versions)')
-    const layoutVersionColumns = new Set((layoutVersionsInfo.values ?? []).map((row) => String(row.name)))
+    const layoutVersionColumns = getPragmaTableColumnNames(layoutVersionsInfo.values)
     const addLayoutVersionColumn = async (name: string, definition: string) => {
       if (!layoutVersionColumns.has(name)) {
         await db.execute(`ALTER TABLE beach_layout_versions ADD COLUMN ${name} ${definition};`)
@@ -3632,7 +3900,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await addLayoutVersionColumn('margin_left_m', 'REAL DEFAULT 0.5')
 
     const layoutRowsInfo = await db.query('PRAGMA table_info(beach_layout_rows)')
-    const layoutRowColumns = new Set((layoutRowsInfo.values ?? []).map((row) => String(row.name)))
+    const layoutRowColumns = getPragmaTableColumnNames(layoutRowsInfo.values)
     const addLayoutRowColumn = async (name: string, definition: string) => {
       if (!layoutRowColumns.has(name)) {
         await db.execute(`ALTER TABLE beach_layout_rows ADD COLUMN ${name} ${definition};`)
@@ -3645,7 +3913,7 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await addLayoutRowColumn('distribution_axis', "TEXT DEFAULT 'x'")
 
     const reservationInfo = await db.query('PRAGMA table_info(reservations)')
-    const reservationColumns = new Set((reservationInfo.values ?? []).map((row) => String(row.name)))
+    const reservationColumns = getPragmaTableColumnNames(reservationInfo.values)
     const addReservationColumn = async (name: string, definition: string) => {
       if (!reservationColumns.has(name)) {
         await db.execute(`ALTER TABLE reservations ADD COLUMN ${name} ${definition};`)
@@ -3675,6 +3943,31 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
          OR (period_type = 'daily' AND reservation_type != 'daily')
          OR (folio_id IS NULL AND account_id IS NOT NULL);
     `)
+
+    const bookingRequestInfo = await db.query('PRAGMA table_info(booking_requests)')
+    const bookingRequestColumns = getPragmaTableColumnNames(bookingRequestInfo.values)
+    const addBookingRequestColumn = async (name: string, definition: string) => {
+      if (!bookingRequestColumns.has(name)) {
+        await db.execute(`ALTER TABLE booking_requests ADD COLUMN ${name} ${definition};`)
+      }
+    }
+    await addBookingRequestColumn('matched_customer_id', 'TEXT')
+    await addBookingRequestColumn('pairing_decision_json', 'TEXT')
+    await addBookingRequestColumn('pairing_resolved_at', 'TEXT')
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS booking_customer_pairing_candidates (
+        id TEXT PRIMARY KEY,
+        request_id TEXT NOT NULL,
+        existing_customer_id TEXT NOT NULL,
+        score INTEGER NOT NULL,
+        confidence TEXT NOT NULL,
+        reasons_json TEXT NOT NULL,
+        matched_fields_json TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(request_id) REFERENCES booking_requests(id),
+        FOREIGN KEY(existing_customer_id) REFERENCES customers(id)
+      );
+    `)
   }
 }
 
@@ -3689,6 +3982,7 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
   private payments: Payment[] = []
   private reservations: Reservation[] = []
   private bookingRequests: BookingRequestRecord[] = []
+  private pairingCandidates: BookingCustomerPairingCandidateRecord[] = []
   private bookingStatusEvents: BookingStatusEventRecord[] = []
   private bookingConflicts: BookingConflictRecord[] = []
   private availabilityLocks: AvailabilityLockRecord[] = []
@@ -3710,6 +4004,49 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     await this.seedInitialTariffsIfMissing()
     await this.seedInitialExtraItemsIfMissing()
     await this.seedInitialIncludedItemsIfMissing()
+  }
+
+  async getDatabaseDiagnostics(): Promise<DatabaseDiagnostics> {
+    const tables = await this.listDatabaseTables()
+    return {
+      runtime: this.runtime,
+      databaseName: DATABASE_NAME,
+      schemaVersion: SCHEMA_VERSION,
+      tables,
+      totalVisibleRows: tables.reduce((sum, table) => sum + table.rowCount, 0),
+      refreshedAt: nowIso(),
+    }
+  }
+
+  async listDatabaseTables(): Promise<DatabaseTableSummary[]> {
+    return DATABASE_TABLES.map((table) => ({
+      ...table,
+      rowCount: this.getMemoryTableRows(table.name).length,
+    }))
+  }
+
+  async getTableRowCount(tableName: string): Promise<number> {
+    requireKnownDatabaseTable(tableName)
+    return this.getMemoryTableRows(tableName).length
+  }
+
+  async readTableRows(
+    tableName: string,
+    options: DatabaseTableReadOptions = {},
+  ): Promise<DatabaseTableRows> {
+    const table = requireKnownDatabaseTable(tableName)
+    const limit = normalizeTableLimit(options.limit)
+    const offset = normalizeTableOffset(options.offset)
+    const rows = this.getMemoryTableRows(tableName)
+    return {
+      tableName,
+      category: table.category,
+      rowCount: rows.length,
+      limit,
+      offset,
+      rows: rows.slice(offset, offset + limit),
+      refreshedAt: nowIso(),
+    }
   }
 
   async getActiveLayout(): Promise<BeachLayout> {
@@ -4581,6 +4918,9 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
       source: input.source,
       status: input.status ?? 'new',
       pairingStatus: input.pairingStatus ?? 'unpaired',
+      matchedCustomerId: null,
+      pairingDecision: null,
+      pairingResolvedAt: null,
       customerPayload: input.customerPayload,
       requestedPeriod: input.requestedPeriod,
       requestedItemId: input.requestedItemId ?? null,
@@ -4599,6 +4939,10 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     return request
   }
 
+  async getBookingRequestById(requestId: string): Promise<BookingRequestRecord | null> {
+    return this.bookingRequests.find((request) => request.id === requestId && !request.deletedAt) ?? null
+  }
+
   async updateBookingRequestStatus(
     requestId: string,
     status: BookingRequestStatus,
@@ -4607,6 +4951,72 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     const updated = { ...current, status, updatedAt: nowIso(), version: current.version + 1 }
     this.bookingRequests = this.bookingRequests.map((request) =>
       request.id === requestId ? updated : request,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async listPairingCandidates(
+    requestId: string,
+  ): Promise<BookingCustomerPairingCandidateRecord[]> {
+    return this.pairingCandidates
+      .filter((candidate) => candidate.requestId === requestId)
+      .toSorted((a, b) => b.score - a.score || a.createdAt.localeCompare(b.createdAt))
+  }
+
+  async replacePairingCandidates(
+    requestId: string,
+    candidates: BookingCustomerPairingCandidateRecord[],
+  ): Promise<BookingCustomerPairingCandidateRecord[]> {
+    this.pairingCandidates = [
+      ...this.pairingCandidates.filter((candidate) => candidate.requestId !== requestId),
+      ...candidates,
+    ]
+    this.persistState()
+    return this.listPairingCandidates(requestId)
+  }
+
+  async updateBookingRequestPairingStatus(
+    requestId: string,
+    pairingStatus: BookingCustomerPairingStatus,
+  ): Promise<BookingRequestRecord> {
+    const current = this.getRequiredMemoryBookingRequest(requestId)
+    const updated = { ...current, pairingStatus, updatedAt: nowIso(), version: current.version + 1 }
+    this.bookingRequests = this.bookingRequests.map((request) =>
+      request.id === requestId ? updated : request,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async resolveBookingRequestPairing(
+    decision: BookingCustomerPairingDecision,
+  ): Promise<BookingRequestRecord> {
+    const current = this.getRequiredMemoryBookingRequest(decision.requestId)
+    const decidedAt = decision.decidedAt ?? nowIso()
+    const pairingStatus: BookingCustomerPairingStatus =
+      decision.decision === 'match_existing'
+        ? 'matched_existing'
+        : decision.decision === 'create_new'
+          ? 'manually_resolved'
+          : decision.decision === 'reject'
+            ? 'rejected'
+            : 'unpaired'
+    const updated: BookingRequestRecord = {
+      ...current,
+      status: decision.decision === 'reject' ? 'rejected' : current.status,
+      pairingStatus,
+      matchedCustomerId:
+        decision.decision === 'match_existing' || decision.decision === 'create_new'
+          ? decision.existingCustomerId ?? null
+          : null,
+      pairingDecision: { ...decision, decidedAt },
+      pairingResolvedAt: decidedAt,
+      updatedAt: nowIso(),
+      version: current.version + 1,
+    }
+    this.bookingRequests = this.bookingRequests.map((request) =>
+      request.id === decision.requestId ? updated : request,
     )
     this.persistState()
     return updated
@@ -5159,6 +5569,7 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     this.payments = []
     this.reservations = []
     this.bookingRequests = []
+    this.pairingCandidates = []
     this.bookingStatusEvents = []
     this.bookingConflicts = []
     this.availabilityLocks = []
@@ -5227,6 +5638,97 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
       throw new Error('Blocco disponibilita non trovato.')
     }
     return lock
+  }
+
+  private getMemoryTableRows(tableName: string): Record<string, unknown>[] {
+    requireKnownDatabaseTable(tableName)
+
+    switch (tableName) {
+      case 'app_meta':
+        return [
+          { key: 'schema_version', value: String(SCHEMA_VERSION), updated_at: nowIso() },
+          { key: 'initial_seed_version', value: String(INITIAL_SEED_VERSION), updated_at: nowIso() },
+        ]
+      case 'beach_layouts':
+        return toDiagnosticRows([this.layout])
+      case 'layout_versions':
+        return toDiagnosticRows([initialLayoutVersion])
+      case 'beach_items':
+        return toDiagnosticRows(this.items)
+      case 'beach_item_status_events':
+        return toDiagnosticRows(this.statusEvents)
+      case 'beach_layout_versions':
+        return toDiagnosticRows(
+          [this.activeParametricLayout?.version, this.draftParametricLayout?.version].filter(
+            (row) => Boolean(row),
+          ) as BeachLayoutVersion[],
+        )
+      case 'beach_layout_elements':
+        return toDiagnosticRows([
+          ...(this.activeParametricLayout?.elements ?? []),
+          ...(this.draftParametricLayout?.elements ?? []),
+        ])
+      case 'beach_layout_rows':
+        return toDiagnosticRows([
+          ...(this.activeParametricLayout?.rows ?? []),
+          ...(this.draftParametricLayout?.rows ?? []),
+        ])
+      case 'beach_layout_zones':
+        return toDiagnosticRows([
+          ...(this.activeParametricLayout?.zones ?? []),
+          ...(this.draftParametricLayout?.zones ?? []),
+        ])
+      case 'beach_layout_distance_rules':
+        return toDiagnosticRows(
+          [
+            this.activeParametricLayout?.distanceRules,
+            this.draftParametricLayout?.distanceRules,
+          ].filter((row) => Boolean(row)) as BeachLayoutDistanceRulesDefinition[],
+        )
+      case 'beach_layout_asset_metrics':
+        return [
+        ]
+      case 'customers':
+        return toDiagnosticRows(this.customers)
+      case 'beach_item_customer_assignments':
+        return toDiagnosticRows(this.assignments)
+      case 'accounts':
+        return toDiagnosticRows(this.accounts)
+      case 'payments':
+        return toDiagnosticRows(this.payments)
+      case 'payment_schedules':
+        return toDiagnosticRows(this.paymentSchedules)
+      case 'payment_installments':
+        return []
+      case 'reservations':
+        return toDiagnosticRows(this.reservations)
+      case 'booking_requests':
+        return toDiagnosticRows(this.bookingRequests)
+      case 'booking_customer_pairing_candidates':
+        return toDiagnosticRows(this.pairingCandidates)
+      case 'booking_status_events':
+        return toDiagnosticRows(this.bookingStatusEvents)
+      case 'booking_conflicts':
+        return toDiagnosticRows(this.bookingConflicts)
+      case 'availability_locks':
+        return toDiagnosticRows(this.availabilityLocks)
+      case 'pricing_snapshots':
+        return toDiagnosticRows(this.pricingSnapshots)
+      case 'booking_folio_links':
+        return toDiagnosticRows(this.bookingFolioLinks)
+      case 'booking_registry_event_links':
+        return toDiagnosticRows(this.bookingRegistryEventLinks)
+      case 'tariff_rules':
+        return toDiagnosticRows(this.tariffRules)
+      case 'tariff_included_items':
+        return toDiagnosticRows(this.includedItems)
+      case 'extra_item_catalog':
+        return toDiagnosticRows(this.extraCatalog)
+      case 'account_extra_items':
+        return toDiagnosticRows(this.accountExtras)
+      default:
+        return []
+    }
   }
 
   private validateMemoryReservationInput(input: ReservationInput): void {

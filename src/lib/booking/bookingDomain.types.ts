@@ -44,10 +44,11 @@ export type BookingRequestSource = Extract<BookingSource, 'client_web' | 'client
 
 export type BookingPairingStatus =
   | 'unpaired'
-  | 'candidate_found'
+  | 'candidates_found'
   | 'matched_existing'
   | 'new_customer_required'
   | 'manually_resolved'
+  | 'rejected'
 
 export type CustomerPairingDecision =
   | 'match_existing'
@@ -92,10 +93,15 @@ export type BookingAvailabilityFilter = {
 }
 
 export type BookingCustomerPayload = {
+  name?: string | null
   fullName?: string
+  firstName?: string | null
+  lastName?: string | null
   phone?: string | null
   email?: string | null
   notes?: string | null
+  source?: string | null
+  rawPayload?: unknown
 }
 
 export type BookingRequestedExtra = {

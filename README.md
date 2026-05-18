@@ -112,7 +112,7 @@ npm run app:dev
 | --- | --- | --- |
 | Core | Git, Node.js from [.nvmrc](.nvmrc), npm | `npm install`, `npm run check`, `npm run build` |
 | Desktop | Tauri, Rust, Cargo | `npm run app:dev`, `npm run desktop:build` |
-| Android | Capacitor Android, Android Studio, Android SDK | `npm run cap:sync:android`, `npm run cap:run:android` |
+| Android | Capacitor Android, Android Studio, Android SDK | `npm run cap:sync:android`, `npm run cap:open:android`, `npm run cap:run:android` |
 | iOS/iPad | Capacitor iOS when enabled, Xcode | `npx cap sync ios`, `npx cap open ios` |
 | Linux | Tauri, WebKitGTK/native dependencies | validate on Linux before claiming package support |
 | Browser | Vite dev server | `npm run dev:server`; preview only, not product runtime |
@@ -176,7 +176,9 @@ Before making the repository public, run the public release checklist and a manu
 
 - Wrong Node version: run `node -v`, then `nvm use`.
 - Missing Rust/Tauri: install Rust, Cargo, and the Tauri prerequisites for the host platform.
+- Linux Wayland/WebKitGTK: use `npm run app:dev`; the repository launcher applies the local WebKitGTK renderer workaround when needed.
 - Port `5173` in use: run `lsof -i :5173`, stop the old process, then restart `npm run app:dev`.
+- Android Studio path: use `npm run cap:open:android`; it auto-detects common Linux installs. If needed, set `CAPACITOR_ANDROID_STUDIO_PATH=/full/path/to/studio.sh`.
 - Android validation: Android Studio, Android SDK, and an emulator or physical device are required.
 - iOS validation: Xcode and Xcode command line tools are required when iOS is intentionally enabled.
 - Browser preview: useful for quick layout checks, but it does not validate native WebView, plugin, SQLite/native storage, package permission, signing, or device-specific behavior.

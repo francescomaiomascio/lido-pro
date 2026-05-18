@@ -122,10 +122,11 @@ Booking request states:
 Pairing states:
 
 - `unpaired`
-- `candidate_found`
+- `candidates_found`
 - `matched_existing`
 - `new_customer_required`
 - `manually_resolved`
+- `rejected`
 
 Customer pairing flow:
 
@@ -135,6 +136,10 @@ Customer pairing flow:
 4. Accepted request converts to a booking with an existing or explicitly created customer.
 
 A client request must not create duplicate customers automatically.
+
+BOOKING.4 implements this as a local-first Customer Pairing Engine. Request payloads are normalized and scored against existing `customers`, candidates are stored in `booking_customer_pairing_candidates`, and operator decisions are recorded on `booking_requests`. Customer creation is allowed only through the existing customer service after an explicit `create_new` decision, and the resulting customer id is recorded on the request without mutating any existing customer automatically. See [Booking Customer Pairing](booking-customer-pairing.md).
+
+BOOKING.5 makes the existing Spiaggia selected-item workflow the canonical Operator Booking Flow. `operatorBookingService` prepares and validates drafts, checks BOOKING.3 availability before confirmation/update, delegates the established reservation/account transaction to the current flow, and returns lightweight Registro event intent metadata without writing fake registry rows. Current `reservations.status = active` still represents the confirmed/active operator booking state; the contract-level `confirmed` split is deferred. Account/Folio remains backed by current `accounts`, and pricing still uses current Articoli/Listino suggestions until BOOKING.7 snapshots harden the pricing boundary. See [Operator Booking Flow](operator-booking-flow.md).
 
 ## Availability Contract
 
@@ -292,14 +297,14 @@ See `docs/architecture/booking-schema-map.md` for the detailed table ownership a
 - No fake cloud, client app, payment gateway, or Bar data.
 - No duplicate customer, account, registry, pricing, layout, or booking subsystem.
 
-## BOOKING.4 Plan Stub
+## BOOKING.4 Implementation Note
 
-BOOKING.4 will:
+BOOKING.4 now:
 
 - use `booking_requests` and customer payloads as pairing inputs;
 - avoid automatic duplicate customer creation;
-- produce pairing candidates and operator decisions;
-- use the availability engine after a request has enough item/period context;
+- produce pairing candidates and record operator decisions;
+- remain separate from the availability engine until Booking Inbox/operator acceptance combines both signals;
 - avoid changing active layout or Canvas behavior.
 
 ## Manual Proof Cases
