@@ -10,6 +10,21 @@ Future UI changes must not hardcode mixed-language strings unless the mixed word
 
 Completion messages must report whether a wave introduces new user-facing copy and whether that copy is Italian-first and i18n-ready.
 
+## Canonicalization before implementation
+
+Before every delivery wave, inventory the existing implementation first.
+
+For schemas, tables, models, repositories, services, routes, components, seeds, fixtures, and documentation:
+- identify the current canonical owner;
+- identify stale, dead, duplicate, half-implemented, or unused structures;
+- extend or refactor the existing owner before creating a new boundary;
+- remove or demote obsolete structures when it is safe and in scope;
+- do not create a parallel subsystem without a migration/deprecation plan;
+- document table/schema canonicalization decisions before adding migrations or repositories;
+- update `docs/architecture/product-spine.md` after major deliveries when real project status changes.
+
+New tables, runtime models, and domain services must map explicitly to existing data and legacy concepts. If old code cannot be removed safely in the same wave, mark the ownership and deprecation path clearly.
+
 ## Responsive validation is mandatory for UI work
 
 Any wave that changes UI, layout, navigation, map, panels, forms, tables, modals, drawers, sheets, or typography must validate responsive behavior. Desktop-only validation is not sufficient.

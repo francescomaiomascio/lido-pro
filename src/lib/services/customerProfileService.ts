@@ -265,6 +265,7 @@ export const searchCustomersWithSummary = async (
         ? `${beachTypeLabels[activity.beachItem.type]} ${activity.beachItem.code}`
         : null
       const hasOpenBalance = accountSummary.balanceAmountCents > 0
+      const hasOpenAccount = accountSummary.openAccounts > 0
       const status = hasOpenBalance
         ? 'open-balance'
         : activity.reservation || activity.assignment
@@ -281,7 +282,11 @@ export const searchCustomersWithSummary = async (
       return {
         customer,
         currentActivityLabel,
+        currentPlaceLabel: itemLabel,
         status,
+        hasActiveReservation: Boolean(activity.reservation),
+        hasActiveAssignment: Boolean(activity.assignment),
+        hasOpenAccount,
         balanceAmountCents: accountSummary.balanceAmountCents,
       }
     }),

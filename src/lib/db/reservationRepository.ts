@@ -1,5 +1,6 @@
 import { getBeachDatabase } from './database'
 import type { Reservation, ReservationInput } from '../types/reservation'
+import { checkItemAvailability as checkCanonicalItemAvailability } from '../booking/availabilityService'
 
 export const createReservation = async (input: ReservationInput): Promise<Reservation> => {
   return getBeachDatabase().createReservation(input)
@@ -45,7 +46,18 @@ export const checkItemAvailability = async (
   endDate: string,
   excludeReservationId?: string,
 ): Promise<boolean> => {
-  return getBeachDatabase().checkItemAvailability(itemId, startDate, endDate, excludeReservationId)
+  const result = await checkCanonicalItemAvailability({
+    itemId,
+    period: {
+      type: startDate === endDate ? 'daily' : 'multi_day',
+      startDate,
+      endDate,
+      label: startDate === endDate ? startDate : `${startDate} - ${endDate}`,
+    },
+    excludeReservationId,
+    mode: 'operator_app',
+  })
+  return result.available
 }
 
 export const getCurrentReservationForItem = async (

@@ -33,6 +33,23 @@ import type {
   ExtraItemCatalogInput,
   TariffIncludedItem,
 } from './extraItem'
+import type {
+  AvailabilityLockInput,
+  AvailabilityLockRecord,
+  BookingConflictInput,
+  BookingConflictRecord,
+  BookingFolioLinkInput,
+  BookingFolioLinkRecord,
+  BookingRegistryEventLinkInput,
+  BookingRegistryEventLinkRecord,
+  BookingRequestInput,
+  BookingRequestRecord,
+  BookingRequestStatus,
+  BookingStatusEventInput,
+  BookingStatusEventRecord,
+  PricingSnapshotInput,
+  PricingSnapshotRecord,
+} from '../booking/bookingPersistence.types'
 
 export type DatabaseRuntime = 'native-sqlite' | 'web-persistent-sqlite' | 'browser-memory-fallback'
 
@@ -106,6 +123,36 @@ export type BeachDatabaseAdapter = {
   getCurrentReservationForItem(itemId: string, date?: string): Promise<Reservation | null>
   getCurrentReservationsForItems(itemIds: string[], date?: string): Promise<Reservation[]>
   getUpcomingReservationsForItem(itemId: string, limit?: number): Promise<Reservation[]>
+  listBookingRequests(): Promise<BookingRequestRecord[]>
+  createBookingRequest(input: BookingRequestInput): Promise<BookingRequestRecord>
+  updateBookingRequestStatus(
+    requestId: string,
+    status: BookingRequestStatus,
+  ): Promise<BookingRequestRecord>
+  listBookingStatusEvents(filters?: {
+    reservationId?: string
+    requestId?: string
+  }): Promise<BookingStatusEventRecord[]>
+  appendBookingStatusEvent(input: BookingStatusEventInput): Promise<BookingStatusEventRecord>
+  listBookingConflicts(filters?: {
+    reservationId?: string
+    requestId?: string
+    status?: BookingConflictRecord['status']
+  }): Promise<BookingConflictRecord[]>
+  createBookingConflict(input: BookingConflictInput): Promise<BookingConflictRecord>
+  resolveBookingConflict(conflictId: string): Promise<BookingConflictRecord>
+  listAvailabilityLocks(filters?: {
+    itemId?: string
+    status?: AvailabilityLockRecord['status']
+  }): Promise<AvailabilityLockRecord[]>
+  createAvailabilityLock(input: AvailabilityLockInput): Promise<AvailabilityLockRecord>
+  releaseAvailabilityLock(lockId: string): Promise<AvailabilityLockRecord>
+  createPricingSnapshot(input: PricingSnapshotInput): Promise<PricingSnapshotRecord>
+  getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null>
+  linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord>
+  linkBookingRegistryEvent(
+    input: BookingRegistryEventLinkInput,
+  ): Promise<BookingRegistryEventLinkRecord>
   seedInitialTariffsIfMissing(): Promise<void>
   getActiveTariffRules(): Promise<TariffRule[]>
   getTariffRule(tariffRuleId: string): Promise<TariffRule | null>

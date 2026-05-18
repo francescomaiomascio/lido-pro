@@ -62,6 +62,10 @@ export type CustomerProfile = {
 export type CustomerSearchSummary = {
   customer: Customer
   currentActivityLabel: string
+  currentPlaceLabel: string | null
   status: 'active' | 'no-active-reservation' | 'open-balance'
+  hasActiveReservation: boolean
+  hasActiveAssignment: boolean
+  hasOpenAccount: boolean
   balanceAmountCents: number
 }

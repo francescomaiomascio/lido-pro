@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { formatEuroFromCents } from '../../lib/format/money'
   import {
     getCustomerProfile,
     getCustomerReservationHistory,
@@ -15,32 +14,61 @@
   } from '../../lib/types/customerProfile'
   import InlineLoadingState from '../loading/InlineLoadingState.svelte'
   import CustomerAnagraficaForm from './CustomerAnagraficaForm.svelte'
+  import CustomerEmptyState from './CustomerEmptyState.svelte'
+  import CustomerListPane from './CustomerListPane.svelte'
   import CustomerProfilePanel from './CustomerProfilePanel.svelte'
+  import type { CustomerFilterId } from './customerWorkspaceTypes'
 
-  type RegistryTab = 'list' | 'new'
   type DetailMode = 'empty' | 'profile' | 'edit'
 
   let query = $state('')
+  let activeFilter: CustomerFilterId = $state('all')
   let customers: CustomerSearchSummary[] = $state([])
   let selectedCustomerId: string | null = $state(null)
   let selectedProfile: CustomerProfile | null = $state(null)
   let reservationHistory: CustomerReservationSummary[] = $state([])
-  let activeTab: RegistryTab = $state('list')
   let detailMode: DetailMode = $state('empty')
+  let creating = $state(false)
+  let loadingList = $state(false)
+  let loadingProfile = $state(false)
   let saving = $state(false)
-  let loading = $state(false)
   let message: string | null = $state(null)
   let error: string | null = $state(null)
   let historyExpanded = $state(false)
 
-  const loadCustomers = async () => {
-    customers = await searchCustomersWithSummary(query)
+  const filteredCustomers = $derived.by(() =>
+    customers.filter((row) => {
+      if (activeFilter === 'active') {
+        return row.status === 'active' || row.status === 'open-balance'
+      }
+
+      if (activeFilter === 'with-booking') {
+        return row.hasActiveReservation
+      }
+
+      if (activeFilter === 'open-account') {
+        return row.hasOpenAccount || row.balanceAmountCents > 0
+      }
+
+      return true
+    }),
+  )
+
+  const loadCustomers = async (nextQuery = query) => {
+    loadingList = true
+    try {
+      customers = await searchCustomersWithSummary(nextQuery)
+    } finally {
+      loadingList = false
+    }
   }
 
   const loadProfile = async (customerId: string) => {
-    loading = true
+    loadingProfile = true
     error = null
+    message = null
     historyExpanded = false
+    creating = false
     selectedCustomerId = customerId
     selectedProfile = null
     reservationHistory = []
@@ -52,38 +80,34 @@
       ])
       selectedProfile = profile
       reservationHistory = history
-      activeTab = 'list'
       detailMode = profile ? 'profile' : 'empty'
     } catch (loadError) {
       error = loadError instanceof Error ? loadError.message : 'Errore caricamento profilo cliente.'
     } finally {
-      loading = false
+      loadingProfile = false
     }
   }
 
+  const handleQueryChange = (nextQuery: string) => {
+    query = nextQuery
+    void loadCustomers(nextQuery).catch(() => {
+      error = 'Errore caricamento clienti.'
+    })
+  }
+
   const startCreate = () => {
+    creating = true
     selectedCustomerId = null
     selectedProfile = null
     reservationHistory = []
-    activeTab = 'new'
     detailMode = 'empty'
     message = null
     error = null
   }
 
-  const showList = () => {
-    activeTab = 'list'
+  const closeCreate = () => {
+    creating = false
     detailMode = selectedProfile ? 'profile' : 'empty'
-    message = null
-    error = null
-  }
-
-  const clearSelection = () => {
-    selectedCustomerId = null
-    selectedProfile = null
-    reservationHistory = []
-    detailMode = 'empty'
-    historyExpanded = false
   }
 
   const saveNewCustomer = async (input: CustomerInput) => {
@@ -92,9 +116,11 @@
     error = null
     try {
       const customer = await createCustomer(input)
-      await loadCustomers()
+      query = ''
+      activeFilter = 'all'
+      await loadCustomers('')
       await loadProfile(customer.id)
-      activeTab = 'list'
+      creating = false
       message = 'Cliente salvato'
     } catch (saveError) {
       error = saveError instanceof Error ? saveError.message : 'Errore durante il salvataggio.'
@@ -113,7 +139,7 @@
     error = null
     try {
       const customer = await updateCustomer(selectedProfile.customer.id, input)
-      await loadCustomers()
+      await loadCustomers(query)
       await loadProfile(customer.id)
       detailMode = 'profile'
       message = 'Cliente salvato'
@@ -129,105 +155,39 @@
       error = 'Errore caricamento clienti.'
     })
   })
-
-  const getCustomerContact = (row: CustomerSearchSummary): string =>
-    row.customer.phone || row.customer.email || 'Nessun recapito'
-
-  const getCustomerStatusLabel = (row: CustomerSearchSummary): string =>
-    row.status === 'open-balance'
-      ? 'Saldo aperto'
-      : row.status === 'active'
-        ? 'Attivo'
-        : 'In archivio'
 </script>
 
-<section class="settings-panel customer-registry-panel" aria-label="Clienti">
-  <div class="settings-view-header settings-panel__header customer-registry-topbar">
-    <h2>Clienti</h2>
-    <div class="customer-registry-toolbar">
-      <div class="customer-registry-tabs" role="tablist" aria-label="Navigazione clienti">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'list'}
-          class:active={activeTab === 'list'}
-          onclick={showList}
-        >
-          Lista
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'new'}
-          class:active={activeTab === 'new'}
-          onclick={startCreate}
-        >
-          Nuovo
-        </button>
-      </div>
-
-      {#if activeTab === 'list'}
-        <label class="customer-registry-search">
-          <span>Cerca</span>
-          <input
-            value={query}
-            placeholder="Cerca"
-            oninput={(event) => {
-              query = event.currentTarget.value
-              loadCustomers()
-            }}
-          />
-        </label>
-      {/if}
+<section class="settings-panel customer-registry-panel customers-workspace" aria-label="Clienti">
+  <header class="customers-page-header">
+    <div>
+      <h2>Clienti</h2>
+      <p>Anagrafiche, contatti e operazioni collegate.</p>
     </div>
-  </div>
+    <button type="button" class="button-secondary" onclick={startCreate}>Nuovo cliente</button>
+  </header>
 
-  <div class="customer-registry-layout customer-registry-shell" class:customer-registry-shell--new={activeTab === 'new'}>
-    <aside class="customer-directory" aria-label="Lista clienti">
-      <div class="customer-directory__head">
-        <span>{customers.length} clienti</span>
-        {#if selectedCustomerId}
-          <button type="button" onclick={clearSelection}>Deseleziona</button>
-        {/if}
-      </div>
+  <div class="customers-shell">
+    <CustomerListPane
+      customers={filteredCustomers}
+      {query}
+      {activeFilter}
+      {selectedCustomerId}
+      loading={loadingList}
+      onQueryChange={handleQueryChange}
+      onFilterChange={(filter) => (activeFilter = filter)}
+      onSelect={loadProfile}
+      onCreate={startCreate}
+    />
 
-      <div class="customer-directory-list">
-        {#each customers as row (row.customer.id)}
-          <button
-            type="button"
-            class="customer-directory-row"
-            class:active={row.customer.id === selectedCustomerId && activeTab === 'list'}
-            onclick={() => loadProfile(row.customer.id)}
-          >
-            <span class="customer-directory-row__main">
-              <strong>{row.customer.fullName}</strong>
-              <small>{getCustomerContact(row)}</small>
-            </span>
-            <span class="customer-directory-row__meta">
-              <span>{row.currentActivityLabel}</span>
-              <strong>{formatEuroFromCents(row.balanceAmountCents)}</strong>
-            </span>
-            <em class:warning={row.status === 'open-balance'}>{getCustomerStatusLabel(row)}</em>
-          </button>
-        {:else}
-          <p class="empty-customer">Nessun cliente trovato.</p>
-        {/each}
-      </div>
-    </aside>
-
-    <section class="customer-registry-detail customer-detail" aria-label="Scheda cliente">
-      {#if activeTab === 'new'}
+    <section class="customer-profile-pane" aria-label="Scheda cliente">
+      {#if creating}
         <div class="customer-detail-create">
-          <div class="settings-subheader">
-            <span>Nuovo cliente</span>
-            <h3>Anagrafica</h3>
-            <p>Inserisci i dati essenziali. La scheda verrà aperta dopo il salvataggio.</p>
+          <div class="customer-detail-create__heading">
+            <span>Creazione cliente</span>
+            <h3>Nuova anagrafica</h3>
+            <p>Salva nome e recapiti. Posto, prenotazioni e conto si collegano dalla scheda operativa.</p>
           </div>
-          <CustomerAnagraficaForm
-            {saving}
-            onSave={saveNewCustomer}
-            onCancel={showList}
-          />
+          <CustomerAnagraficaForm {saving} onSave={saveNewCustomer} onCancel={closeCreate} />
         </div>
       {:else if selectedProfile}
         <CustomerProfilePanel
@@ -242,7 +202,7 @@
           onSave={saveExistingCustomer}
           onToggleHistory={() => (historyExpanded = !historyExpanded)}
         />
-      {:else if loading}
+      {:else if loadingProfile}
         <InlineLoadingState
           compact
           eyebrow="Cliente"
@@ -251,9 +211,21 @@
           rows={3}
         />
       {:else}
-        <div class="settings-empty-detail customer-detail-empty">
-          <h3>Seleziona un cliente</h3>
-          <p>La scheda anagrafica, l'attivita recente e il conto compariranno qui.</p>
+        <div class="customer-profile-pane__empty">
+          <CustomerEmptyState
+            eyebrow="Workspace cliente"
+            title="Scegli un cliente dalla lista"
+            message="Qui trovi contatti, posto assegnato, prenotazioni, conto e storico operativo."
+          />
+          <div class="customer-disabled-shortcuts" aria-label="Collegamenti disponibili">
+            <span>Collegamenti della scheda</span>
+            <div>
+              <span>Prenotazioni</span>
+              <span>Conto</span>
+              <span>Registro</span>
+              <span>Spiaggia</span>
+            </div>
+          </div>
         </div>
       {/if}
     </section>

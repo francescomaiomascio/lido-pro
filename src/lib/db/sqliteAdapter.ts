@@ -42,6 +42,23 @@ import type {
   TariffIncludedItem,
 } from '../types/extraItem'
 import type { BeachDatabaseAdapter } from '../types/db'
+import type {
+  AvailabilityLockInput,
+  AvailabilityLockRecord,
+  BookingConflictInput,
+  BookingConflictRecord,
+  BookingFolioLinkInput,
+  BookingFolioLinkRecord,
+  BookingRegistryEventLinkInput,
+  BookingRegistryEventLinkRecord,
+  BookingRequestInput,
+  BookingRequestRecord,
+  BookingRequestStatus,
+  BookingStatusEventInput,
+  BookingStatusEventRecord,
+  PricingSnapshotInput,
+  PricingSnapshotRecord,
+} from '../booking/bookingPersistence.types'
 import { assetMetricDefinitions } from '../map-canvas/assets/assetMetricDefinitions'
 import { createDefaultBeachMetricModel } from '../map-canvas/metric/beachMetricModel'
 import { calculateParametricLayout, type ParametricLayoutOutput } from '../map-canvas/parametric/parametricLayoutEngine'
@@ -319,6 +336,102 @@ type ReservationRow = {
   cancelled_at: string | null
 }
 
+type BookingRequestRow = {
+  id: string
+  workspace_id: string | null
+  source: BookingRequestRecord['source']
+  status: BookingRequestRecord['status']
+  pairing_status: BookingRequestRecord['pairingStatus']
+  customer_payload_json: string
+  requested_period_json: string
+  requested_item_id: string | null
+  requested_item_type: string | null
+  requested_extras_json: string | null
+  converted_reservation_id: string | null
+  created_at: string
+  updated_at: string
+  deleted_at: string | null
+  sync_state: BookingRequestRecord['syncState']
+  remote_id: string | null
+  version: number
+}
+
+type BookingStatusEventRow = {
+  id: string
+  reservation_id: string | null
+  request_id: string | null
+  from_status: string | null
+  to_status: string
+  source: BookingStatusEventRecord['source']
+  reason: string | null
+  payload_json: string | null
+  created_at: string
+  created_by: string | null
+  device_id: string | null
+}
+
+type BookingConflictRow = {
+  id: string
+  reservation_id: string | null
+  request_id: string | null
+  conflict_type: BookingConflictRecord['conflictType']
+  severity: BookingConflictRecord['severity']
+  affected_item_ids_json: string
+  affected_period_json: string
+  message: string
+  status: BookingConflictRecord['status']
+  created_at: string
+  resolved_at: string | null
+}
+
+type AvailabilityLockRow = {
+  id: string
+  workspace_id: string | null
+  item_id: string
+  period_json: string
+  source: AvailabilityLockRecord['source']
+  reservation_id: string | null
+  request_id: string | null
+  status: AvailabilityLockRecord['status']
+  expires_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+type PricingSnapshotRow = {
+  id: string
+  reservation_id: string | null
+  source_rule_id: string | null
+  catalog_item_id: string | null
+  period_type: PricingSnapshotRecord['periodType']
+  scope_json: string | null
+  base_price: number
+  extras_total: number
+  included_items_json: string | null
+  calculated_total: number
+  manual_override_json: string | null
+  created_at: string
+  updated_at: string
+}
+
+type BookingFolioLinkRow = {
+  id: string
+  reservation_id: string
+  account_id: string
+  status: BookingFolioLinkRecord['status']
+  created_at: string
+  updated_at: string
+}
+
+type BookingRegistryEventLinkRow = {
+  id: string
+  reservation_id: string | null
+  request_id: string | null
+  registry_event_id: string
+  event_type: string
+  created_at: string
+}
+
 type TariffRuleRow = {
   id: string
   name: string
@@ -593,6 +706,132 @@ const toReservation = (row: ReservationRow): Reservation => ({
   createdAt: row.created_at,
   updatedAt: row.updated_at,
   cancelledAt: row.cancelled_at,
+})
+
+const parseJsonField = <T>(value: string | null | undefined, fallback: T): T => {
+  if (!value) {
+    return fallback
+  }
+  try {
+    return JSON.parse(value) as T
+  } catch {
+    return fallback
+  }
+}
+
+const serializeJsonField = (value: unknown): string => JSON.stringify(value ?? null)
+
+const toBookingRequest = (row: BookingRequestRow): BookingRequestRecord => ({
+  id: row.id,
+  workspaceId: row.workspace_id,
+  source: row.source,
+  status: row.status,
+  pairingStatus: row.pairing_status,
+  customerPayload: parseJsonField(row.customer_payload_json, {}),
+  requestedPeriod: parseJsonField(row.requested_period_json, {
+    id: '',
+    type: 'daily',
+    startDate: '',
+    label: '',
+  }),
+  requestedItemId: row.requested_item_id,
+  requestedItemType: row.requested_item_type,
+  requestedExtras: parseJsonField(row.requested_extras_json, []),
+  convertedReservationId: row.converted_reservation_id,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+  deletedAt: row.deleted_at,
+  syncState: row.sync_state,
+  remoteId: row.remote_id,
+  version: row.version,
+})
+
+const toBookingStatusEvent = (row: BookingStatusEventRow): BookingStatusEventRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  requestId: row.request_id,
+  fromStatus: row.from_status,
+  toStatus: row.to_status,
+  source: row.source,
+  reason: row.reason,
+  payload: parseJsonField(row.payload_json, null),
+  createdAt: row.created_at,
+  createdBy: row.created_by,
+  deviceId: row.device_id,
+})
+
+const toBookingConflict = (row: BookingConflictRow): BookingConflictRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  requestId: row.request_id,
+  conflictType: row.conflict_type,
+  severity: row.severity,
+  affectedItemIds: parseJsonField(row.affected_item_ids_json, []),
+  affectedPeriod: parseJsonField(row.affected_period_json, {
+    id: '',
+    type: 'daily',
+    startDate: '',
+    label: '',
+  }),
+  message: row.message,
+  status: row.status,
+  createdAt: row.created_at,
+  resolvedAt: row.resolved_at,
+})
+
+const toAvailabilityLock = (row: AvailabilityLockRow): AvailabilityLockRecord => ({
+  id: row.id,
+  workspaceId: row.workspace_id,
+  itemId: row.item_id,
+  period: parseJsonField(row.period_json, {
+    id: '',
+    type: 'daily',
+    startDate: '',
+    label: '',
+  }),
+  source: row.source,
+  reservationId: row.reservation_id,
+  requestId: row.request_id,
+  status: row.status,
+  expiresAt: row.expires_at,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+const toPricingSnapshot = (row: PricingSnapshotRow): PricingSnapshotRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  sourceRuleId: row.source_rule_id,
+  catalogItemId: row.catalog_item_id,
+  periodType: row.period_type,
+  scope: parseJsonField(row.scope_json, null),
+  basePrice: row.base_price,
+  extrasTotal: row.extras_total,
+  includedItems: parseJsonField(row.included_items_json, []),
+  calculatedTotal: row.calculated_total,
+  manualOverride: parseJsonField(row.manual_override_json, null),
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+const toBookingFolioLink = (row: BookingFolioLinkRow): BookingFolioLinkRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  accountId: row.account_id,
+  status: row.status,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+const toBookingRegistryEventLink = (
+  row: BookingRegistryEventLinkRow,
+): BookingRegistryEventLinkRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  requestId: row.request_id,
+  registryEventId: row.registry_event_id,
+  eventType: row.event_type,
+  createdAt: row.created_at,
 })
 
 const toTariffRule = (row: TariffRuleRow): TariffRule => ({
@@ -2019,8 +2258,10 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await db.run(
       `INSERT INTO reservations
        (id, item_id, customer_id, assignment_id, account_id, reservation_type, start_date, end_date,
-        status, title, notes, active, created_at, updated_at, cancelled_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, 1, ?, ?, NULL)`,
+        status, title, notes, active, source, booking_mode, booking_status, period_type,
+        sync_state, version, folio_id, created_at, updated_at, cancelled_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, 1, 'operator', 'operator_app',
+        'active', ?, 'local', 1, ?, ?, ?, NULL)`,
       [
         id,
         input.itemId,
@@ -2032,6 +2273,8 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
         input.endDate,
         input.title?.trim() || null,
         input.notes?.trim() || null,
+        input.reservationType,
+        input.accountId ?? null,
         now,
         now,
       ],
@@ -2055,7 +2298,8 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await db.run(
       `UPDATE reservations
        SET item_id = ?, customer_id = ?, assignment_id = ?, account_id = ?, reservation_type = ?,
-        start_date = ?, end_date = ?, title = ?, notes = ?, updated_at = ?
+        start_date = ?, end_date = ?, title = ?, notes = ?, booking_status = status,
+        period_type = ?, folio_id = ?, version = version + 1, updated_at = ?
        WHERE id = ? AND active = 1`,
       [
         input.itemId,
@@ -2067,6 +2311,8 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
         input.endDate,
         input.title?.trim() || null,
         input.notes?.trim() || null,
+        input.reservationType,
+        input.accountId ?? null,
         nowIso(),
         reservationId,
       ],
@@ -2079,9 +2325,10 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     const now = nowIso()
     await db.run(
       `UPDATE reservations
-       SET status = 'cancelled', active = 0, cancelled_at = ?, updated_at = ?
+       SET status = 'cancelled', booking_status = 'cancelled', active = 0,
+        cancelled_at = ?, deleted_at = ?, version = version + 1, updated_at = ?
        WHERE id = ?`,
-      [now, now, reservationId],
+      [now, now, now, reservationId],
     )
     return this.requireReservation(db, reservationId)
   }
@@ -2199,6 +2446,344 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
       [itemId, getTodayIsoDate(), limit],
     )
     return (result.values ?? []).map((row) => toReservation(row as ReservationRow))
+  }
+
+  async listBookingRequests(): Promise<BookingRequestRecord[]> {
+    const db = await this.getConnection()
+    const result = await db.query(
+      `SELECT id, workspace_id, source, status, pairing_status, customer_payload_json,
+        requested_period_json, requested_item_id, requested_item_type, requested_extras_json,
+        converted_reservation_id, created_at, updated_at, deleted_at, sync_state, remote_id, version
+       FROM booking_requests
+       WHERE deleted_at IS NULL
+       ORDER BY created_at DESC`,
+    )
+    return (result.values ?? []).map((row) => toBookingRequest(row as BookingRequestRow))
+  }
+
+  async createBookingRequest(input: BookingRequestInput): Promise<BookingRequestRecord> {
+    const db = await this.getConnection()
+    const now = nowIso()
+    const id = input.id ?? createEntityId('booking-request')
+    await db.run(
+      `INSERT INTO booking_requests
+       (id, workspace_id, source, status, pairing_status, customer_payload_json,
+        requested_period_json, requested_item_id, requested_item_type, requested_extras_json,
+        converted_reservation_id, created_at, updated_at, deleted_at, sync_state, remote_id, version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, NULL, 'local', NULL, 1)`,
+      [
+        id,
+        input.workspaceId ?? null,
+        input.source,
+        input.status ?? 'new',
+        input.pairingStatus ?? 'unpaired',
+        serializeJsonField(input.customerPayload),
+        serializeJsonField(input.requestedPeriod),
+        input.requestedItemId ?? null,
+        input.requestedItemType ?? null,
+        serializeJsonField(input.requestedExtras ?? []),
+        now,
+        now,
+      ],
+    )
+    const requests = await this.listBookingRequests()
+    return this.requireBookingRequest(requests, id)
+  }
+
+  async updateBookingRequestStatus(
+    requestId: string,
+    status: BookingRequestStatus,
+  ): Promise<BookingRequestRecord> {
+    const db = await this.getConnection()
+    await db.run(
+      'UPDATE booking_requests SET status = ?, updated_at = ?, version = version + 1 WHERE id = ?',
+      [status, nowIso(), requestId],
+    )
+    return this.requireBookingRequest(await this.listBookingRequests(), requestId)
+  }
+
+  async listBookingStatusEvents(filters: {
+    reservationId?: string
+    requestId?: string
+  } = {}): Promise<BookingStatusEventRecord[]> {
+    const db = await this.getConnection()
+    const clauses: string[] = []
+    const values: string[] = []
+    if (filters.reservationId) {
+      clauses.push('reservation_id = ?')
+      values.push(filters.reservationId)
+    }
+    if (filters.requestId) {
+      clauses.push('request_id = ?')
+      values.push(filters.requestId)
+    }
+    const result = await db.query(
+      `SELECT id, reservation_id, request_id, from_status, to_status, source, reason,
+        payload_json, created_at, created_by, device_id
+       FROM booking_status_events
+       ${clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''}
+       ORDER BY created_at DESC`,
+      values,
+    )
+    return (result.values ?? []).map((row) => toBookingStatusEvent(row as BookingStatusEventRow))
+  }
+
+  async appendBookingStatusEvent(input: BookingStatusEventInput): Promise<BookingStatusEventRecord> {
+    const db = await this.getConnection()
+    const createdAt = input.createdAt ?? nowIso()
+    const id = input.id ?? createEntityId('booking-status-event')
+    await db.run(
+      `INSERT INTO booking_status_events
+       (id, reservation_id, request_id, from_status, to_status, source, reason, payload_json,
+        created_at, created_by, device_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.reservationId ?? null,
+        input.requestId ?? null,
+        input.fromStatus ?? null,
+        input.toStatus,
+        input.source,
+        input.reason ?? null,
+        input.payload == null ? null : serializeJsonField(input.payload),
+        createdAt,
+        input.createdBy ?? null,
+        input.deviceId ?? null,
+      ],
+    )
+    return this.requireBookingStatusEvent(await this.listBookingStatusEvents(), id)
+  }
+
+  async listBookingConflicts(filters: {
+    reservationId?: string
+    requestId?: string
+    status?: BookingConflictRecord['status']
+  } = {}): Promise<BookingConflictRecord[]> {
+    const db = await this.getConnection()
+    const clauses: string[] = []
+    const values: string[] = []
+    if (filters.reservationId) {
+      clauses.push('reservation_id = ?')
+      values.push(filters.reservationId)
+    }
+    if (filters.requestId) {
+      clauses.push('request_id = ?')
+      values.push(filters.requestId)
+    }
+    if (filters.status) {
+      clauses.push('status = ?')
+      values.push(filters.status)
+    }
+    const result = await db.query(
+      `SELECT id, reservation_id, request_id, conflict_type, severity, affected_item_ids_json,
+        affected_period_json, message, status, created_at, resolved_at
+       FROM booking_conflicts
+       ${clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''}
+       ORDER BY created_at DESC`,
+      values,
+    )
+    return (result.values ?? []).map((row) => toBookingConflict(row as BookingConflictRow))
+  }
+
+  async createBookingConflict(input: BookingConflictInput): Promise<BookingConflictRecord> {
+    const db = await this.getConnection()
+    const id = input.id ?? createEntityId('booking-conflict')
+    const createdAt = input.createdAt ?? nowIso()
+    await db.run(
+      `INSERT INTO booking_conflicts
+       (id, reservation_id, request_id, conflict_type, severity, affected_item_ids_json,
+        affected_period_json, message, status, created_at, resolved_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
+      [
+        id,
+        input.reservationId ?? null,
+        input.requestId ?? null,
+        input.conflictType,
+        input.severity,
+        serializeJsonField(input.affectedItemIds),
+        serializeJsonField(input.affectedPeriod),
+        input.message,
+        input.status ?? 'open',
+        createdAt,
+      ],
+    )
+    return this.requireBookingConflict(await this.listBookingConflicts(), id)
+  }
+
+  async resolveBookingConflict(conflictId: string): Promise<BookingConflictRecord> {
+    const db = await this.getConnection()
+    await db.run(
+      "UPDATE booking_conflicts SET status = 'resolved', resolved_at = ? WHERE id = ?",
+      [nowIso(), conflictId],
+    )
+    return this.requireBookingConflict(await this.listBookingConflicts(), conflictId)
+  }
+
+  async listAvailabilityLocks(filters: {
+    itemId?: string
+    status?: AvailabilityLockRecord['status']
+  } = {}): Promise<AvailabilityLockRecord[]> {
+    const db = await this.getConnection()
+    const clauses: string[] = []
+    const values: string[] = []
+    if (filters.itemId) {
+      clauses.push('item_id = ?')
+      values.push(filters.itemId)
+    }
+    if (filters.status) {
+      clauses.push('status = ?')
+      values.push(filters.status)
+    }
+    const result = await db.query(
+      `SELECT id, workspace_id, item_id, period_json, source, reservation_id, request_id,
+        status, expires_at, created_at, updated_at
+       FROM availability_locks
+       ${clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''}
+       ORDER BY created_at DESC`,
+      values,
+    )
+    return (result.values ?? []).map((row) => toAvailabilityLock(row as AvailabilityLockRow))
+  }
+
+  async createAvailabilityLock(input: AvailabilityLockInput): Promise<AvailabilityLockRecord> {
+    const db = await this.getConnection()
+    const now = nowIso()
+    const id = input.id ?? createEntityId('availability-lock')
+    await db.run(
+      `INSERT INTO availability_locks
+       (id, workspace_id, item_id, period_json, source, reservation_id, request_id, status,
+        expires_at, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.workspaceId ?? null,
+        input.itemId,
+        serializeJsonField(input.period),
+        input.source,
+        input.reservationId ?? null,
+        input.requestId ?? null,
+        input.status ?? 'active',
+        input.expiresAt ?? null,
+        input.createdAt ?? now,
+        input.updatedAt ?? now,
+      ],
+    )
+    return this.requireAvailabilityLock(await this.listAvailabilityLocks(), id)
+  }
+
+  async releaseAvailabilityLock(lockId: string): Promise<AvailabilityLockRecord> {
+    const db = await this.getConnection()
+    await db.run(
+      "UPDATE availability_locks SET status = 'released', updated_at = ? WHERE id = ?",
+      [nowIso(), lockId],
+    )
+    return this.requireAvailabilityLock(await this.listAvailabilityLocks(), lockId)
+  }
+
+  async createPricingSnapshot(input: PricingSnapshotInput): Promise<PricingSnapshotRecord> {
+    const db = await this.getConnection()
+    const now = nowIso()
+    const id = input.id ?? createEntityId('pricing-snapshot')
+    await db.run(
+      `INSERT INTO pricing_snapshots
+       (id, reservation_id, source_rule_id, catalog_item_id, period_type, scope_json,
+        base_price, extras_total, included_items_json, calculated_total, manual_override_json,
+        created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.reservationId ?? null,
+        input.sourceRuleId ?? null,
+        input.catalogItemId ?? null,
+        input.periodType,
+        input.scope == null ? null : serializeJsonField(input.scope),
+        input.basePrice,
+        input.extrasTotal,
+        serializeJsonField(input.includedItems),
+        input.calculatedTotal,
+        input.manualOverride == null ? null : serializeJsonField(input.manualOverride),
+        input.createdAt ?? now,
+        input.updatedAt ?? now,
+      ],
+    )
+    return this.getRequiredPricingSnapshot(id)
+  }
+
+  async getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null> {
+    const db = await this.getConnection()
+    const result = await db.query(
+      `SELECT id, reservation_id, source_rule_id, catalog_item_id, period_type, scope_json,
+        base_price, extras_total, included_items_json, calculated_total, manual_override_json,
+        created_at, updated_at
+       FROM pricing_snapshots
+       WHERE id = ?`,
+      [snapshotId],
+    )
+    const row = result.values?.[0] as PricingSnapshotRow | undefined
+    return row ? toPricingSnapshot(row) : null
+  }
+
+  async linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord> {
+    const db = await this.getConnection()
+    const now = nowIso()
+    const existing = await db.query(
+      'SELECT id FROM booking_folio_links WHERE reservation_id = ? AND account_id = ? LIMIT 1',
+      [input.reservationId, input.accountId],
+    )
+    const id = String(existing.values?.[0]?.id ?? input.id ?? createEntityId('booking-folio-link'))
+    if (existing.values?.[0]) {
+      await db.run('UPDATE booking_folio_links SET status = ?, updated_at = ? WHERE id = ?', [
+        input.status,
+        input.updatedAt ?? now,
+        id,
+      ])
+    } else {
+      await db.run(
+        `INSERT INTO booking_folio_links
+         (id, reservation_id, account_id, status, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          id,
+          input.reservationId,
+          input.accountId,
+          input.status,
+          input.createdAt ?? now,
+          input.updatedAt ?? now,
+        ],
+      )
+    }
+    const result = await db.query(
+      'SELECT id, reservation_id, account_id, status, created_at, updated_at FROM booking_folio_links WHERE id = ?',
+      [id],
+    )
+    return toBookingFolioLink(result.values?.[0] as BookingFolioLinkRow)
+  }
+
+  async linkBookingRegistryEvent(
+    input: BookingRegistryEventLinkInput,
+  ): Promise<BookingRegistryEventLinkRecord> {
+    const db = await this.getConnection()
+    const id = input.id ?? createEntityId('booking-registry-link')
+    await db.run(
+      `INSERT INTO booking_registry_event_links
+       (id, reservation_id, request_id, registry_event_id, event_type, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.reservationId ?? null,
+        input.requestId ?? null,
+        input.registryEventId,
+        input.eventType,
+        input.createdAt ?? nowIso(),
+      ],
+    )
+    const result = await db.query(
+      `SELECT id, reservation_id, request_id, registry_event_id, event_type, created_at
+       FROM booking_registry_event_links
+       WHERE id = ?`,
+      [id],
+    )
+    return toBookingRegistryEventLink(result.values?.[0] as BookingRegistryEventLinkRow)
   }
 
   async seedInitialTariffsIfMissing(): Promise<void> {
@@ -2738,6 +3323,58 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     }
   }
 
+  private requireBookingRequest(
+    requests: BookingRequestRecord[],
+    requestId: string,
+  ): BookingRequestRecord {
+    const request = requests.find((current) => current.id === requestId)
+    if (!request) {
+      throw new Error('Richiesta prenotazione non trovata.')
+    }
+    return request
+  }
+
+  private requireBookingStatusEvent(
+    events: BookingStatusEventRecord[],
+    eventId: string,
+  ): BookingStatusEventRecord {
+    const event = events.find((current) => current.id === eventId)
+    if (!event) {
+      throw new Error('Evento prenotazione non trovato.')
+    }
+    return event
+  }
+
+  private requireBookingConflict(
+    conflicts: BookingConflictRecord[],
+    conflictId: string,
+  ): BookingConflictRecord {
+    const conflict = conflicts.find((current) => current.id === conflictId)
+    if (!conflict) {
+      throw new Error('Conflitto prenotazione non trovato.')
+    }
+    return conflict
+  }
+
+  private requireAvailabilityLock(
+    locks: AvailabilityLockRecord[],
+    lockId: string,
+  ): AvailabilityLockRecord {
+    const lock = locks.find((current) => current.id === lockId)
+    if (!lock) {
+      throw new Error('Blocco disponibilita non trovato.')
+    }
+    return lock
+  }
+
+  private async getRequiredPricingSnapshot(snapshotId: string): Promise<PricingSnapshotRecord> {
+    const snapshot = await this.getPricingSnapshotById(snapshotId)
+    if (!snapshot) {
+      throw new Error('Snapshot prezzo non trovato.')
+    }
+    return snapshot
+  }
+
   private async getTariffRuleById(
     db: SQLiteDBConnection,
     tariffRuleId: string,
@@ -3006,6 +3643,38 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     await addLayoutRowColumn('start_margin_m', 'REAL DEFAULT 0')
     await addLayoutRowColumn('end_margin_m', 'REAL DEFAULT 0')
     await addLayoutRowColumn('distribution_axis', "TEXT DEFAULT 'x'")
+
+    const reservationInfo = await db.query('PRAGMA table_info(reservations)')
+    const reservationColumns = new Set((reservationInfo.values ?? []).map((row) => String(row.name)))
+    const addReservationColumn = async (name: string, definition: string) => {
+      if (!reservationColumns.has(name)) {
+        await db.execute(`ALTER TABLE reservations ADD COLUMN ${name} ${definition};`)
+      }
+    }
+    await addReservationColumn('source', "TEXT NOT NULL DEFAULT 'operator'")
+    await addReservationColumn('booking_mode', "TEXT NOT NULL DEFAULT 'operator_app'")
+    await addReservationColumn('booking_status', "TEXT NOT NULL DEFAULT 'active'")
+    await addReservationColumn('period_type', "TEXT NOT NULL DEFAULT 'daily'")
+    await addReservationColumn('sync_state', "TEXT NOT NULL DEFAULT 'local'")
+    await addReservationColumn('remote_id', 'TEXT')
+    await addReservationColumn('version', 'INTEGER NOT NULL DEFAULT 1')
+    await addReservationColumn('deleted_at', 'TEXT')
+    await addReservationColumn('pricing_snapshot_id', 'TEXT')
+    await addReservationColumn('folio_id', 'TEXT')
+    await addReservationColumn('request_id', 'TEXT')
+    await db.execute(`
+      UPDATE reservations
+      SET booking_status = status,
+          period_type = reservation_type,
+          folio_id = account_id
+      WHERE booking_status IS NULL
+         OR booking_status = ''
+         OR (booking_status = 'active' AND status != 'active')
+         OR period_type IS NULL
+         OR period_type = ''
+         OR (period_type = 'daily' AND reservation_type != 'daily')
+         OR (folio_id IS NULL AND account_id IS NOT NULL);
+    `)
   }
 }
 
@@ -3019,6 +3688,13 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
   private accounts: Account[] = []
   private payments: Payment[] = []
   private reservations: Reservation[] = []
+  private bookingRequests: BookingRequestRecord[] = []
+  private bookingStatusEvents: BookingStatusEventRecord[] = []
+  private bookingConflicts: BookingConflictRecord[] = []
+  private availabilityLocks: AvailabilityLockRecord[] = []
+  private pricingSnapshots: PricingSnapshotRecord[] = []
+  private bookingFolioLinks: BookingFolioLinkRecord[] = []
+  private bookingRegistryEventLinks: BookingRegistryEventLinkRecord[] = []
   private tariffRules: TariffRule[] = []
   private extraCatalog: ExtraItemCatalogEntry[] = []
   private accountExtras: AccountExtraItem[] = []
@@ -3891,6 +4567,229 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
       .slice(0, limit)
   }
 
+  async listBookingRequests(): Promise<BookingRequestRecord[]> {
+    return this.bookingRequests
+      .filter((request) => !request.deletedAt)
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async createBookingRequest(input: BookingRequestInput): Promise<BookingRequestRecord> {
+    const now = nowIso()
+    const request: BookingRequestRecord = {
+      id: input.id ?? createEntityId('booking-request'),
+      workspaceId: input.workspaceId ?? null,
+      source: input.source,
+      status: input.status ?? 'new',
+      pairingStatus: input.pairingStatus ?? 'unpaired',
+      customerPayload: input.customerPayload,
+      requestedPeriod: input.requestedPeriod,
+      requestedItemId: input.requestedItemId ?? null,
+      requestedItemType: input.requestedItemType ?? null,
+      requestedExtras: input.requestedExtras ?? [],
+      convertedReservationId: null,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+      syncState: 'local',
+      remoteId: null,
+      version: 1,
+    }
+    this.bookingRequests = [request, ...this.bookingRequests]
+    this.persistState()
+    return request
+  }
+
+  async updateBookingRequestStatus(
+    requestId: string,
+    status: BookingRequestStatus,
+  ): Promise<BookingRequestRecord> {
+    const current = this.getRequiredMemoryBookingRequest(requestId)
+    const updated = { ...current, status, updatedAt: nowIso(), version: current.version + 1 }
+    this.bookingRequests = this.bookingRequests.map((request) =>
+      request.id === requestId ? updated : request,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async listBookingStatusEvents(filters: {
+    reservationId?: string
+    requestId?: string
+  } = {}): Promise<BookingStatusEventRecord[]> {
+    return this.bookingStatusEvents
+      .filter((event) =>
+        (!filters.reservationId || event.reservationId === filters.reservationId) &&
+        (!filters.requestId || event.requestId === filters.requestId),
+      )
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async appendBookingStatusEvent(input: BookingStatusEventInput): Promise<BookingStatusEventRecord> {
+    const event: BookingStatusEventRecord = {
+      id: input.id ?? createEntityId('booking-status-event'),
+      reservationId: input.reservationId ?? null,
+      requestId: input.requestId ?? null,
+      fromStatus: input.fromStatus ?? null,
+      toStatus: input.toStatus,
+      source: input.source,
+      reason: input.reason ?? null,
+      payload: input.payload ?? null,
+      createdAt: input.createdAt ?? nowIso(),
+      createdBy: input.createdBy ?? null,
+      deviceId: input.deviceId ?? null,
+    }
+    this.bookingStatusEvents = [event, ...this.bookingStatusEvents]
+    this.persistState()
+    return event
+  }
+
+  async listBookingConflicts(filters: {
+    reservationId?: string
+    requestId?: string
+    status?: BookingConflictRecord['status']
+  } = {}): Promise<BookingConflictRecord[]> {
+    return this.bookingConflicts
+      .filter((conflict) =>
+        (!filters.reservationId || conflict.reservationId === filters.reservationId) &&
+        (!filters.requestId || conflict.requestId === filters.requestId) &&
+        (!filters.status || conflict.status === filters.status),
+      )
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async createBookingConflict(input: BookingConflictInput): Promise<BookingConflictRecord> {
+    const conflict: BookingConflictRecord = {
+      id: input.id ?? createEntityId('booking-conflict'),
+      reservationId: input.reservationId ?? null,
+      requestId: input.requestId ?? null,
+      conflictType: input.conflictType,
+      severity: input.severity,
+      affectedItemIds: input.affectedItemIds,
+      affectedPeriod: input.affectedPeriod,
+      message: input.message,
+      status: input.status ?? 'open',
+      createdAt: input.createdAt ?? nowIso(),
+      resolvedAt: null,
+    }
+    this.bookingConflicts = [conflict, ...this.bookingConflicts]
+    this.persistState()
+    return conflict
+  }
+
+  async resolveBookingConflict(conflictId: string): Promise<BookingConflictRecord> {
+    const current = this.getRequiredMemoryBookingConflict(conflictId)
+    const updated = { ...current, status: 'resolved' as const, resolvedAt: nowIso() }
+    this.bookingConflicts = this.bookingConflicts.map((conflict) =>
+      conflict.id === conflictId ? updated : conflict,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async listAvailabilityLocks(filters: {
+    itemId?: string
+    status?: AvailabilityLockRecord['status']
+  } = {}): Promise<AvailabilityLockRecord[]> {
+    return this.availabilityLocks
+      .filter((lock) =>
+        (!filters.itemId || lock.itemId === filters.itemId) &&
+        (!filters.status || lock.status === filters.status),
+      )
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async createAvailabilityLock(input: AvailabilityLockInput): Promise<AvailabilityLockRecord> {
+    const now = nowIso()
+    const lock: AvailabilityLockRecord = {
+      id: input.id ?? createEntityId('availability-lock'),
+      workspaceId: input.workspaceId ?? null,
+      itemId: input.itemId,
+      period: input.period,
+      source: input.source,
+      reservationId: input.reservationId ?? null,
+      requestId: input.requestId ?? null,
+      status: input.status ?? 'active',
+      expiresAt: input.expiresAt ?? null,
+      createdAt: input.createdAt ?? now,
+      updatedAt: input.updatedAt ?? now,
+    }
+    this.availabilityLocks = [lock, ...this.availabilityLocks]
+    this.persistState()
+    return lock
+  }
+
+  async releaseAvailabilityLock(lockId: string): Promise<AvailabilityLockRecord> {
+    const current = this.getRequiredMemoryAvailabilityLock(lockId)
+    const updated = { ...current, status: 'released' as const, updatedAt: nowIso() }
+    this.availabilityLocks = this.availabilityLocks.map((lock) =>
+      lock.id === lockId ? updated : lock,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async createPricingSnapshot(input: PricingSnapshotInput): Promise<PricingSnapshotRecord> {
+    const now = nowIso()
+    const snapshot: PricingSnapshotRecord = {
+      id: input.id ?? createEntityId('pricing-snapshot'),
+      reservationId: input.reservationId ?? null,
+      sourceRuleId: input.sourceRuleId ?? null,
+      catalogItemId: input.catalogItemId ?? null,
+      periodType: input.periodType,
+      scope: input.scope ?? null,
+      basePrice: input.basePrice,
+      extrasTotal: input.extrasTotal,
+      includedItems: input.includedItems,
+      calculatedTotal: input.calculatedTotal,
+      manualOverride: input.manualOverride ?? null,
+      createdAt: input.createdAt ?? now,
+      updatedAt: input.updatedAt ?? now,
+    }
+    this.pricingSnapshots = [snapshot, ...this.pricingSnapshots]
+    this.persistState()
+    return snapshot
+  }
+
+  async getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null> {
+    return this.pricingSnapshots.find((snapshot) => snapshot.id === snapshotId) ?? null
+  }
+
+  async linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord> {
+    const now = nowIso()
+    const current = this.bookingFolioLinks.find(
+      (link) => link.reservationId === input.reservationId && link.accountId === input.accountId,
+    )
+    const link: BookingFolioLinkRecord = {
+      id: current?.id ?? input.id ?? createEntityId('booking-folio-link'),
+      reservationId: input.reservationId,
+      accountId: input.accountId,
+      status: input.status,
+      createdAt: current?.createdAt ?? input.createdAt ?? now,
+      updatedAt: input.updatedAt ?? now,
+    }
+    this.bookingFolioLinks = current
+      ? this.bookingFolioLinks.map((existing) => (existing.id === link.id ? link : existing))
+      : [link, ...this.bookingFolioLinks]
+    this.persistState()
+    return link
+  }
+
+  async linkBookingRegistryEvent(
+    input: BookingRegistryEventLinkInput,
+  ): Promise<BookingRegistryEventLinkRecord> {
+    const link: BookingRegistryEventLinkRecord = {
+      id: input.id ?? createEntityId('booking-registry-link'),
+      reservationId: input.reservationId ?? null,
+      requestId: input.requestId ?? null,
+      registryEventId: input.registryEventId,
+      eventType: input.eventType,
+      createdAt: input.createdAt ?? nowIso(),
+    }
+    this.bookingRegistryEventLinks = [link, ...this.bookingRegistryEventLinks]
+    this.persistState()
+    return link
+  }
+
   async seedInitialTariffsIfMissing(): Promise<void> {
     const now = nowIso()
     const existingNames = new Set(this.tariffRules.filter((rule) => rule.active).map((rule) => rule.name.toLowerCase()))
@@ -4259,6 +5158,13 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     this.accounts = []
     this.payments = []
     this.reservations = []
+    this.bookingRequests = []
+    this.bookingStatusEvents = []
+    this.bookingConflicts = []
+    this.availabilityLocks = []
+    this.pricingSnapshots = []
+    this.bookingFolioLinks = []
+    this.bookingRegistryEventLinks = []
     this.tariffRules = []
     this.extraCatalog = []
     this.accountExtras = []
@@ -4297,6 +5203,30 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
       throw new Error('Prenotazione non trovata.')
     }
     return reservation
+  }
+
+  private getRequiredMemoryBookingRequest(requestId: string): BookingRequestRecord {
+    const request = this.bookingRequests.find((current) => current.id === requestId)
+    if (!request) {
+      throw new Error('Richiesta prenotazione non trovata.')
+    }
+    return request
+  }
+
+  private getRequiredMemoryBookingConflict(conflictId: string): BookingConflictRecord {
+    const conflict = this.bookingConflicts.find((current) => current.id === conflictId)
+    if (!conflict) {
+      throw new Error('Conflitto prenotazione non trovato.')
+    }
+    return conflict
+  }
+
+  private getRequiredMemoryAvailabilityLock(lockId: string): AvailabilityLockRecord {
+    const lock = this.availabilityLocks.find((current) => current.id === lockId)
+    if (!lock) {
+      throw new Error('Blocco disponibilita non trovato.')
+    }
+    return lock
   }
 
   private validateMemoryReservationInput(input: ReservationInput): void {

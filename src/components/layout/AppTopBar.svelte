@@ -64,12 +64,26 @@
         onclick={() => selectTopbarItem(module.id)}
       >
         <span class="topbar-module-nav__icon" aria-hidden="true">
-          {#if module.id === 'clients'}
+          {#if module.id === 'dashboard'}
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 11.5 12 5l8 6.5"></path>
+              <path d="M6.5 10.5V19h11v-8.5"></path>
+              <path d="M10 19v-5h4v5"></path>
+            </svg>
+          {:else if module.id === 'clients'}
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M15 19v-1.4a3.6 3.6 0 0 0-3.6-3.6H7.6A3.6 3.6 0 0 0 4 17.6V19"></path>
               <circle cx="9.5" cy="8" r="3"></circle>
               <path d="M17 11.5a2.8 2.8 0 0 0 0-5.5"></path>
               <path d="M20 19v-1a3.2 3.2 0 0 0-2-3"></path>
+            </svg>
+          {:else if module.id === 'employees'}
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 20v-2.2a3.8 3.8 0 0 1 3.8-3.8h.4a3.8 3.8 0 0 1 3.8 3.8V20"></path>
+              <circle cx="12" cy="8" r="3"></circle>
+              <path d="M5 20h14"></path>
+              <path d="M17.5 10.5h2.2"></path>
+              <path d="M18.6 9.4v2.2"></path>
             </svg>
           {:else if module.id === 'registry'}
             <svg viewBox="0 0 24 24" fill="none">

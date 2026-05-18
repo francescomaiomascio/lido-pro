@@ -340,4 +340,106 @@ CREATE INDEX IF NOT EXISTS idx_beach_layout_asset_metrics_version ON beach_layou
       -- Runtime-safe listino ALTERs are guarded in sqliteAdapter.ensureRuntimeColumns.
     `,
   },
+  {
+    version: 13,
+    sql: `
+      -- Runtime-safe reservation ALTERs are guarded in sqliteAdapter.ensureRuntimeColumns.
+
+      CREATE TABLE IF NOT EXISTS booking_requests (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT,
+        source TEXT NOT NULL,
+        status TEXT NOT NULL,
+        pairing_status TEXT NOT NULL,
+        customer_payload_json TEXT NOT NULL,
+        requested_period_json TEXT NOT NULL,
+        requested_item_id TEXT,
+        requested_item_type TEXT,
+        requested_extras_json TEXT,
+        converted_reservation_id TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT,
+        sync_state TEXT,
+        remote_id TEXT,
+        version INTEGER NOT NULL DEFAULT 1
+      );
+
+      CREATE TABLE IF NOT EXISTS booking_status_events (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT,
+        request_id TEXT,
+        from_status TEXT,
+        to_status TEXT NOT NULL,
+        source TEXT NOT NULL,
+        reason TEXT,
+        payload_json TEXT,
+        created_at TEXT NOT NULL,
+        created_by TEXT,
+        device_id TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS booking_conflicts (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT,
+        request_id TEXT,
+        conflict_type TEXT NOT NULL,
+        severity TEXT NOT NULL,
+        affected_item_ids_json TEXT NOT NULL,
+        affected_period_json TEXT NOT NULL,
+        message TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        resolved_at TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS availability_locks (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT,
+        item_id TEXT NOT NULL,
+        period_json TEXT NOT NULL,
+        source TEXT NOT NULL,
+        reservation_id TEXT,
+        request_id TEXT,
+        status TEXT NOT NULL,
+        expires_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS pricing_snapshots (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT,
+        source_rule_id TEXT,
+        catalog_item_id TEXT,
+        period_type TEXT NOT NULL,
+        scope_json TEXT,
+        base_price REAL NOT NULL DEFAULT 0,
+        extras_total REAL NOT NULL DEFAULT 0,
+        included_items_json TEXT,
+        calculated_total REAL NOT NULL DEFAULT 0,
+        manual_override_json TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS booking_folio_links (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT NOT NULL,
+        account_id TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS booking_registry_event_links (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT,
+        request_id TEXT,
+        registry_event_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+    `,
+  },
 ] as const

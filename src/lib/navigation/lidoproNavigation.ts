@@ -1,6 +1,7 @@
 export type LidoProModuleId =
   | 'dashboard'
   | 'clients'
+  | 'employees'
   | 'registry'
   | 'priceList'
   | 'activeLayout'
@@ -35,10 +36,22 @@ export const lidoproPrimaryModules: Array<LidoProModule & { id: LidoProPrimaryMo
     description: 'Stato operativo e accesso ai workspace principali.',
   },
   {
+    id: 'activeLayout',
+    label: 'Spiaggia',
+    shortLabel: 'Spiaggia',
+    description: 'Spiaggia operativa protetta usata durante il lavoro quotidiano.',
+  },
+  {
     id: 'clients',
     label: 'Clienti',
     shortLabel: 'Clienti',
     description: 'Anagrafiche, profili e assegnazioni cliente.',
+  },
+  {
+    id: 'employees',
+    label: 'Dipendenti',
+    shortLabel: 'Staff',
+    description: 'Staff operativo, ruoli e assegnazioni locali.',
   },
   {
     id: 'registry',
@@ -51,12 +64,6 @@ export const lidoproPrimaryModules: Array<LidoProModule & { id: LidoProPrimaryMo
     label: 'Listino',
     shortLabel: 'Listino',
     description: 'Tariffe, catalogo, dotazioni e articoli collegati ai conti.',
-  },
-  {
-    id: 'activeLayout',
-    label: 'Spiaggia',
-    shortLabel: 'Spiaggia',
-    description: 'Spiaggia operativa protetta usata durante il lavoro quotidiano.',
   },
   {
     id: 'studioProjects',
@@ -82,6 +89,12 @@ export const lidoproModules: LidoProModule[] = [
 
 export const lidoproTopbarItems: LidoProTopbarItem[] = [
   {
+    id: 'dashboard',
+    label: 'Home',
+    shortLabel: 'Home',
+    description: 'Stato operativo e accesso ai workspace principali.',
+  },
+  {
     id: 'activeLayout',
     label: 'Spiaggia',
     shortLabel: 'Spiaggia',
@@ -100,6 +113,12 @@ export const lidoproTopbarItems: LidoProTopbarItem[] = [
     label: 'Clienti',
     shortLabel: 'Clienti',
     description: 'Anagrafiche, profili e assegnazioni cliente.',
+  },
+  {
+    id: 'employees',
+    label: 'Dipendenti',
+    shortLabel: 'Staff',
+    description: 'Staff operativo, ruoli e assegnazioni locali.',
   },
   {
     id: 'registry',

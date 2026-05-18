@@ -4,6 +4,7 @@
   import BeachItemList from '../components/beach/BeachItemList.svelte'
   import BeachMap from '../components/beach/BeachMap.svelte'
   import LidoProDashboard from '../components/dashboard/LidoProDashboard.svelte'
+  import EmployeesView from '../components/employees/EmployeesView.svelte'
   import AppTopBar from '../components/layout/AppTopBar.svelte'
   import FilterSheet from '../components/layout/FilterSheet.svelte'
   import ViewSwitcher from '../components/layout/ViewSwitcher.svelte'
@@ -62,6 +63,7 @@
     loadExtraItemCatalog,
     removeAccountExtraItemAndReload,
   } from '../lib/services/extraItemService'
+  import { seedDemoOperationsIfNeeded } from '../lib/services/demoOperationsSeedService'
   import {
     getAccountLedger,
     getReservationSummaryForItem,
@@ -216,6 +218,16 @@
     startLoadingTimer()
     try {
       await loadState()
+      if (import.meta.env.DEV) {
+        const seedResult = await seedDemoOperationsIfNeeded()
+        if (
+          seedResult.createdCustomers > 0 ||
+          seedResult.createdReservations > 0 ||
+          seedResult.createdPayments > 0
+        ) {
+          await loadState()
+        }
+      }
       loadingStepIndex = loadingSteps.length - 1
     } catch (error: unknown) {
       errorMessage = error instanceof Error ? error.message : 'Errore caricamento spiaggia.'
@@ -804,6 +816,7 @@
             {typeSummary}
             {workspaceSummary}
             {runtime}
+            {extraCatalog}
             onOpenModule={selectModule}
           />
         {:else if activeModule === 'activeLayout'}
@@ -882,6 +895,10 @@
         {:else if activeModule === 'clients'}
           <section class="workspace-page workspace-page--clients" aria-label="Clienti">
             <CustomersSettingsPanel />
+          </section>
+        {:else if activeModule === 'employees'}
+          <section class="workspace-page workspace-page--employees" aria-label="Dipendenti">
+            <EmployeesView />
           </section>
         {:else if activeModule === 'registry'}
           <section class="workspace-page workspace-page--registry" aria-label="Registro">

@@ -5,13 +5,13 @@
   import { formatEuroFromCents } from '../../lib/format/money'
   import { accountStatusLabels, paymentMethodLabels } from '../../lib/format/accountLabels'
   import { reservationStatusLabels, reservationTypeLabels } from '../../lib/format/reservationLabels'
-  import { requestOpenRegistry } from '../../lib/state/registryFilters'
   import type { CustomerInput } from '../../lib/types/customer'
   import type {
     CustomerProfile,
     CustomerReservationSummary,
   } from '../../lib/types/customerProfile'
   import CustomerAnagraficaForm from './CustomerAnagraficaForm.svelte'
+  import CustomerOperationalLinks from './CustomerOperationalLinks.svelte'
 
   type ProfileVariant = 'standalone' | 'embedded'
 
@@ -62,7 +62,11 @@
   )
   const currentPlaceLabel = $derived(
     profile.currentBeachItem
-      ? `${beachTypeLabels[profile.currentBeachItem.type]} ${profile.currentBeachItem.code}`
+      ? [
+          beachTypeLabels[profile.currentBeachItem.type],
+          profile.currentBeachItem.rowLabel ? `Fila ${profile.currentBeachItem.rowLabel}` : null,
+          profile.currentBeachItem.numberIndex ? `Posto ${profile.currentBeachItem.numberIndex}` : profile.currentBeachItem.code,
+        ].filter(Boolean).join(' · ')
       : 'Nessun posto attivo',
   )
   const currentPeriodLabel = $derived(
@@ -80,27 +84,18 @@
   const contactLine = $derived(
     [profile.customer.phone, profile.customer.email].filter(Boolean).join(' · ') || 'Nessun recapito',
   )
+  const profileStatusLine = $derived(
+    `${profile.customer.active ? 'Cliente attivo' : 'In archivio'} · Aggiornato ${formatCompactDateTime(profile.customer.updatedAt)}`,
+  )
 </script>
 
 <article class={`customer-profile-panel customer-profile-panel--${variant}`} aria-label="Scheda cliente">
   <header class="customer-profile-header">
     <div class="customer-profile-title">
-      <span>Cliente</span>
       <h2>{profile.customer.fullName}</h2>
-      <p>{contactLine}</p>
+      <p>{profileStatusLine}</p>
     </div>
     <div class="customer-profile-actions">
-      <button
-        type="button"
-        class="button-secondary"
-        onclick={() =>
-          requestOpenRegistry({
-            customerId: profile.customer.id,
-            customerName: profile.customer.fullName,
-          })}
-      >
-        Registro
-      </button>
       {#if !editing}
         <button type="button" class="button-secondary" onclick={onEdit}>Modifica</button>
       {/if}
@@ -130,9 +125,16 @@
       {/if}
     </section>
 
+    <section class="customer-profile-section customer-profile-section--links" aria-label="Collegamenti operativi">
+      <div class="customer-profile-section__heading">
+        <span>Collegamenti operativi</span>
+      </div>
+      <CustomerOperationalLinks {profile} />
+    </section>
+
     <section class="customer-profile-section customer-profile-section--current" aria-label="Operativita">
       <div class="customer-profile-section__heading">
-        <span>Operativita</span>
+        <span>Riepilogo operativo</span>
       </div>
       <dl class="customer-compact-facts">
         <div><dt>Posto</dt><dd>{currentPlaceLabel}</dd></div>
