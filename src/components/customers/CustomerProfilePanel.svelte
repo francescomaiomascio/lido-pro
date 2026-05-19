@@ -26,6 +26,7 @@
     onCancelEdit,
     onSave,
     onToggleHistory,
+    onStartBooking,
   }: {
     profile: CustomerProfile
     fullReservationHistory: CustomerReservationSummary[]
@@ -37,6 +38,7 @@
     onCancelEdit: () => void
     onSave: (input: CustomerInput) => void | Promise<void>
     onToggleHistory: () => void
+    onStartBooking: () => void
   } = $props()
 
   const activeReservationId = $derived(profile.currentReservation?.id ?? null)
@@ -97,6 +99,7 @@
     </div>
     <div class="customer-profile-actions">
       {#if !editing}
+        <button type="button" class="button-primary" onclick={onStartBooking}>Nuova prenotazione</button>
         <button type="button" class="button-secondary" onclick={onEdit}>Modifica</button>
       {/if}
     </div>

@@ -18,7 +18,7 @@ import type {
   ExtraItemCatalogEntry,
   ExtraItemCatalogInput,
 } from '../types/extraItem'
-import { loadBeachState } from './beachLayoutService'
+import { loadActiveOperationalBeachState } from './beachLayoutService'
 
 export const loadExtraItemCatalog = async (): Promise<ExtraItemCatalogEntry[]> => {
   await initializeBeachDatabase()
@@ -48,7 +48,7 @@ export const addAccountExtraItemAndReload = async (
 ): Promise<BeachState> => {
   await addExtraItemToAccount(accountId, input)
   await recalculateAccountTotalWithExtras(accountId)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const updateAccountExtraItemAndReload = async (
@@ -56,10 +56,10 @@ export const updateAccountExtraItemAndReload = async (
   input: AccountExtraItemInput,
 ): Promise<BeachState> => {
   await updateAccountExtraItem(id, input)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const removeAccountExtraItemAndReload = async (id: string): Promise<BeachState> => {
   await removeAccountExtraItem(id)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }

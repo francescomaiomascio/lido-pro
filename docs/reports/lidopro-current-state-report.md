@@ -11,8 +11,8 @@ This report is based on repository inspection and validation commands run in the
 Status: partial / risky
 
 - Current branch: `main`.
-- Active shell Node: `v20.20.2`.
-- Project engine requirement: `node >=22.12.0` in `package.json`.
+- Active shell Node during the original audit: `v20.20.2`.
+- Current project engine requirement: `node >=24.0.0` in `package.json`.
 - Node 24 available at `/opt/homebrew/opt/node@24/bin/node` (`v24.15.0`).
 - Main stack: Svelte 5, Vite 8, TypeScript, Tauri 2, Capacitor 8, Android, local SQLite through `@capacitor-community/sqlite`, `jeep-sqlite`, and `sql.js`.
 - Package scripts include `dev`, `build`, `check`, Tauri build/dev, Capacitor sync/run/open commands, and validation aliases.
@@ -27,7 +27,7 @@ Validation results:
 
 - `npm run check`: passed, 0 errors and 0 warnings.
 - `npm run build`: passed.
-- `npm run cap:sync`: failed with active shell Node `v20.20.2` because Capacitor CLI requires Node `>=22.0.0`.
+- `npm run cap:sync`: failed with active shell Node `v20.20.2` because the project now requires Node `>=24.0.0`.
 - `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run cap:sync`: passed.
 - `PATH=/opt/homebrew/opt/node@24/bin:$PATH npx cap sync android`: passed.
 - `git diff --check`: passed before report creation.

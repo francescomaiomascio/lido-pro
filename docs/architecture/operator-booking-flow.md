@@ -14,7 +14,7 @@ select beach item
 -> assign customer
 -> choose period
 -> check availability
--> apply current Articoli/Listino price suggestion
+-> apply current Articoli pricing suggestion
 -> create or update reservation
 -> create or preserve conto/account link
 -> expose registry event intent for later Registro integration
@@ -96,11 +96,11 @@ BOOKING.5 preserves the current conto/account behavior:
 - if payments exist, totals are not destructively recalculated by the operator booking flow;
 - extras remain owned by the existing extra item service.
 
-Final Folio terminology and account boundary hardening remain deferred to FOLIO.1 / BOOKING.8.
+BOOKING.8 now provides the Folio / Conto service boundary over the existing account system. Persistent folio lines and final Folio UI terminology remain deferred to FOLIO.1.
 
 ## Pricing / Articoli Boundary
 
-The flow continues to use current tariff suggestions from Articoli/Listino services.
+The flow continues to use current tariff suggestions from Articoli pricing services.
 
 The account amount can be generated from the current suggestion or entered manually. Pricing snapshot persistence exists from BOOKING.2, but BOOKING.5 does not force snapshot creation. BOOKING.7 will harden pricing snapshots.
 

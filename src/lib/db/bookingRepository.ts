@@ -1,6 +1,8 @@
 import type {
   AvailabilityLockInput,
   AvailabilityLockRecord,
+  BookingChangeRequestInput,
+  BookingChangeRequestRecord,
   BookingConflictInput,
   BookingConflictRecord,
   BookingFolioLinkInput,
@@ -43,6 +45,13 @@ export const updateBookingRequestStatus = async (
   return getBeachDatabase().updateBookingRequestStatus(requestId, status)
 }
 
+export const markBookingRequestConverted = async (
+  requestId: string,
+  reservationId: string,
+): Promise<BookingRequestRecord> => {
+  return getBeachDatabase().markBookingRequestConverted(requestId, reservationId)
+}
+
 export const listPairingCandidates = async (
   requestId: string,
 ): Promise<BookingCustomerPairingCandidateRecord[]> => {
@@ -80,6 +89,33 @@ export const appendBookingStatusEvent = async (
   input: BookingStatusEventInput,
 ): Promise<BookingStatusEventRecord> => {
   return getBeachDatabase().appendBookingStatusEvent(input)
+}
+
+export const listBookingChangeRequests = async (filters?: {
+  reservationId?: string
+  status?: BookingChangeRequestRecord['status']
+}): Promise<BookingChangeRequestRecord[]> => {
+  return getBeachDatabase().listBookingChangeRequests(filters)
+}
+
+export const createBookingChangeRequest = async (
+  input: BookingChangeRequestInput,
+): Promise<BookingChangeRequestRecord> => {
+  return getBeachDatabase().createBookingChangeRequest(input)
+}
+
+export const getBookingChangeRequestById = async (
+  changeRequestId: string,
+): Promise<BookingChangeRequestRecord | null> => {
+  return getBeachDatabase().getBookingChangeRequestById(changeRequestId)
+}
+
+export const updateBookingChangeRequestStatus = async (
+  changeRequestId: string,
+  status: BookingChangeRequestRecord['status'],
+  decidedBy?: string | null,
+): Promise<BookingChangeRequestRecord> => {
+  return getBeachDatabase().updateBookingChangeRequestStatus(changeRequestId, status, decidedBy)
 }
 
 export const listBookingConflicts = async (filters?: {
@@ -127,10 +163,44 @@ export const createPricingSnapshot = async (
   return getBeachDatabase().createPricingSnapshot(input)
 }
 
+export const updatePricingSnapshotStatus = async (
+  snapshotId: string,
+  status: NonNullable<PricingSnapshotRecord['status']>,
+  metadata?: Record<string, unknown> | null,
+): Promise<PricingSnapshotRecord> => {
+  return getBeachDatabase().updatePricingSnapshotStatus(snapshotId, status, metadata)
+}
+
 export const getPricingSnapshotById = async (
   snapshotId: string,
 ): Promise<PricingSnapshotRecord | null> => {
   return getBeachDatabase().getPricingSnapshotById(snapshotId)
+}
+
+export const getPricingSnapshotForReservation = async (
+  reservationId: string,
+): Promise<PricingSnapshotRecord | null> => {
+  return getBeachDatabase().getPricingSnapshotForReservation(reservationId)
+}
+
+export const listPricingSnapshotsForReservation = async (
+  reservationId: string,
+): Promise<PricingSnapshotRecord[]> => {
+  return getBeachDatabase().listPricingSnapshotsForReservation(reservationId)
+}
+
+export const linkPricingSnapshotToReservation = async (
+  reservationId: string,
+  snapshotId: string,
+): Promise<PricingSnapshotRecord> => {
+  return getBeachDatabase().linkPricingSnapshotToReservation(reservationId, snapshotId)
+}
+
+export const linkPricingSnapshotToAccount = async (
+  accountId: string,
+  snapshotId: string,
+): Promise<PricingSnapshotRecord> => {
+  return getBeachDatabase().linkPricingSnapshotToAccount(accountId, snapshotId)
 }
 
 export const linkBookingFolio = async (

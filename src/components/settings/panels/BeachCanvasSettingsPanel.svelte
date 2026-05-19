@@ -282,7 +282,7 @@
       title: 'Ombrelloni',
       description: 'Varianti grafiche e metriche degli ombrelloni.',
       categoryId: 'umbrellas',
-      note: 'Le varianti vendibili sono governate dal Listino; qui restano solo materiali tecnici per lo Studio.',
+      note: 'Le varianti vendibili sono governate da Articoli; qui restano solo materiali tecnici per lo Studio.',
     },
     'beach-library-palms': {
       title: 'Palme',
@@ -300,7 +300,7 @@
       title: 'Oggetti tecnici',
       description: 'Elementi tecnici e ostacoli di scena.',
       categoryId: 'map_items',
-      note: 'I servizi a pagamento stanno nel Listino; qui restano oggetti tecnici e ostacoli di mappa.',
+      note: 'I servizi a pagamento stanno in Articoli; qui restano oggetti tecnici e ostacoli di mappa.',
     },
     'beach-library-icons-symbols': {
       title: 'Icone Studio',
@@ -811,14 +811,14 @@
   </section>
 {:else if section === 'beach-assets'}
   <section class="settings-panel beach-library-shell" aria-label="Asset costruzione">
-    <SettingsHeader title="Asset costruzione" description="Materiali e oggetti tecnici per costruire o renderizzare la mappa. Gli articoli vendibili stanno nel Listino." status="Studio" />
+    <SettingsHeader title="Asset costruzione" description="Materiali e oggetti tecnici per costruire o renderizzare la mappa. Gli articoli vendibili stanno in Articoli." status="Studio" />
     <BeachLibraryCategoryList
       categories={realLibraryCategories}
       targetSections={libraryCategoryTargets}
       onOpen={onSectionSelect}
     />
     <div class="beach-library-note beach-library-note--action">
-      <span>Questa area raccoglie asset di costruzione e rendering. Prezzi, stock, dotazioni ed extra si gestiscono dal Listino.</span>
+      <span>Questa area raccoglie asset di costruzione e rendering. Prezzi, stock, dotazioni ed extra si gestiscono da Articoli.</span>
       <button type="button" onclick={openEditModeFromLibrary}>Apri modalità modifica</button>
     </div>
   </section>

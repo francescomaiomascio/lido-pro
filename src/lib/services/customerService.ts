@@ -9,7 +9,7 @@ import {
 import { normalizeCustomerInput, validateCustomerInput } from '../customers/customerValidation'
 import type { Customer, CustomerAssignmentType, CustomerInput } from '../types/customer'
 import type { BeachState } from '../types/db'
-import { loadBeachState } from './beachLayoutService'
+import { loadActiveOperationalBeachState } from './beachLayoutService'
 
 export const loadCustomers = async (): Promise<Customer[]> => {
   return getActiveCustomers()
@@ -41,14 +41,14 @@ export const assignCustomerToItem = async (
   note?: string,
 ): Promise<BeachState> => {
   await assignCustomerToBeachItem(itemId, customerId, assignmentType, note)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const unassignCustomerFromItem = async (itemId: string): Promise<BeachState> => {
   await unassignCustomerFromBeachItem(itemId)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const loadBeachStateWithCustomers = async (): Promise<BeachState> => {
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }

@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  LidoPro is a proprietary commercial operating platform for beach establishments, combining parametric space planning, map-based daily operations, reservations, customer management, pricing, accounts, and service workflows into one connected product surface.
+  LidoPro is a proprietary vertical operating platform for beach establishments. It combines an operator app, protected active Spiaggia layout, parametric Studio, booking and availability engine, customer records, Articoli/catalog pricing, accounts/folios, Registro events, staff, services, customer booking surfaces, and cloud-ready sync/account infrastructure into one connected product.
 </p>
 
 <p align="center">
-  <em>Gestionale operativo per stabilimenti balneari: progettazione, mappa operativa, prenotazioni, clienti, listino, conti e servizi.</em>
+  <em>Gestionale operativo per stabilimenti balneari: Spiaggia, Studio, prenotazioni, clienti, Articoli, conti, Registro, servizi, staff, app cliente, booking web e cloud sync.</em>
 </p>
 
 <p align="center">
@@ -28,52 +28,127 @@
 </p>
 
 <p align="center">
-  <em>LidoPro desktop preview — operational beach map, selected place detail, and local booking/account workflow.</em>
+  <em>LidoPro desktop preview — operator Spiaggia surface, selected place detail, and local booking/account workflow.</em>
 </p>
 
 ## Product Overview
 
-LidoPro starts from the beach map as the operational surface. Lido Studio handles parametric design and planning of the beach layout, while the active operational map is the protected daily surface used by staff.
+LidoPro is designed as a connected operating system for beach establishments. It is not just a beach map: it connects design, daily operations, bookings, customer records, Articoli, folios, Registro events, staff, services, and customer-facing booking surfaces around the active operational layout.
 
-Each place, reservation, customer, account state, equipment record, and operational event should be connected through the same product surface rather than living in isolated screens.
+The operator app manages the daily workflow locally and reliably, while the broader platform prepares customer booking, account/sync, cloud backup, AI-assisted setup, and client-facing surfaces around the same operational model.
 
-The current implementation is local-first and operator-focused. The broader product direction is a connected commercial platform for beach operations, including beach management, bar/service operations, customer booking, real payments, cloud synchronization, multi-device accounts, and intelligent operational assistance when implemented and released.
+Studio designs layouts through drafts, previews, verification, and controlled publication. Spiaggia operates the protected active layout. Booking connects customers, availability, period, Articoli/pricing snapshots, Conti/Folio, payments, Registro, dashboard state, and future web/client-facing status.
+
+Cloud / Account / Sync is the planned shared system layer for tenants, accounts, backup, synchronization, APIs, customer booking, storage, and AI gateway. It is not a replacement for the local operational engine.
 
 <p align="center">
   <img src="public/brand/readme/lidopro-readme-product-rail.svg" alt="LidoPro product surfaces" width="920">
 </p>
 
-## Product Pillars
+## Usage Modes
 
-| Pillar | Scope | Status |
+| Mode | Purpose | Status |
 | --- | --- | --- |
-| Parametric Beach Studio | Design and verify beach layouts before publication. | Implemented / evolving |
-| Active Operational Map | Protected daily map for places, reservations, customers, and account state. | Implemented / evolving |
-| Booking and Customer Operations | Reservations, assignments, customer records, activity, and local workflow history. | Implemented / evolving |
-| Catalog, Pricing, and Accounts | Tariffs, extras, articles, local ledger, and payment-record foundations. | Implemented / evolving |
-| Bar and Service Operations | Orders, service items, food/beverage flows, and beach delivery workflows. | Product domain / not fully released |
-| Connected Platform Direction | Cloud sync, customer portal, real payments, multi-device accounts, and intelligent assistance. | Strategic boundary / not live |
+| Operator App | Staff-facing app for Spiaggia, bookings, customers, accounts, Articoli, Registro and services. | Implemented / evolving |
+| Web Booking | Customer-facing booking request and availability surface. | Planned / contract-first |
+| Client App | Smartphone/tablet customer app for bookings, services, account status and payments. | Planned |
+| Cloud / Sync | Account, tenant, backup, sync, multi-device and API layer. | Planned architecture |
+| AI Assistant | Operator-only assistant for drafts, imports, booking/account suggestions and Studio help. | Planned / operator-only |
 
-## Operational Layout Model
+## Product Areas
 
-LidoPro separates design work from daily operations. Studio drafts can be edited and reviewed, while the active layout remains the protected operational surface used by staff.
+| Area | Scope | Current status |
+| --- | --- | --- |
+| Home | Operational dashboard fed by booking, folio, Registro, Spiaggia, Staff and Servizi data. | Partial / final rebuild later |
+| Spiaggia | Protected active layout for daily operations, place selection, booking, customer, account and payments. | Implemented / evolving |
+| Studio | Parametric layout design, sketch, draft, preview, verification and controlled publication. | Implemented / evolving |
+| Booking | Requests, reservations, availability, pairing, lifecycle, inbox and customer-facing state. | Implemented / evolving |
+| Clienti | Customer records, profiles, history and pairing. | Implemented / evolving |
+| Articoli | Catalog, pricing rules, included equipment, extras, service items and account lines. | Implemented / evolving |
+| Conti / Folio | Account totals, residuals, payments, adjustments and booking economic state. | Implemented / evolving |
+| Registro | Operational events, movements, payment/account/booking history and audit direction. | Implemented / evolving |
+| Servizi | Service domain including Bar, orders, extra services and future service requests. | Planned / foundation pending |
+| Staff | Employees, roles, assignments and operational presence. | Shell / foundation pending |
+| Client App | Customer-facing mobile/tablet experience. | Planned |
+| Web Booking | Public booking and request workflow for the lido's customers. | Planned |
+| Cloud / Account / Sync | Tenant, account, backup, sync, multi-device, APIs and storage. | Planned architecture |
+| AI Integration | Operator-only assistant, local/cloud adapters, typed action drafts and imports. | Planned |
+
+## Layout and Operations Model
+
+LidoPro separates design work from daily operations. Studio drafts can be edited and reviewed, while Spiaggia remains the protected active operational surface used by staff.
 
 <p align="center">
   <img src="public/brand/readme/lidopro-readme-operational-flow.svg" alt="LidoPro operational layout flow from design to publication to daily operations" width="920">
 </p>
 
-The publication step is the boundary between planning and operations: drafts do not directly mutate customer, reservation, account, or daily workflow data.
+The layout pipeline is:
+
+```text
+Studio Project Draft
+-> Layout Preview
+-> Verification
+-> Controlled Publication
+-> Active Layout Projection
+-> Spiaggia Operational View
+-> Booking / Conti / Registro
+```
+
+Studio does not directly mutate operational Spiaggia. Spiaggia consumes the protected `activeLayoutProjection`, and booking/account flows attach to that active operational layout. Publication is the boundary between design and operation: drafts do not directly mutate customer, reservation, account, or daily workflow data.
+
+## Booking Spine
+
+Booking is not a standalone table. It is the operational transaction connecting:
+
+```text
+Cliente
+-> Booking / Richiesta
+-> Disponibilita
+-> Posto / Periodo
+-> Articoli / Pricing Snapshot
+-> Conto / Folio
+-> Pagamento
+-> Registro
+-> Dashboard
+-> Web/App cliente
+```
+
+The current implementation includes an evolving domain contract, local-first persistence, availability engine, customer pairing, selected-item operator booking console, lifecycle/change request handling, pricing snapshots, Folio boundary, Registro events, and Booking Inbox. This is not a complete public web booking or client-app runtime yet.
+
+## Local-first and Cloud-ready Architecture
+
+LidoPro is designed local-first: the operator app reads and writes locally for reliability on tablet, smartphone, and desktop, including when connectivity is unstable. SQLite/local storage remains the operational engine.
+
+The cloud layer is planned as the system layer for tenant/account, backup, synchronization, APIs, customer booking, storage, multi-device operation, and AI gateway. The product does not require replacing local SQLite with a fully online runtime, and cloud sync is not claimed as live in the current implementation.
+
+## AI Integration
+
+AI is planned as an operator-only assistant first. It can prepare booking drafts, customer/import suggestions, Articoli/catalog imports, account/folio draft actions, and Studio layout suggestions.
+
+The rule is: AI proposes, the operator confirms, the system validates, and only then data is written. A local LAN AI adapter and a cloud AI gateway are planned boundaries. AI is not initially exposed to the Client App or Web Booking surfaces, and provider keys must not live inside client mobile apps.
 
 ## Current Status
 
 | Area | Status |
 | --- | --- |
 | Product stage | Active development / commercial pre-release |
-| Current runtime posture | Local-first operator application |
+| Operator app | Implemented and evolving |
+| Spiaggia active layout | Implemented and evolving |
+| Studio / parametric design | Implemented and evolving |
+| Booking core | Implemented and evolving |
+| Articoli / pricing / extras | Implemented and evolving |
+| Conti / Folio | Implemented and evolving |
+| Registro | Implemented and evolving |
+| Staff | Shell / foundation pending |
+| Servizi / Bar | Planned / foundation pending |
+| Client App | Planned |
+| Web Booking | Planned |
+| Cloud sync/account | Planned architecture |
+| AI assistant | Planned operator-only integration |
+| Browser | Development preview only |
+| Runtime posture | Local-first, cloud-ready |
 | Primary desktop runtime | Tauri Desktop |
 | Primary field validation target | Android tablet |
-| Browser | Development preview only |
-| Not live unless released | Cloud sync, customer portal, real payments, hosted booking, SaaS operation, AI assistant |
 
 ## Commercial and Repository Status
 

@@ -65,7 +65,7 @@ LidoPro is a proprietary commercial operating platform for beach establishments.
 One concise Italian positioning line may be used when appropriate:
 
 ```text
-Gestionale operativo per stabilimenti balneari: progettazione, mappa operativa, prenotazioni, clienti, listino, conti e servizi.
+Gestionale operativo per stabilimenti balneari: progettazione, mappa operativa, prenotazioni, clienti, articoli, conti e servizi.
 ```
 
 ## Protected Layout Boundary

@@ -22,7 +22,7 @@ Before creating new structures:
 | Reservation / booking record | `src/lib/types/reservation.ts`, `src/lib/db/reservationRepository.ts`, `src/lib/services/reservationService.ts` | Existing active reservation record with item, customer, assignment, account, dates, status. | Keep as current runtime record. | Rename or migrate to booking tables only with an explicit data migration plan. |
 | Account / folio / conto | `src/lib/types/account.ts`, `src/lib/db/accountRepository.ts`, `src/components/accounts/*`, `src/components/operational/BookingSheet.svelte`, `docs/architecture/account-payment-model.md` | Expected total, paid amount, residual, payments, schedules. | Keep accounts/payments as money source. | Booking links to a folio/account; payment records remain attached to folio/account. |
 | Account lines / extras | `src/lib/types/extraItem.ts`, `src/lib/db/extraItemRepository.ts`, `src/components/extras/*` | Extra catalog, included items, and account extra rows. | Keep account extra rows. | Pricing snapshots can include extras without moving extra ownership into Booking. |
-| Pricing / Listino rule | `src/lib/types/tariff.ts`, `src/lib/db/tariffRepository.ts`, `src/lib/services/tariffService.ts`, `docs/architecture/tariff-catalog-model.md` | Operator-configured tariff rules and price suggestions. | Keep tariff rules as live catalog. | Confirmed booking stores a pricing snapshot so later listino edits do not rewrite totals silently. |
+| Articoli / pricing rule | `src/lib/types/tariff.ts`, `src/lib/db/tariffRepository.ts`, `src/lib/services/tariffService.ts`, `docs/architecture/tariff-catalog-model.md` | Operator-configured tariff rules and price suggestions. | Keep tariff rules as live catalog. | Confirmed booking stores a pricing snapshot so later Articoli/pricing edits do not rewrite totals silently. |
 | Registry event / movement | `src/lib/types/registry.ts`, `src/lib/services/registryService.ts`, `src/components/registry/*` | Read-model over reservations and accounts for storico/registro. | Keep current registry projection. | Booking mutations emit or link registry events when the event store exists. |
 | Active layout | `src/lib/layout/*`, `src/lib/map-canvas/parametric/*`, `src/lib/services/beachLayoutService.ts` | Local-first active layout and parametric layout projection. | Keep layout modules. | Booking reads active layout availability; it does not mutate layout geometry. |
 | Dashboard booking metrics | `src/components/dashboard/homeOperationalModel.ts`, `src/components/dashboard/HomeReservationsPanel.svelte`, `src/components/dashboard/HomeAccountsPanel.svelte` | Derived active reservations, open accounts, residuals, missing account/customer/period indicators. | Keep dashboard model as projection. | Dashboard consumes booking/request/folio availability projections after repository work. |
@@ -65,7 +65,7 @@ The TypeScript contract is in `src/lib/booking/bookingDomain.types.ts`.
 - `BookingAssignment`: booking-to-item assignment with assignment status.
 - `BookingConflict`: availability, item, period, customer, folio, or policy conflict.
 - `CustomerPairingCandidate`: possible existing customer match with score, reasons, and decision.
-- `PricingSnapshot`: confirmed calculation boundary from listino/pricing rules plus extras/manual override.
+- `PricingSnapshot`: confirmed calculation boundary from Articoli/pricing rules plus extras/manual override.
 - `FolioLink`: booking-to-conto relationship and folio state.
 - `RegistryEventLink`: booking-to-registry event relationship.
 - `AvailabilityQuery` and `AvailabilityResult`: typed availability boundary for query/repository work.
@@ -139,7 +139,21 @@ A client request must not create duplicate customers automatically.
 
 BOOKING.4 implements this as a local-first Customer Pairing Engine. Request payloads are normalized and scored against existing `customers`, candidates are stored in `booking_customer_pairing_candidates`, and operator decisions are recorded on `booking_requests`. Customer creation is allowed only through the existing customer service after an explicit `create_new` decision, and the resulting customer id is recorded on the request without mutating any existing customer automatically. See [Booking Customer Pairing](booking-customer-pairing.md).
 
-BOOKING.5 makes the existing Spiaggia selected-item workflow the canonical Operator Booking Flow. `operatorBookingService` prepares and validates drafts, checks BOOKING.3 availability before confirmation/update, delegates the established reservation/account transaction to the current flow, and returns lightweight Registro event intent metadata without writing fake registry rows. Current `reservations.status = active` still represents the confirmed/active operator booking state; the contract-level `confirmed` split is deferred. Account/Folio remains backed by current `accounts`, and pricing still uses current Articoli/Listino suggestions until BOOKING.7 snapshots harden the pricing boundary. See [Operator Booking Flow](operator-booking-flow.md).
+BOOKING.5 makes the existing Spiaggia selected-item workflow the canonical Operator Booking Flow. `operatorBookingService` prepares and validates drafts, checks BOOKING.3 availability before confirmation/update, delegates the established reservation/account transaction to the current flow, and returns lightweight Registro event intent metadata without writing fake registry rows. Current `reservations.status = active` still represents the confirmed/active operator booking state; the contract-level `confirmed` split is deferred. Account/Folio remains backed by current `accounts`, and pricing still uses current Articoli pricing suggestions until BOOKING.7 snapshots harden the pricing boundary. See [Operator Booking Flow](operator-booking-flow.md).
+
+BOOKING.6 adds the Clienti-first operator entry point without changing the persistence owner. `customerBookingService` starts from an existing selected customer, searches real availability through BOOKING.3, assigns the customer to the selected active-layout item through the existing customer service, and confirms through `operatorBookingService`. The flow refreshes the customer profile read model after confirmation and can open Spiaggia focused on the booked item. See [Client-first Booking Flow](client-first-booking-flow.md).
+
+BOOKING.6.5 adds the shared reservation lifecycle foundation before pricing snapshots. `bookingPeriodService` normalizes daily, multi-day, seasonal, and custom periods for operator and future client surfaces. `reservationLifecycleService` proposes/applies operator period changes and cancellations through the existing reservation repository, uses the Availability Engine with `excludeReservationId`, previews account impact without rewriting payments, creates `booking_change_requests` for client modes instead of direct mutation, appends lifecycle events through `booking_status_events`, and exposes `ClientBookingProjection` for future web/app surfaces. See [Booking Reservation Lifecycle](booking-reservation-lifecycle.md).
+
+BOOKING.7 adds the Articoli Pricing Snapshot boundary. `pricingSnapshotService` builds snapshots from existing tariff suggestions, current reservation period/item context, included equipment, and account extras where available. The operator booking/account path creates a locked snapshot when an account-backed booking is prepared, and existing snapshots are not rewritten silently by later Articoli pricing changes. Snapshot reprice support is service-level and explicit; account/payment mutation remains deferred to BOOKING.8 / FOLIO.1. See [Booking Pricing Snapshot](booking-pricing-snapshot.md).
+
+BOOKING.8 adds the Folio / Conto service boundary over the existing account system. `folioService` normalizes account totals, paid amount, residual, status, payment count, pricing snapshot links, and manual-review requirements into `FolioSummary`. Current `accounts`, `payments`, and `account_extra_items` remain runtime persistence; folio lines are currently derived previews from pricing snapshot lines and account extras, not a new persisted ledger table. Payments remain append-style records and cancellation with existing payments returns manual-review / reversal warnings instead of deleting or rewriting payment history. See [Booking Folio Engine](booking-folio-engine.md).
+
+BOOKING.9 adds the Registro event foundation. `registry_events` is the append-style operational diary for persisted booking, lifecycle, folio, payment, and pricing actions, while the current Registro UI/read-model remains stable. Events use dedupe keys where needed and link to reservations or booking requests through `booking_registry_event_links` when available. See [Booking Registro Events](booking-registro-events.md).
+
+BOOKING.10 adds the operator-side Booking Inbox. The Clienti workspace can review real `booking_requests` and `booking_change_requests`, refresh pairing, match or explicitly create customers, inspect availability/account-impact state, reject or leave requests pending, convert new booking requests through the existing customer/operator booking flow, and apply change/cancellation requests through the lifecycle service. It is not a client app, public web booking UI, or cloud sync surface. See [Booking Inbox](booking-inbox.md).
+
+SPIAGGIA.1 clarifies the active layout relationship for Booking. Operator booking flows consume the protected `activeLayoutProjection` through the operational Spiaggia read model; Studio drafts and layout previews remain design inputs until controlled publication. Booking, availability, account, and customer operations must not depend on an unaccepted Studio draft. See [Spiaggia Active Layout Boundary](spiaggia-active-layout-boundary.md).
 
 ## Availability Contract
 
@@ -178,16 +192,16 @@ The engine reads existing `reservations`, active layout items, and `availability
 
 See `docs/architecture/booking-availability-engine.md` for blocking policy, lock handling, overlap rules, proof cases, and limitations.
 
-## Pricing / Listino Boundary
+## Articoli / Pricing Boundary
 
-Booking uses listino/pricing rules to calculate price before confirmation, but a confirmed booking must not depend only on live listino values.
+Booking uses Articoli/pricing rules to calculate price before confirmation, but a confirmed booking must not depend only on live pricing values.
 
 When a booking is confirmed or converted from a request:
 
 1. Calculate from `tariff_rules`, included items, extras, and operator context.
 2. Create `PricingSnapshot`.
 3. Link the snapshot to booking and folio/account.
-4. Preserve confirmed totals when listino changes later.
+4. Preserve confirmed totals when Articoli/pricing rules change later.
 
 Allowed operations:
 
@@ -218,6 +232,8 @@ Folio states:
 - `partial`
 - `paid`
 - `cancelled`
+- `closed`
+- `manual_review`
 
 Client web/app payment path, contractually:
 
@@ -232,21 +248,27 @@ No payment gateway is implemented in BOOKING.1.
 
 ## Registry Event Boundary
 
-Important booking mutations must emit or link registro events when the registry event store is introduced. Current `registryService` is a projection over reservations/accounts and remains unchanged.
+Important booking mutations now emit or link registro events through the BOOKING.9 event store. Current `registryService` remains a projection over reservations/accounts and is not replaced.
 
 Event types:
 
 - `booking_created`
-- `booking_requested`
 - `booking_confirmed`
+- `booking_period_changed`
 - `booking_cancelled`
 - `booking_completed`
+- `booking_change_requested`
+- `booking_change_accepted`
+- `booking_change_rejected`
 - `customer_paired`
 - `folio_created`
 - `folio_updated`
+- `folio_manual_review_required`
 - `payment_recorded`
+- `credit_or_refund_required`
+- `pricing_snapshot_created`
+- `pricing_reprice_required`
 - `availability_conflict_detected`
-- `booking_repriced`
 
 Integration point: repositories/services that create or mutate booking, folio/account, pricing snapshot, customer pairing, and payment records.
 
@@ -254,7 +276,7 @@ Integration point: repositories/services that create or mutate booking, folio/ac
 
 - Spiaggia: item availability, item assignment, selected item UI, active layout projection.
 - Clienti: customer profile, pairing, booking history.
-- Listino: price rules, included/extras, pricing snapshot.
+- Articoli: price rules, included/extras, pricing snapshot.
 - Registro: operational event history and read model.
 - Conti: folio/account, residual, payments.
 - Dashboard: active bookings, pending requests, open accounts, conflicts, today availability.
@@ -270,7 +292,7 @@ Current runtime ownership remains:
 - `customers`: customer identity source.
 - `accounts`: current Conto/Folio persistence until Folio refactor.
 - `payments`: current payment records.
-- `tariff_rules`, `extra_item_catalog`, `account_extra_items`, `tariff_included_items`: current Articoli/Listino pricing and extra inputs.
+- `tariff_rules`, `extra_item_catalog`, `account_extra_items`, `tariff_included_items`: current Articoli pricing and extra inputs.
 
 BOOKING.2 adds supplementary tables:
 
@@ -314,6 +336,6 @@ BOOKING.4 now:
 - Availability: daily availability is prioritized; seasonal booking is included and operator-friendly.
 - Customer pairing: request-to-customer matching is defined and duplicate customer avoidance is explicit.
 - Folio/payment: client payment update path is contractual only; no gateway is implemented.
-- Listino snapshot: confirmed booking pricing snapshot boundary is defined.
+- Articoli snapshot: confirmed booking pricing snapshot boundary is defined.
 - Registro: booking event types are defined.
 - Safety: no active layout, live Canvas, UI, or current business logic change is introduced.

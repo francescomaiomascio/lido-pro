@@ -394,8 +394,8 @@
       <div class="native-system-row native-system-row--control">
         <div class="native-system-row__label">Font editoriale</div>
         <div class="native-system-row__value">
-          <strong>Attivo nel Listino</strong>
-          <span>Preferenza attuale del modulo listino.</span>
+          <strong>Attivo in Articoli</strong>
+          <span>Preferenza attuale del modulo Articoli.</span>
         </div>
       </div>
     </div>

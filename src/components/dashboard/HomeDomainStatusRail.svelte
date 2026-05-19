@@ -43,7 +43,7 @@
 
   <section>
     <span aria-hidden="true">●</span>
-    <strong>Listino</strong>
+    <strong>Articoli</strong>
     <small>{model.catalogStatus.syncWithLayoutStatus}</small>
     <em>{model.catalogStatus.beachItemsActive} articoli spiaggia · {model.catalogStatus.barItemsActive} bar</em>
   </section>

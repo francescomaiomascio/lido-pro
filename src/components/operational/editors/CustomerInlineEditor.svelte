@@ -6,7 +6,7 @@
   import ActionActivity from '../../loading/ActionActivity.svelte'
 
   let {
-    assignedCustomer: _assignedCustomer = null,
+    assignedCustomer = null,
     saving,
     onAssign,
     onRemove: _onRemove,
@@ -69,6 +69,19 @@
     <button type="button" class="customer-picker__cancel" onclick={onClose}>Annulla</button>
   </div>
 
+  {#if assignedCustomer}
+    <div class="customer-picker__current" aria-label="Cliente attuale">
+      <div>
+        <span>Cliente attuale</span>
+        <strong>{assignedCustomer.customer.fullName}</strong>
+        <small>{assignedCustomer.customer.phone || assignedCustomer.customer.email || 'Contatto non presente'}</small>
+      </div>
+      {#if _onRemove}
+        <button type="button" disabled={saving} onclick={_onRemove}>Rimuovi</button>
+      {/if}
+    </div>
+  {/if}
+
   {#if mode === 'new'}
     <form
       class="customer-picker__new"
@@ -98,12 +111,14 @@
         <button
           type="button"
           class="customer-picker__row"
+          class:customer-picker__row--selected={assignedCustomer?.customer.id === customer.id}
           role="option"
-          aria-selected="false"
+          aria-selected={assignedCustomer?.customer.id === customer.id}
           disabled={saving}
           onclick={() => onAssign(customer.id)}
         >
           <strong>{customer.fullName}</strong>
+          <span>{customer.phone || customer.email || 'Nessun contatto'}</span>
         </button>
       {:else}
         <p class="inline-editor__empty">Nessun cliente trovato.</p>

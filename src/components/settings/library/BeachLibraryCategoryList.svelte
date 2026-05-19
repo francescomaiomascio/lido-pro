@@ -22,7 +22,7 @@
   <div>
     <span>Studio Canvas</span>
     <strong>Materiali tecnici e asset di costruzione</strong>
-    <p>Gli elementi vendibili stanno nel Listino; qui restano asset non contabili per costruzione e rendering.</p>
+    <p>Gli elementi vendibili stanno in Articoli; qui restano asset non contabili per costruzione e rendering.</p>
   </div>
   <dl>
     <div>

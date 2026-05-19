@@ -13,14 +13,29 @@
     CustomerSearchSummary,
   } from '../../lib/types/customerProfile'
   import InlineLoadingState from '../loading/InlineLoadingState.svelte'
+  import BookingRequestInbox from './BookingRequestInbox.svelte'
   import CustomerAnagraficaForm from './CustomerAnagraficaForm.svelte'
+  import CustomerBookingFlow from './CustomerBookingFlow.svelte'
   import CustomerEmptyState from './CustomerEmptyState.svelte'
   import CustomerListPane from './CustomerListPane.svelte'
   import CustomerProfilePanel from './CustomerProfilePanel.svelte'
   import type { CustomerFilterId } from './customerWorkspaceTypes'
+  import type { CustomerBookingConfirmResult } from '../../lib/booking/customerBookingService'
 
   type DetailMode = 'empty' | 'profile' | 'edit'
+  type WorkspaceMode = 'customers' | 'requests'
 
+  let {
+    onOpenBeachItem,
+    onBookingCreated,
+    onInboxChanged,
+  }: {
+    onOpenBeachItem?: (itemId: string) => void | Promise<void>
+    onBookingCreated?: (result: CustomerBookingConfirmResult) => void | Promise<void>
+    onInboxChanged?: () => void | Promise<void>
+  } = $props()
+
+  let workspaceMode: WorkspaceMode = $state('customers')
   let query = $state('')
   let activeFilter: CustomerFilterId = $state('all')
   let customers: CustomerSearchSummary[] = $state([])
@@ -32,6 +47,7 @@
   let loadingList = $state(false)
   let loadingProfile = $state(false)
   let saving = $state(false)
+  let bookingFlowOpen = $state(false)
   let message: string | null = $state(null)
   let error: string | null = $state(null)
   let historyExpanded = $state(false)
@@ -68,11 +84,29 @@
     error = null
     message = null
     historyExpanded = false
+    bookingFlowOpen = false
     creating = false
     selectedCustomerId = customerId
     selectedProfile = null
     reservationHistory = []
     detailMode = 'empty'
+    try {
+      const [profile, history] = await Promise.all([
+        getCustomerProfile(customerId),
+        getCustomerReservationHistory(customerId),
+      ])
+      selectedProfile = profile
+      reservationHistory = history
+      detailMode = profile ? 'profile' : 'empty'
+    } catch (loadError) {
+      error = loadError instanceof Error ? loadError.message : 'Errore caricamento profilo cliente.'
+    } finally {
+      loadingProfile = false
+    }
+  }
+
+  const refreshProfile = async (customerId: string) => {
+    loadingProfile = true
     try {
       const [profile, history] = await Promise.all([
         getCustomerProfile(customerId),
@@ -96,11 +130,13 @@
   }
 
   const startCreate = () => {
+    workspaceMode = 'customers'
     creating = true
     selectedCustomerId = null
     selectedProfile = null
     reservationHistory = []
     detailMode = 'empty'
+    bookingFlowOpen = false
     message = null
     error = null
   }
@@ -108,6 +144,51 @@
   const closeCreate = () => {
     creating = false
     detailMode = selectedProfile ? 'profile' : 'empty'
+  }
+
+  const startBooking = () => {
+    if (!selectedProfile) {
+      return
+    }
+    bookingFlowOpen = true
+    workspaceMode = 'customers'
+    detailMode = 'profile'
+    message = null
+    error = null
+  }
+
+  const openRequests = () => {
+    workspaceMode = 'requests'
+    creating = false
+    bookingFlowOpen = false
+    message = null
+    error = null
+  }
+
+  const openCustomers = () => {
+    workspaceMode = 'customers'
+    message = null
+    error = null
+  }
+
+  const handleInboxChanged = async () => {
+    await loadCustomers(query)
+    if (selectedCustomerId) {
+      await refreshProfile(selectedCustomerId)
+    }
+    await onInboxChanged?.()
+  }
+
+  const closeBooking = () => {
+    bookingFlowOpen = false
+  }
+
+  const handleBookingCompleted = async (result: CustomerBookingConfirmResult) => {
+    await onBookingCreated?.(result)
+    await loadCustomers(query)
+    await refreshProfile(result.reservation.customerId)
+    bookingFlowOpen = true
+    message = 'Prenotazione creata'
   }
 
   const saveNewCustomer = async (input: CustomerInput) => {
@@ -163,73 +244,92 @@
       <h2>Clienti</h2>
       <p>Anagrafiche, contatti e operazioni collegate.</p>
     </div>
-    <button type="button" class="button-secondary" onclick={startCreate}>Nuovo cliente</button>
+    <div class="customers-page-actions">
+      <div class="customers-page-tabs" aria-label="Vista Clienti">
+        <button type="button" class:active={workspaceMode === 'customers'} onclick={openCustomers}>Clienti</button>
+        <button type="button" class:active={workspaceMode === 'requests'} onclick={openRequests}>Richieste</button>
+      </div>
+      <button type="button" class="button-secondary" onclick={startCreate}>Nuovo cliente</button>
+    </div>
   </header>
 
-  <div class="customers-shell">
-    <CustomerListPane
-      customers={filteredCustomers}
-      {query}
-      {activeFilter}
-      {selectedCustomerId}
-      loading={loadingList}
-      onQueryChange={handleQueryChange}
-      onFilterChange={(filter) => (activeFilter = filter)}
-      onSelect={loadProfile}
-      onCreate={startCreate}
-    />
+  {#if workspaceMode === 'requests'}
+    <BookingRequestInbox onInboxChanged={handleInboxChanged} />
+  {:else}
+    <div class="customers-shell">
+      <CustomerListPane
+        customers={filteredCustomers}
+        {query}
+        {activeFilter}
+        {selectedCustomerId}
+        loading={loadingList}
+        onQueryChange={handleQueryChange}
+        onFilterChange={(filter) => (activeFilter = filter)}
+        onSelect={loadProfile}
+        onCreate={startCreate}
+      />
 
-    <section class="customer-profile-pane" aria-label="Scheda cliente">
-      {#if creating}
-        <div class="customer-detail-create">
-          <div class="customer-detail-create__heading">
-            <span>Creazione cliente</span>
-            <h3>Nuova anagrafica</h3>
-            <p>Salva nome e recapiti. Posto, prenotazioni e conto si collegano dalla scheda operativa.</p>
+      <section class="customer-profile-pane" aria-label="Scheda cliente">
+        {#if creating}
+          <div class="customer-detail-create">
+            <div class="customer-detail-create__heading">
+              <span>Creazione cliente</span>
+              <h3>Nuova anagrafica</h3>
+              <p>Salva nome e recapiti. Posto, prenotazioni e conto si collegano dalla scheda operativa.</p>
+            </div>
+            <CustomerAnagraficaForm {saving} onSave={saveNewCustomer} onCancel={closeCreate} />
           </div>
-          <CustomerAnagraficaForm {saving} onSave={saveNewCustomer} onCancel={closeCreate} />
-        </div>
-      {:else if selectedProfile}
-        <CustomerProfilePanel
-          profile={selectedProfile}
-          fullReservationHistory={reservationHistory}
-          {saving}
-          editing={detailMode === 'edit'}
-          {historyExpanded}
-          variant="embedded"
-          onEdit={() => (detailMode = 'edit')}
-          onCancelEdit={() => (detailMode = 'profile')}
-          onSave={saveExistingCustomer}
-          onToggleHistory={() => (historyExpanded = !historyExpanded)}
-        />
-      {:else if loadingProfile}
-        <InlineLoadingState
-          compact
-          eyebrow="Cliente"
-          title="Caricamento profilo"
-          message="Preparazione scheda anagrafica, storico e riepilogo conto."
-          rows={3}
-        />
-      {:else}
-        <div class="customer-profile-pane__empty">
-          <CustomerEmptyState
-            eyebrow="Workspace cliente"
-            title="Scegli un cliente dalla lista"
-            message="Qui trovi contatti, posto assegnato, prenotazioni, conto e storico operativo."
+        {:else if selectedProfile}
+          {#if bookingFlowOpen}
+            <CustomerBookingFlow
+              profile={selectedProfile}
+              onClose={closeBooking}
+              onCompleted={handleBookingCompleted}
+              {onOpenBeachItem}
+            />
+          {/if}
+          <CustomerProfilePanel
+            profile={selectedProfile}
+            fullReservationHistory={reservationHistory}
+            {saving}
+            editing={detailMode === 'edit'}
+            {historyExpanded}
+            variant="embedded"
+            onEdit={() => (detailMode = 'edit')}
+            onCancelEdit={() => (detailMode = 'profile')}
+            onSave={saveExistingCustomer}
+            onToggleHistory={() => (historyExpanded = !historyExpanded)}
+            onStartBooking={startBooking}
           />
-          <div class="customer-disabled-shortcuts" aria-label="Collegamenti disponibili">
-            <span>Collegamenti della scheda</span>
-            <div>
-              <span>Prenotazioni</span>
-              <span>Conto</span>
-              <span>Registro</span>
-              <span>Spiaggia</span>
+        {:else if loadingProfile}
+          <InlineLoadingState
+            compact
+            eyebrow="Cliente"
+            title="Caricamento profilo"
+            message="Preparazione scheda anagrafica, storico e riepilogo conto."
+            rows={3}
+          />
+        {:else}
+          <div class="customer-profile-pane__empty">
+            <CustomerEmptyState
+              eyebrow="Workspace cliente"
+              title="Scegli un cliente dalla lista"
+              message="Qui trovi contatti, posto assegnato, prenotazioni, conto e storico operativo."
+            />
+            <div class="customer-disabled-shortcuts" aria-label="Collegamenti disponibili">
+              <span>Collegamenti della scheda</span>
+              <div>
+                <span>Prenotazioni</span>
+                <span>Conto</span>
+                <span>Registro</span>
+                <span>Spiaggia</span>
+              </div>
             </div>
           </div>
-        </div>
-      {/if}
-    </section>
-  </div>
+        {/if}
+      </section>
+    </div>
+  {/if}
 
   {#if message}
     <p class="inline-confirmation">{message}</p>

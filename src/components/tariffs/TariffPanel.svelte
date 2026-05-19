@@ -831,18 +831,18 @@
       inventoryOverrides = {}
     }
     loadListino().catch(() => {
-      error = 'Errore caricamento listino.'
+      error = 'Errore caricamento Articoli.'
     })
   })
 </script>
 
-<section class="settings-panel listino-panel" aria-label="Listino">
+<section class="settings-panel listino-panel" aria-label="Articoli">
   <div class="settings-view-header settings-panel__header listino-topbar">
-    <h2>Listino</h2>
+    <h2>Articoli</h2>
     <span class="settings-toolbar-count">{catalogRows.length} voci</span>
   </div>
 
-  <section class="listino-catalog-shell" aria-label="Catalogo gestionale listino">
+  <section class="listino-catalog-shell" aria-label="Catalogo operativo Articoli">
     <div class="listino-catalog-toolbar">
       <label class="listino-catalog-search">
         <span>Cerca</span>
@@ -879,7 +879,7 @@
     </div>
 
     <div class="listino-catalog-layout">
-      <aside class="listino-catalog-list" aria-label="Articoli listino">
+      <aside class="listino-catalog-list" aria-label="Articoli">
         <div class="listino-inventory-matrix__head" aria-hidden="true">
           <span>Articolo</span>
           <span>In spiaggia / Totale</span>
@@ -1190,7 +1190,7 @@
           {/each}
         </aside>
 
-        <section class="listino-article-sheet" aria-label="Scheda articolo listino">
+        <section class="listino-article-sheet" aria-label="Scheda articolo">
           <header class="listino-article-sheet__header">
             <div>
               <h3>{activePlaceCard.label}</h3>
@@ -1322,7 +1322,7 @@
         </section>
       </div>
     {:else}
-      <section class="listino-grid listino-items-grid" aria-label="Dotazioni e servizi listino">
+      <section class="listino-grid listino-items-grid" aria-label="Dotazioni e servizi Articoli">
         <div class="listino-grid__head" aria-hidden="true">
           <span>Articolo</span>
           <span>Totali</span>
@@ -1381,7 +1381,7 @@
     {/if}
 
     {#if detailMode !== 'empty'}
-    <section class="listino-inspector" aria-label="Dettaglio listino">
+    <section class="listino-inspector" aria-label="Dettaglio Articoli">
       {#if detailMode === 'tariff'}
         <div class="settings-subheader listino-inspector__header">
           <span>{selectedRule ? 'Modifica voce' : 'Nuova voce'}</span>

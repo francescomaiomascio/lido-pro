@@ -109,15 +109,15 @@ Rules:
 
 ```text
 CURRENT
-- BOOKING.4 - Customer Pairing
+- REGISTRO.2 - Event-powered Registro Surface
 
 NEXT
-- SPIAGGIA.1 - Active Layout Projection Boundary
-- ARTICOLI.1 - Rename UI module Listino -> Articoli
+- SERVIZI.1 - Servizi Workspace Foundation
+- STAFF.1 - Staff Storage / Domain Contract
 
 SUPPORT NEXT
 - FOLIO.1 - Folio/account boundary
-- REGISTRO.1 - Booking event boundary
+- REGISTRO.1 - Event-first Registro UI and operations
 
 WAIT
 - HOME.FINAL
@@ -174,11 +174,12 @@ Current reality:
 - Active layout renders map/list.
 - Selected item opens the operational panel.
 - Customer, period, account, payments, extras, and registry context are already connected.
-- Canvas Studio/edit affordance is still too close to the operational Canvas.
+- Spiaggia now consumes a protected `activeLayoutProjection` through `loadActiveOperationalBeachState()`.
+- Studio design affordances are no longer mounted as normal active Spiaggia controls.
 
 Consegne:
 
-- [NEXT] SPIAGGIA.1 - Active Layout Projection Boundary.
+- [DONE] SPIAGGIA.1 - Active Layout Projection Boundary. Spiaggia consumes the protected active projection, the operational Canvas no longer exposes Canvas Studio/edit rail/flyout controls, and booking/customer/account reload paths return the active operational layout even after Studio draft work.
 - [TODO] SPIAGGIA.2 - Booking-aware Selected Item Panel.
 - [TODO] SPIAGGIA.3 - Disponibilita visuale su Canvas operativo.
 - [TODO] SPIAGGIA.4 - Modifiche operative leggere.
@@ -206,7 +207,7 @@ Current reality:
 
 Consegne:
 
-- [BLOCKED] STUDIO.1 - Sketch Canvas Consolidation. Blocked by SPIAGGIA.1.
+- [NEXT] STUDIO.1 - Sketch Canvas Consolidation. SPIAGGIA.1 now protects the active operational Canvas; Studio consolidation can proceed without exposing design tools as normal Spiaggia controls.
 - [TODO] STUDIO.2 - Aree funzionali + tracciati.
 - [TODO] STUDIO.3 - Ingombri / footprint / vincoli dimensionali.
 - [TODO] STUDIO.4 - Layout Preview Generator.
@@ -238,11 +239,14 @@ Consegne:
 - [DONE] BOOKING.3 - Availability Engine. Local-first service evaluates availability from existing `reservations` and `availability_locks`; no UI/web/client flow yet.
 - [DONE] BOOKING.4 - Customer Pairing. Local-first engine scores request payloads against existing customers, stores pairing candidates, and records explicit operator decisions without silent customer creation.
 - [DONE] BOOKING.5 - Operator Booking Flow. Existing Spiaggia selected-item workflow is backed by `operatorBookingService`, validates availability before writes, and preserves current reservation/account/payment/extras behavior.
-- [CURRENT] BOOKING.6 - Client-first Booking Flow.
-- [TODO] BOOKING.7 - Articoli Pricing Snapshot.
-- [TODO] BOOKING.8 - Folio / Conto Engine.
-- [TODO] BOOKING.9 - Registro Event Integration.
-- [TODO] BOOKING.10 - Booking Inbox / Richieste cliente.
+- [DONE] BOOKING.5.5 - Selected Item Booking Console. The Spiaggia selected-item sheet is refounded as a guided operator console with stable dossier, task workspace, availability-aware period setup, folio overview, payments, and Articoli extras.
+- [DONE] BOOKING.5.6 - Booking Panel Layout / Responsive Compact Cutover. The selected-item sheet now uses a compact summary, guided step rail, workspace-focused body, Conto-centered payment surface with no separate Saldo section, responsive proportions, and confirmation-backed destructive actions without changing booking domain behavior.
+- [DONE] BOOKING.6 - Client-first Booking Flow. Clienti can start a customer-scoped booking, choose a period, search BOOKING.3 availability, select an active-layout item, confirm through the existing operator reservation/account path, refresh the customer profile, and open Spiaggia focused on the item.
+- [DONE] BOOKING.6.5 - Reservation Lifecycle / Shared Period & Account Impact. Shared period handling, lifecycle policy, client change-request persistence, operator period/cancellation services, safe account-impact previews, lifecycle events, and client-facing booking projection are in place before pricing snapshots.
+- [DONE] BOOKING.7 - Articoli Pricing Snapshot. Account-backed booking confirmation now creates locked pricing snapshots from current tariff suggestions, included equipment, and account extras where available; later Articoli changes do not silently rewrite existing booking economics.
+- [DONE] BOOKING.8 - Folio / Conto Engine. `folioService` now normalizes the existing account/payment system into FolioSummary, links booking/account/snapshot context, derives folio line previews from snapshots and extras, preserves payments append-style, and returns manual-review warnings for unsafe cancellation/reversal cases without adding a duplicate folio system.
+- [DONE] BOOKING.9 - Registro Event Integration. `registry_events` now provides an append-style operational diary for persisted booking, lifecycle, folio, payment, and pricing actions, with booking-event links where available and without replacing the current Registro projection UI.
+- [DONE] BOOKING.10 - Booking Inbox / Richieste cliente. Clienti now includes an operator-side Richieste inbox that reads real booking and change requests, shows pairing/availability/account-impact state, and lets the operator match/create customers, reject, leave pending, convert booking requests, or apply lifecycle changes through existing services.
 
 Rules:
 
@@ -283,16 +287,16 @@ Purpose: catalog of operational items, services, extras, equipment, and price ru
 
 Current reality:
 
-- Live UI still says `Listino`.
-- Runtime id `priceList` is stale but can be kept internal until a safe rename.
+- User-facing navigation and current module copy now use Articoli.
+- Runtime id `priceList`, `TariffPanel`, tariff services, and `listino-*` CSS classes remain internal implementation names until a low-risk technical rename exists.
 - Tariff rules, extra item catalog, included items, and account extras exist.
 - Price suggestions feed the booking/account flow.
-- Pricing snapshots are missing.
+- Pricing snapshots capture booking/account economics without replacing the current tariff rules.
 - Stock/inventory overrides are still localStorage/presentational.
 
 Consegne:
 
-- [NEXT] ARTICOLI.1 - Rename UI module Listino -> Articoli. First produce/execute a controlled rename map.
+- [DONE] ARTICOLI.1 - Listino -> Articoli naming and responsibility cleanup. User-facing top-level module copy now says Articoli; internal tariff/listino/priceList names are documented and intentionally retained.
 - [TODO] ARTICOLI.2 - Catalogo Articoli Spiaggia / Servizi / Extra.
 - [TODO] ARTICOLI.3 - Pricing rules: daily / multi-day / seasonal / custom.
 - [TODO] ARTICOLI.4 - Pricing Snapshot per Booking.
@@ -582,7 +586,7 @@ Rules:
 PHASE 1 - Spine Normalization
 
 1. PRODUCT.SPINE.1 - this wave
-2. ARTICOLI.1 - Listino -> Articoli rename map/UI rename
+2. ARTICOLI.1 - Listino -> Articoli rename map/UI rename [DONE]
 3. SPIAGGIA.1 - Active Layout Projection Boundary
 
 PHASE 2 - Booking Core
@@ -596,11 +600,13 @@ PHASE 2 - Booking Core
 PHASE 3 - Operator Flows
 
 9. BOOKING.5 - Operator Booking Flow in Spiaggia
-10. BOOKING.6 - Client-first Booking Flow
-11. BOOKING.7 - Pricing Snapshot
-12. BOOKING.8 - Folio / Conto Engine
-13. BOOKING.9 - Registro Event Integration
-14. BOOKING.10 - Booking Inbox
+10. BOOKING.5.6 - Booking Panel Layout / Responsive Compact Cutover
+11. BOOKING.6 - Client-first Booking Flow
+12. BOOKING.6.5 - Reservation Lifecycle / Shared Period & Account Impact
+13. BOOKING.7 - Pricing Snapshot
+14. BOOKING.8 - Folio / Conto Engine
+15. BOOKING.9 - Registro Event Integration
+16. BOOKING.10 - Booking Inbox
 
 PHASE 4 - Domain Foundations
 

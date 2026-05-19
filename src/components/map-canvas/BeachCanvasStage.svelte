@@ -406,9 +406,6 @@
   bind:this={hostElement}
   aria-label={`${items.length} elementi spiaggia su Canvas`}
 >
-  {#if $mapCanvasConfigStore.interaction.mode === 'edit'}
-    <div class="beach-canvas-edit-badge">Modifica</div>
-  {/if}
   <canvas
     bind:this={canvasElement}
     aria-label="Mappa spiaggia Canvas"

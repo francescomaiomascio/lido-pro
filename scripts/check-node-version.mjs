@@ -1,5 +1,5 @@
-const minimumMajor = 22
-const minimumMinor = 12
+const minimumMajor = 24
+const minimumMinor = 0
 const currentVersion = process.versions.node
 const [currentMajor, currentMinor] = currentVersion.split('.').map(Number)
 

@@ -1,5 +1,7 @@
 <script lang="ts">
   import BeachCanvasShell from '../map-canvas/BeachCanvasShell.svelte'
+  import { createActiveLayoutProjection } from '../../lib/layout/layoutProjectionBoundary'
+  import { buildOperationalLayoutViewModel } from '../../lib/layout/operationalLayoutViewModel'
   import type { BeachStatusFilter } from '../../lib/state/beachFilters'
   import type { BeachItem, BeachLayout } from '../../lib/types/beach'
 
@@ -24,12 +26,15 @@
     onClearSelection: () => void
     onOpenOperationalPanel: () => void
   } = $props()
+
+  const activeLayoutProjection = $derived(createActiveLayoutProjection(layout, items))
+  const operationalLayoutView = $derived(buildOperationalLayoutViewModel(activeLayoutProjection))
 </script>
 
 <section class="beach-map-panel" aria-label="Mappa spiaggia">
   <BeachCanvasShell
-    {layout}
-    {items}
+    layout={activeLayoutProjection.layout}
+    items={operationalLayoutView.items}
     {matchingItemIds}
     {selectedItemId}
     {searchQuery}

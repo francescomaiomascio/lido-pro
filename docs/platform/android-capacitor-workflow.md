@@ -25,7 +25,7 @@ nvm use
 node -v
 ```
 
-The repository targets Node from [.nvmrc](../../.nvmrc). Capacitor CLI 8 requires Node `>=22.0.0`; the current repository engine is stricter and requires Node `>=22.12.0`.
+The repository targets Node from [.nvmrc](../../.nvmrc). Capacitor CLI 8 requires Node `>=22.0.0`; the current repository engine is stricter and requires Node `>=24.0.0`.
 
 ## Sync Android
 

@@ -1,5 +1,5 @@
 export const DATABASE_NAME = 'beach_bdf.db'
-export const SCHEMA_VERSION = 14
+export const SCHEMA_VERSION = 17
 
 export const CREATE_SCHEMA_SQL = `
 PRAGMA foreign_keys = ON;
@@ -211,6 +211,24 @@ CREATE TABLE IF NOT EXISTS booking_status_events (
   device_id TEXT
 );
 
+CREATE TABLE IF NOT EXISTS booking_change_requests (
+  id TEXT PRIMARY KEY,
+  reservation_id TEXT NOT NULL,
+  booking_request_id TEXT,
+  source TEXT NOT NULL,
+  type TEXT NOT NULL,
+  status TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  availability_result_json TEXT,
+  account_impact_json TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  decided_at TEXT,
+  decided_by TEXT,
+  FOREIGN KEY(reservation_id) REFERENCES reservations(id),
+  FOREIGN KEY(booking_request_id) REFERENCES booking_requests(id)
+);
+
 CREATE TABLE IF NOT EXISTS booking_conflicts (
   id TEXT PRIMARY KEY,
   reservation_id TEXT,
@@ -242,13 +260,18 @@ CREATE TABLE IF NOT EXISTS availability_locks (
 CREATE TABLE IF NOT EXISTS pricing_snapshots (
   id TEXT PRIMARY KEY,
   reservation_id TEXT,
+  account_id TEXT,
+  source TEXT NOT NULL DEFAULT 'operator_app',
+  status TEXT NOT NULL DEFAULT 'locked',
   source_rule_id TEXT,
   catalog_item_id TEXT,
   period_type TEXT NOT NULL,
   scope_json TEXT,
   base_price REAL NOT NULL DEFAULT 0,
   extras_total REAL NOT NULL DEFAULT 0,
+  discounts_total REAL NOT NULL DEFAULT 0,
   included_items_json TEXT,
+  lines_json TEXT,
   calculated_total REAL NOT NULL DEFAULT 0,
   manual_override_json TEXT,
   created_at TEXT NOT NULL,
@@ -272,6 +295,41 @@ CREATE TABLE IF NOT EXISTS booking_registry_event_links (
   event_type TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS registry_events (
+  id TEXT PRIMARY KEY,
+  workspace_id TEXT,
+  source TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  severity TEXT NOT NULL,
+  status TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  entity_type TEXT,
+  entity_id TEXT,
+  reservation_id TEXT,
+  request_id TEXT,
+  customer_id TEXT,
+  account_id TEXT,
+  payment_id TEXT,
+  item_id TEXT,
+  pricing_snapshot_id TEXT,
+  amount_cents INTEGER,
+  payload_json TEXT,
+  dedupe_key TEXT,
+  created_at TEXT NOT NULL,
+  created_by TEXT,
+  device_id TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_registry_events_created_at ON registry_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_registry_events_source ON registry_events(source);
+CREATE INDEX IF NOT EXISTS idx_registry_events_type ON registry_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_registry_events_reservation ON registry_events(reservation_id);
+CREATE INDEX IF NOT EXISTS idx_registry_events_customer ON registry_events(customer_id);
+CREATE INDEX IF NOT EXISTS idx_registry_events_account ON registry_events(account_id);
+CREATE INDEX IF NOT EXISTS idx_registry_events_item ON registry_events(item_id);
+CREATE INDEX IF NOT EXISTS idx_registry_events_dedupe ON registry_events(dedupe_key);
 
 CREATE TABLE IF NOT EXISTS tariff_rules (
   id TEXT PRIMARY KEY,

@@ -32,7 +32,8 @@
   import {
     BEACH_LAYOUT_VIEW_CHANGED_EVENT,
     loadBeachItemStatusEvents,
-    loadBeachState,
+    loadActiveOperationalBeachState,
+    setParametricLayoutViewMode,
     updateBeachItemOperationalNoteAndReload,
   } from '../lib/services/beachLayoutService'
   import { unassignCustomerFromItem } from '../lib/services/customerService'
@@ -49,6 +50,7 @@
     validateOperatorBookingDraft,
     type OperatorBookingValidationResult,
   } from '../lib/booking/operatorBookingService'
+  import type { CustomerBookingConfirmResult } from '../lib/booking/customerBookingService'
   import {
     addPaymentAndReload,
     closeAccountAndReload,
@@ -184,7 +186,7 @@
   )
 
   const loadState = async () => {
-    const state = await loadBeachState()
+    const state = await loadActiveOperationalBeachState()
     layout = state.layout
     items = state.items
     runtime = state.runtime
@@ -359,7 +361,29 @@
     viewState.activeView = 'map'
   }
 
+  const openBeachItemFromCustomer = async (itemId: string) => {
+    await loadState()
+    selectModule('activeLayout')
+    viewState.activeView = 'map'
+    selectItem(itemId)
+  }
+
+  const handleCustomerBookingCreated = async (result: CustomerBookingConfirmResult) => {
+    layout = result.operatorResult.state.layout
+    items = result.operatorResult.state.items
+    runtime = result.operatorResult.state.runtime
+    showToast('Prenotazione creata')
+  }
+
+  const handleBookingInboxChanged = async () => {
+    await loadState()
+    showToast('Richieste aggiornate')
+  }
+
   const selectModule = (module: LidoProModuleId) => {
+    if (module === 'activeLayout') {
+      setParametricLayoutViewMode('active')
+    }
     activeModule = module
     if (module !== 'activeLayout') {
       viewState.filtersOpen = false
@@ -408,7 +432,7 @@
       runtime = state.runtime
       itemEvents = await loadBeachItemStatusEvents(selectedItem.id)
       showToast('Cliente assegnato')
-      operationalPanel.activeTab = 'period'
+      operationalPanel.activeTab = 'overview'
       const nextItem = state.items.find((item) => item.id === selectedItem.id) ?? null
       await loadSelectedAccountPayments(nextItem)
       await loadSelectedPriceSuggestion(nextItem)
@@ -707,7 +731,7 @@
     const selectedItemId = selectedItem.id
     const result = await Dialog.confirm({
       title: 'Annulla prenotazione',
-      message: 'Annullare questa prenotazione?',
+      message: 'Annullare questa prenotazione? Conto e pagamenti non vengono eliminati automaticamente.',
       okButtonTitle: 'Annulla prenotazione',
       cancelButtonTitle: 'Indietro',
     })
@@ -760,7 +784,7 @@
       await loadSelectedPriceSuggestion(nextItem)
       await loadSelectedOperationalReadModels(nextItem)
       await loadSelectedIncludedEquipment(nextItem)
-      operationalPanel.activeTab = 'payments'
+      operationalPanel.activeTab = 'overview'
       showToast(result.createdReservation ? 'Prenotazione creata' : 'Prenotazione aggiornata')
     } catch (error: unknown) {
       operationalError =
@@ -855,11 +879,6 @@
           />
         {:else if activeModule === 'activeLayout'}
           <div class="active-layout-workspace" aria-label="Layout attivo operativo">
-            <div class="active-layout-ribbon" role="status">
-              <strong>Layout attivo protetto</strong>
-              <span>Operativita giornaliera · progettazione strutturale in Studio</span>
-            </div>
-
             <div class="workspace-view-switcher">
               <ViewSwitcher
                 activeView={viewState.activeView}
@@ -928,7 +947,11 @@
           </section>
         {:else if activeModule === 'clients'}
           <section class="workspace-page workspace-page--clients" aria-label="Clienti">
-            <CustomersSettingsPanel />
+            <CustomersSettingsPanel
+              onOpenBeachItem={openBeachItemFromCustomer}
+              onBookingCreated={handleCustomerBookingCreated}
+              onInboxChanged={handleBookingInboxChanged}
+            />
           </section>
         {:else if activeModule === 'employees'}
           <section class="workspace-page workspace-page--employees" aria-label="Dipendenti">
@@ -939,7 +962,7 @@
             <RegistrySettingsPanel openRequest={registryOpenRequest} />
           </section>
         {:else if activeModule === 'priceList'}
-          <section class="workspace-page workspace-page--price-list" aria-label="Listino">
+          <section class="workspace-page workspace-page--price-list" aria-label="Articoli">
             <TariffsSettingsPanel
               {items}
               onCatalogChange={(catalog) => (extraCatalog = catalog)}

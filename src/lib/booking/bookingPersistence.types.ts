@@ -18,6 +18,10 @@ import type {
   CustomerPairingStatus,
   PairingDecision,
 } from './customerPairing.types'
+import type {
+  BookingChangeRequestStatus,
+  BookingChangeRequestType,
+} from './reservationLifecycle.types'
 
 export type { BookingRequestStatus } from './bookingDomain.types'
 
@@ -80,6 +84,32 @@ export type BookingStatusEventInput = Omit<BookingStatusEventRecord, 'id' | 'cre
   createdAt?: string
 }
 
+export type BookingChangeRequestRecord = {
+  id: string
+  reservationId: string
+  bookingRequestId?: string | null
+  source: Exclude<BookingSource, 'sync'>
+  type: BookingChangeRequestType
+  status: BookingChangeRequestStatus
+  payload: Record<string, unknown>
+  availabilityResult?: Record<string, unknown> | null
+  accountImpact?: Record<string, unknown> | null
+  createdAt: string
+  updatedAt: string
+  decidedAt?: string | null
+  decidedBy?: string | null
+}
+
+export type BookingChangeRequestInput = Omit<
+  BookingChangeRequestRecord,
+  'id' | 'createdAt' | 'updatedAt' | 'status'
+> & {
+  id?: string
+  status?: BookingChangeRequestStatus
+  createdAt?: string
+  updatedAt?: string
+}
+
 export type BookingConflictRecord = {
   id: string
   reservationId?: string | null
@@ -124,13 +154,18 @@ export type AvailabilityLockInput = Omit<AvailabilityLockRecord, 'id' | 'created
 export type PricingSnapshotRecord = {
   id: string
   reservationId?: string | null
+  accountId?: string | null
+  source?: string | null
+  status?: 'draft' | 'locked' | 'superseded' | 'voided'
   sourceRuleId?: string | null
   catalogItemId?: string | null
   periodType: BookingPeriodType
   scope?: Record<string, unknown> | null
   basePrice: number
   extrasTotal: number
+  discountsTotal?: number
   includedItems: unknown[]
+  lines?: unknown[]
   calculatedTotal: number
   manualOverride?: Record<string, unknown> | null
   createdAt: string

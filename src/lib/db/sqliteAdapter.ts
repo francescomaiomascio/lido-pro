@@ -52,6 +52,8 @@ import type {
 import type {
   AvailabilityLockInput,
   AvailabilityLockRecord,
+  BookingChangeRequestInput,
+  BookingChangeRequestRecord,
   BookingConflictInput,
   BookingConflictRecord,
   BookingFolioLinkInput,
@@ -69,6 +71,11 @@ import type {
   PricingSnapshotInput,
   PricingSnapshotRecord,
 } from '../booking/bookingPersistence.types'
+import type {
+  RegistryEvent,
+  RegistryEventFilter,
+  RegistryEventInput,
+} from '../registry/registryEvent.types'
 import { assetMetricDefinitions } from '../map-canvas/assets/assetMetricDefinitions'
 import { createDefaultBeachMetricModel } from '../map-canvas/metric/beachMetricModel'
 import { calculateParametricLayout, type ParametricLayoutOutput } from '../map-canvas/parametric/parametricLayoutEngine'
@@ -394,6 +401,22 @@ type BookingStatusEventRow = {
   device_id: string | null
 }
 
+type BookingChangeRequestRow = {
+  id: string
+  reservation_id: string
+  booking_request_id: string | null
+  source: BookingChangeRequestRecord['source']
+  type: BookingChangeRequestRecord['type']
+  status: BookingChangeRequestRecord['status']
+  payload_json: string
+  availability_result_json: string | null
+  account_impact_json: string | null
+  created_at: string
+  updated_at: string
+  decided_at: string | null
+  decided_by: string | null
+}
+
 type BookingConflictRow = {
   id: string
   reservation_id: string | null
@@ -425,13 +448,18 @@ type AvailabilityLockRow = {
 type PricingSnapshotRow = {
   id: string
   reservation_id: string | null
+  account_id: string | null
+  source: string | null
+  status: PricingSnapshotRecord['status']
   source_rule_id: string | null
   catalog_item_id: string | null
   period_type: PricingSnapshotRecord['periodType']
   scope_json: string | null
   base_price: number
   extras_total: number
+  discounts_total: number | null
   included_items_json: string | null
+  lines_json: string | null
   calculated_total: number
   manual_override_json: string | null
   created_at: string
@@ -454,6 +482,32 @@ type BookingRegistryEventLinkRow = {
   registry_event_id: string
   event_type: string
   created_at: string
+}
+
+type RegistryEventRow = {
+  id: string
+  workspace_id: string | null
+  source: RegistryEvent['source']
+  event_type: RegistryEvent['type']
+  severity: RegistryEvent['severity']
+  status: RegistryEvent['status']
+  title: string
+  description: string | null
+  entity_type: string | null
+  entity_id: string | null
+  reservation_id: string | null
+  request_id: string | null
+  customer_id: string | null
+  account_id: string | null
+  payment_id: string | null
+  item_id: string | null
+  pricing_snapshot_id: string | null
+  amount_cents: number | null
+  payload_json: string | null
+  dedupe_key: string | null
+  created_at: string
+  created_by: string | null
+  device_id: string | null
 }
 
 type TariffRuleRow = {
@@ -500,10 +554,12 @@ const DATABASE_TABLES: { name: string; category: DatabaseTableCategory }[] = [
   { name: 'booking_requests', category: 'booking' },
   { name: 'booking_customer_pairing_candidates', category: 'booking' },
   { name: 'booking_status_events', category: 'booking' },
+  { name: 'booking_change_requests', category: 'booking' },
   { name: 'booking_conflicts', category: 'booking' },
   { name: 'availability_locks', category: 'booking' },
   { name: 'pricing_snapshots', category: 'booking' },
   { name: 'booking_folio_links', category: 'booking' },
+  { name: 'registry_events', category: 'registro' },
   { name: 'booking_registry_event_links', category: 'registro' },
   { name: 'tariff_rules', category: 'articoli' },
   { name: 'tariff_included_items', category: 'articoli' },
@@ -854,6 +910,22 @@ const toBookingStatusEvent = (row: BookingStatusEventRow): BookingStatusEventRec
   deviceId: row.device_id,
 })
 
+const toBookingChangeRequest = (row: BookingChangeRequestRow): BookingChangeRequestRecord => ({
+  id: row.id,
+  reservationId: row.reservation_id,
+  bookingRequestId: row.booking_request_id,
+  source: row.source,
+  type: row.type,
+  status: row.status,
+  payload: parseJsonField(row.payload_json, {}),
+  availabilityResult: parseJsonField(row.availability_result_json, null),
+  accountImpact: parseJsonField(row.account_impact_json, null),
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+  decidedAt: row.decided_at,
+  decidedBy: row.decided_by,
+})
+
 const toBookingConflict = (row: BookingConflictRow): BookingConflictRecord => ({
   id: row.id,
   reservationId: row.reservation_id,
@@ -895,13 +967,18 @@ const toAvailabilityLock = (row: AvailabilityLockRow): AvailabilityLockRecord =>
 const toPricingSnapshot = (row: PricingSnapshotRow): PricingSnapshotRecord => ({
   id: row.id,
   reservationId: row.reservation_id,
+  accountId: row.account_id,
+  source: row.source ?? 'operator_app',
+  status: row.status ?? 'locked',
   sourceRuleId: row.source_rule_id,
   catalogItemId: row.catalog_item_id,
   periodType: row.period_type,
   scope: parseJsonField(row.scope_json, null),
   basePrice: row.base_price,
   extrasTotal: row.extras_total,
+  discountsTotal: row.discounts_total ?? 0,
   includedItems: parseJsonField(row.included_items_json, []),
+  lines: parseJsonField(row.lines_json, []),
   calculatedTotal: row.calculated_total,
   manualOverride: parseJsonField(row.manual_override_json, null),
   createdAt: row.created_at,
@@ -926,6 +1003,32 @@ const toBookingRegistryEventLink = (
   registryEventId: row.registry_event_id,
   eventType: row.event_type,
   createdAt: row.created_at,
+})
+
+const toRegistryEvent = (row: RegistryEventRow): RegistryEvent => ({
+  id: row.id,
+  workspaceId: row.workspace_id,
+  source: row.source,
+  type: row.event_type,
+  severity: row.severity,
+  status: row.status,
+  title: row.title,
+  description: row.description,
+  entityType: row.entity_type,
+  entityId: row.entity_id,
+  reservationId: row.reservation_id,
+  requestId: row.request_id,
+  customerId: row.customer_id,
+  accountId: row.account_id,
+  paymentId: row.payment_id,
+  itemId: row.item_id,
+  pricingSnapshotId: row.pricing_snapshot_id,
+  amountCents: row.amount_cents,
+  payload: parseJsonField(row.payload_json, null),
+  dedupeKey: row.dedupe_key,
+  createdAt: row.created_at,
+  createdBy: row.created_by,
+  deviceId: row.device_id,
 })
 
 const toTariffRule = (row: TariffRuleRow): TariffRule => ({
@@ -2672,6 +2775,23 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     return this.requireBookingRequest(await this.listBookingRequests(), requestId)
   }
 
+  async markBookingRequestConverted(
+    requestId: string,
+    reservationId: string,
+  ): Promise<BookingRequestRecord> {
+    const db = await this.getConnection()
+    await db.run(
+      `UPDATE booking_requests
+       SET status = 'converted_to_booking',
+           converted_reservation_id = ?,
+           updated_at = ?,
+           version = version + 1
+       WHERE id = ?`,
+      [reservationId, nowIso(), requestId],
+    )
+    return this.requireBookingRequest(await this.listBookingRequests(), requestId)
+  }
+
   async listPairingCandidates(
     requestId: string,
   ): Promise<BookingCustomerPairingCandidateRecord[]> {
@@ -2822,6 +2942,85 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     return this.requireBookingStatusEvent(await this.listBookingStatusEvents(), id)
   }
 
+  async listBookingChangeRequests(filters: {
+    reservationId?: string
+    status?: BookingChangeRequestRecord['status']
+  } = {}): Promise<BookingChangeRequestRecord[]> {
+    const db = await this.getConnection()
+    const clauses: string[] = []
+    const values: string[] = []
+    if (filters.reservationId) {
+      clauses.push('reservation_id = ?')
+      values.push(filters.reservationId)
+    }
+    if (filters.status) {
+      clauses.push('status = ?')
+      values.push(filters.status)
+    }
+    const result = await db.query(
+      `SELECT id, reservation_id, booking_request_id, source, type, status, payload_json,
+        availability_result_json, account_impact_json, created_at, updated_at, decided_at, decided_by
+       FROM booking_change_requests
+       ${clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''}
+       ORDER BY created_at DESC`,
+      values,
+    )
+    return (result.values ?? []).map((row) => toBookingChangeRequest(row as BookingChangeRequestRow))
+  }
+
+  async createBookingChangeRequest(
+    input: BookingChangeRequestInput,
+  ): Promise<BookingChangeRequestRecord> {
+    const db = await this.getConnection()
+    const now = nowIso()
+    const createdAt = input.createdAt ?? now
+    const updatedAt = input.updatedAt ?? now
+    const id = input.id ?? createEntityId('booking-change-request')
+    await db.run(
+      `INSERT INTO booking_change_requests
+       (id, reservation_id, booking_request_id, source, type, status, payload_json,
+        availability_result_json, account_impact_json, created_at, updated_at, decided_at, decided_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.reservationId,
+        input.bookingRequestId ?? null,
+        input.source,
+        input.type,
+        input.status ?? 'requested',
+        serializeJsonField(input.payload),
+        input.availabilityResult == null ? null : serializeJsonField(input.availabilityResult),
+        input.accountImpact == null ? null : serializeJsonField(input.accountImpact),
+        createdAt,
+        updatedAt,
+        input.decidedAt ?? null,
+        input.decidedBy ?? null,
+      ],
+    )
+    return this.requireBookingChangeRequest(await this.listBookingChangeRequests(), id)
+  }
+
+  async getBookingChangeRequestById(changeRequestId: string): Promise<BookingChangeRequestRecord | null> {
+    const requests = await this.listBookingChangeRequests()
+    return requests.find((request) => request.id === changeRequestId) ?? null
+  }
+
+  async updateBookingChangeRequestStatus(
+    changeRequestId: string,
+    status: BookingChangeRequestRecord['status'],
+    decidedBy?: string | null,
+  ): Promise<BookingChangeRequestRecord> {
+    const db = await this.getConnection()
+    const decidedAt = ['accepted', 'rejected', 'applied', 'cancelled'].includes(status) ? nowIso() : null
+    await db.run(
+      `UPDATE booking_change_requests
+       SET status = ?, updated_at = ?, decided_at = COALESCE(?, decided_at), decided_by = COALESCE(?, decided_by)
+       WHERE id = ?`,
+      [status, nowIso(), decidedAt, decidedBy ?? null, changeRequestId],
+    )
+    return this.requireBookingChangeRequest(await this.listBookingChangeRequests(), changeRequestId)
+  }
+
   async listBookingConflicts(filters: {
     reservationId?: string
     requestId?: string
@@ -2954,20 +3153,25 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
     const id = input.id ?? createEntityId('pricing-snapshot')
     await db.run(
       `INSERT INTO pricing_snapshots
-       (id, reservation_id, source_rule_id, catalog_item_id, period_type, scope_json,
-        base_price, extras_total, included_items_json, calculated_total, manual_override_json,
-        created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, reservation_id, account_id, source, status, source_rule_id, catalog_item_id, period_type, scope_json,
+        base_price, extras_total, discounts_total, included_items_json, lines_json, calculated_total,
+        manual_override_json, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         input.reservationId ?? null,
+        input.accountId ?? null,
+        input.source ?? 'operator_app',
+        input.status ?? 'locked',
         input.sourceRuleId ?? null,
         input.catalogItemId ?? null,
         input.periodType,
         input.scope == null ? null : serializeJsonField(input.scope),
         input.basePrice,
         input.extrasTotal,
+        input.discountsTotal ?? 0,
         serializeJsonField(input.includedItems),
+        serializeJsonField(input.lines ?? []),
         input.calculatedTotal,
         input.manualOverride == null ? null : serializeJsonField(input.manualOverride),
         input.createdAt ?? now,
@@ -2980,15 +3184,77 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
   async getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null> {
     const db = await this.getConnection()
     const result = await db.query(
-      `SELECT id, reservation_id, source_rule_id, catalog_item_id, period_type, scope_json,
-        base_price, extras_total, included_items_json, calculated_total, manual_override_json,
-        created_at, updated_at
+      `SELECT id, reservation_id, account_id, source, status, source_rule_id, catalog_item_id,
+        period_type, scope_json, base_price, extras_total, discounts_total, included_items_json,
+        lines_json, calculated_total, manual_override_json, created_at, updated_at
        FROM pricing_snapshots
        WHERE id = ?`,
       [snapshotId],
     )
     const row = result.values?.[0] as PricingSnapshotRow | undefined
     return row ? toPricingSnapshot(row) : null
+  }
+
+  async listPricingSnapshotsForReservation(reservationId: string): Promise<PricingSnapshotRecord[]> {
+    const db = await this.getConnection()
+    const result = await db.query(
+      `SELECT id, reservation_id, account_id, source, status, source_rule_id, catalog_item_id,
+        period_type, scope_json, base_price, extras_total, discounts_total, included_items_json,
+        lines_json, calculated_total, manual_override_json, created_at, updated_at
+       FROM pricing_snapshots
+       WHERE reservation_id = ?
+       ORDER BY created_at DESC`,
+      [reservationId],
+    )
+    return (result.values ?? []).map((row) => toPricingSnapshot(row as PricingSnapshotRow))
+  }
+
+  async getPricingSnapshotForReservation(reservationId: string): Promise<PricingSnapshotRecord | null> {
+    return (await this.listPricingSnapshotsForReservation(reservationId))
+      .find((snapshot) => snapshot.status !== 'voided') ?? null
+  }
+
+  async updatePricingSnapshotStatus(
+    snapshotId: string,
+    status: NonNullable<PricingSnapshotRecord['status']>,
+    metadata?: Record<string, unknown> | null,
+  ): Promise<PricingSnapshotRecord> {
+    const current = await this.getRequiredPricingSnapshot(snapshotId)
+    const manualOverride = metadata
+      ? { ...(current.manualOverride ?? {}), statusMetadata: metadata, statusUpdatedAt: nowIso() }
+      : current.manualOverride
+    await (await this.getConnection()).run(
+      'UPDATE pricing_snapshots SET status = ?, manual_override_json = ?, updated_at = ? WHERE id = ?',
+      [
+        status,
+        manualOverride == null ? null : serializeJsonField(manualOverride),
+        nowIso(),
+        snapshotId,
+      ],
+    )
+    return this.getRequiredPricingSnapshot(snapshotId)
+  }
+
+  async linkPricingSnapshotToReservation(
+    reservationId: string,
+    snapshotId: string,
+  ): Promise<PricingSnapshotRecord> {
+    await (await this.getConnection()).run(
+      'UPDATE pricing_snapshots SET reservation_id = ?, updated_at = ? WHERE id = ?',
+      [reservationId, nowIso(), snapshotId],
+    )
+    return this.getRequiredPricingSnapshot(snapshotId)
+  }
+
+  async linkPricingSnapshotToAccount(
+    accountId: string,
+    snapshotId: string,
+  ): Promise<PricingSnapshotRecord> {
+    await (await this.getConnection()).run(
+      'UPDATE pricing_snapshots SET account_id = ?, updated_at = ? WHERE id = ?',
+      [accountId, nowIso(), snapshotId],
+    )
+    return this.getRequiredPricingSnapshot(snapshotId)
   }
 
   async linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord> {
@@ -3052,6 +3318,150 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
       [id],
     )
     return toBookingRegistryEventLink(result.values?.[0] as BookingRegistryEventLinkRow)
+  }
+
+  async appendRegistryEvent(input: RegistryEventInput): Promise<RegistryEvent> {
+    if (input.dedupeKey) {
+      const existing = await this.findRegistryEventByDedupeKey(input.dedupeKey)
+      if (existing) return existing
+    }
+
+    const db = await this.getConnection()
+    const id = createEntityId('registry-event')
+    const links = input.links ?? {}
+    await db.run(
+      `INSERT INTO registry_events
+       (id, workspace_id, source, event_type, severity, status, title, description,
+        entity_type, entity_id, reservation_id, request_id, customer_id, account_id,
+        payment_id, item_id, pricing_snapshot_id, amount_cents, payload_json,
+        dedupe_key, created_at, created_by, device_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.workspaceId ?? null,
+        input.source,
+        input.type,
+        input.severity ?? 'info',
+        'active',
+        input.title,
+        input.description ?? null,
+        links.entityType ?? null,
+        links.entityId ?? null,
+        links.reservationId ?? null,
+        links.requestId ?? null,
+        links.customerId ?? null,
+        links.accountId ?? null,
+        links.paymentId ?? null,
+        links.itemId ?? null,
+        links.pricingSnapshotId ?? null,
+        input.amountCents ?? null,
+        input.payload == null ? null : serializeJsonField(input.payload),
+        input.dedupeKey ?? null,
+        input.createdAt ?? nowIso(),
+        input.createdBy ?? null,
+        input.deviceId ?? null,
+      ],
+    )
+    return this.requireRegistryEvent(id)
+  }
+
+  async listRegistryEvents(filter: RegistryEventFilter = {}): Promise<RegistryEvent[]> {
+    const clauses: string[] = []
+    const values: unknown[] = []
+    const addFilter = (column: string, value: unknown) => {
+      if (value == null || value === '') return
+      clauses.push(`${column} = ?`)
+      values.push(value)
+    }
+    addFilter('source', filter.source)
+    addFilter('event_type', filter.type)
+    addFilter('status', filter.status)
+    addFilter('reservation_id', filter.reservationId)
+    addFilter('request_id', filter.requestId)
+    addFilter('customer_id', filter.customerId)
+    addFilter('account_id', filter.accountId)
+    addFilter('item_id', filter.itemId)
+    const limit = Math.max(1, Math.min(500, Math.trunc(filter.limit ?? 100)))
+    const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''
+    const result = await (await this.getConnection()).query(
+      `SELECT id, workspace_id, source, event_type, severity, status, title, description,
+        entity_type, entity_id, reservation_id, request_id, customer_id, account_id,
+        payment_id, item_id, pricing_snapshot_id, amount_cents, payload_json,
+        dedupe_key, created_at, created_by, device_id
+       FROM registry_events
+       ${where}
+       ORDER BY created_at DESC
+       LIMIT ?`,
+      [...values, limit],
+    )
+    return (result.values ?? []).map((row) => toRegistryEvent(row as RegistryEventRow))
+  }
+
+  async getRegistryEventById(id: string): Promise<RegistryEvent | null> {
+    const result = await (await this.getConnection()).query(
+      `SELECT id, workspace_id, source, event_type, severity, status, title, description,
+        entity_type, entity_id, reservation_id, request_id, customer_id, account_id,
+        payment_id, item_id, pricing_snapshot_id, amount_cents, payload_json,
+        dedupe_key, created_at, created_by, device_id
+       FROM registry_events
+       WHERE id = ?`,
+      [id],
+    )
+    const row = result.values?.[0] as RegistryEventRow | undefined
+    return row ? toRegistryEvent(row) : null
+  }
+
+  async acknowledgeRegistryEvent(id: string): Promise<RegistryEvent> {
+    return this.updateRegistryEventStatus(id, 'acknowledged')
+  }
+
+  async resolveRegistryEvent(id: string): Promise<RegistryEvent> {
+    return this.updateRegistryEventStatus(id, 'resolved')
+  }
+
+  async voidRegistryEvent(id: string, reason?: string | null): Promise<RegistryEvent> {
+    const current = await this.requireRegistryEvent(id)
+    await (await this.getConnection()).run(
+      'UPDATE registry_events SET status = ?, payload_json = ? WHERE id = ?',
+      [
+        'voided',
+        serializeJsonField({ ...(current.payload ?? {}), voidReason: reason ?? null, voidedAt: nowIso() }),
+        id,
+      ],
+    )
+    return this.requireRegistryEvent(id)
+  }
+
+  async findRegistryEventByDedupeKey(dedupeKey: string): Promise<RegistryEvent | null> {
+    const result = await (await this.getConnection()).query(
+      `SELECT id, workspace_id, source, event_type, severity, status, title, description,
+        entity_type, entity_id, reservation_id, request_id, customer_id, account_id,
+        payment_id, item_id, pricing_snapshot_id, amount_cents, payload_json,
+        dedupe_key, created_at, created_by, device_id
+       FROM registry_events
+       WHERE dedupe_key = ?
+       LIMIT 1`,
+      [dedupeKey],
+    )
+    const row = result.values?.[0] as RegistryEventRow | undefined
+    return row ? toRegistryEvent(row) : null
+  }
+
+  private async requireRegistryEvent(id: string): Promise<RegistryEvent> {
+    const event = await this.getRegistryEventById(id)
+    if (!event) throw new Error('Evento registro non trovato.')
+    return event
+  }
+
+  private async updateRegistryEventStatus(
+    id: string,
+    status: RegistryEvent['status'],
+  ): Promise<RegistryEvent> {
+    await (await this.getConnection()).run(
+      'UPDATE registry_events SET status = ? WHERE id = ?',
+      [status, id],
+    )
+    return this.requireRegistryEvent(id)
   }
 
   async seedInitialTariffsIfMissing(): Promise<void> {
@@ -3501,6 +3911,8 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
   async resetSeedForDevelopmentOnly(): Promise<void> {
     const db = await this.getConnection()
     await db.execute(`
+      DELETE FROM booking_change_requests;
+      DELETE FROM booking_status_events;
       DELETE FROM reservations;
       DELETE FROM payments;
       DELETE FROM account_extra_items;
@@ -3611,6 +4023,17 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
       throw new Error('Evento prenotazione non trovato.')
     }
     return event
+  }
+
+  private requireBookingChangeRequest(
+    requests: BookingChangeRequestRecord[],
+    requestId: string,
+  ): BookingChangeRequestRecord {
+    const request = requests.find((current) => current.id === requestId)
+    if (!request) {
+      throw new Error('Richiesta modifica prenotazione non trovata.')
+    }
+    return request
   }
 
   private requireBookingConflict(
@@ -3968,6 +4391,37 @@ class NativeSQLiteAdapter implements BeachDatabaseAdapter {
         FOREIGN KEY(existing_customer_id) REFERENCES customers(id)
       );
     `)
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS booking_change_requests (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT NOT NULL,
+        booking_request_id TEXT,
+        source TEXT NOT NULL,
+        type TEXT NOT NULL,
+        status TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        availability_result_json TEXT,
+        account_impact_json TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        decided_at TEXT,
+        decided_by TEXT,
+        FOREIGN KEY(reservation_id) REFERENCES reservations(id),
+        FOREIGN KEY(booking_request_id) REFERENCES booking_requests(id)
+      );
+    `)
+    const pricingSnapshotInfo = await db.query('PRAGMA table_info(pricing_snapshots)')
+    const pricingSnapshotColumns = getPragmaTableColumnNames(pricingSnapshotInfo.values)
+    const addPricingSnapshotColumn = async (name: string, definition: string) => {
+      if (!pricingSnapshotColumns.has(name)) {
+        await db.execute(`ALTER TABLE pricing_snapshots ADD COLUMN ${name} ${definition};`)
+      }
+    }
+    await addPricingSnapshotColumn('account_id', 'TEXT')
+    await addPricingSnapshotColumn('source', "TEXT NOT NULL DEFAULT 'operator_app'")
+    await addPricingSnapshotColumn('status', "TEXT NOT NULL DEFAULT 'locked'")
+    await addPricingSnapshotColumn('discounts_total', 'REAL NOT NULL DEFAULT 0')
+    await addPricingSnapshotColumn('lines_json', 'TEXT')
   }
 }
 
@@ -3984,11 +4438,13 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
   private bookingRequests: BookingRequestRecord[] = []
   private pairingCandidates: BookingCustomerPairingCandidateRecord[] = []
   private bookingStatusEvents: BookingStatusEventRecord[] = []
+  private bookingChangeRequests: BookingChangeRequestRecord[] = []
   private bookingConflicts: BookingConflictRecord[] = []
   private availabilityLocks: AvailabilityLockRecord[] = []
   private pricingSnapshots: PricingSnapshotRecord[] = []
   private bookingFolioLinks: BookingFolioLinkRecord[] = []
   private bookingRegistryEventLinks: BookingRegistryEventLinkRecord[] = []
+  private registryEvents: RegistryEvent[] = []
   private tariffRules: TariffRule[] = []
   private extraCatalog: ExtraItemCatalogEntry[] = []
   private accountExtras: AccountExtraItem[] = []
@@ -4956,6 +5412,25 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     return updated
   }
 
+  async markBookingRequestConverted(
+    requestId: string,
+    reservationId: string,
+  ): Promise<BookingRequestRecord> {
+    const current = this.getRequiredMemoryBookingRequest(requestId)
+    const updated = {
+      ...current,
+      status: 'converted_to_booking' as const,
+      convertedReservationId: reservationId,
+      updatedAt: nowIso(),
+      version: current.version + 1,
+    }
+    this.bookingRequests = this.bookingRequests.map((request) =>
+      request.id === requestId ? updated : request,
+    )
+    this.persistState()
+    return updated
+  }
+
   async listPairingCandidates(
     requestId: string,
   ): Promise<BookingCustomerPairingCandidateRecord[]> {
@@ -5053,6 +5528,70 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     return event
   }
 
+  async listBookingChangeRequests(filters: {
+    reservationId?: string
+    status?: BookingChangeRequestRecord['status']
+  } = {}): Promise<BookingChangeRequestRecord[]> {
+    return this.bookingChangeRequests
+      .filter((request) =>
+        (!filters.reservationId || request.reservationId === filters.reservationId) &&
+        (!filters.status || request.status === filters.status),
+      )
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async createBookingChangeRequest(
+    input: BookingChangeRequestInput,
+  ): Promise<BookingChangeRequestRecord> {
+    const now = nowIso()
+    const request: BookingChangeRequestRecord = {
+      id: input.id ?? createEntityId('booking-change-request'),
+      reservationId: input.reservationId,
+      bookingRequestId: input.bookingRequestId ?? null,
+      source: input.source,
+      type: input.type,
+      status: input.status ?? 'requested',
+      payload: input.payload,
+      availabilityResult: input.availabilityResult ?? null,
+      accountImpact: input.accountImpact ?? null,
+      createdAt: input.createdAt ?? now,
+      updatedAt: input.updatedAt ?? now,
+      decidedAt: input.decidedAt ?? null,
+      decidedBy: input.decidedBy ?? null,
+    }
+    this.bookingChangeRequests = [request, ...this.bookingChangeRequests]
+    this.persistState()
+    return request
+  }
+
+  async getBookingChangeRequestById(changeRequestId: string): Promise<BookingChangeRequestRecord | null> {
+    return this.bookingChangeRequests.find((request) => request.id === changeRequestId) ?? null
+  }
+
+  async updateBookingChangeRequestStatus(
+    changeRequestId: string,
+    status: BookingChangeRequestRecord['status'],
+    decidedBy?: string | null,
+  ): Promise<BookingChangeRequestRecord> {
+    const current = await this.getBookingChangeRequestById(changeRequestId)
+    if (!current) {
+      throw new Error('Richiesta modifica prenotazione non trovata.')
+    }
+    const shouldDecide = ['accepted', 'rejected', 'applied', 'cancelled'].includes(status)
+    const updated: BookingChangeRequestRecord = {
+      ...current,
+      status,
+      updatedAt: nowIso(),
+      decidedAt: shouldDecide ? nowIso() : current.decidedAt,
+      decidedBy: decidedBy ?? current.decidedBy,
+    }
+    this.bookingChangeRequests = this.bookingChangeRequests.map((request) =>
+      request.id === changeRequestId ? updated : request,
+    )
+    this.persistState()
+    return updated
+  }
+
   async listBookingConflicts(filters: {
     reservationId?: string
     requestId?: string
@@ -5143,13 +5682,18 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     const snapshot: PricingSnapshotRecord = {
       id: input.id ?? createEntityId('pricing-snapshot'),
       reservationId: input.reservationId ?? null,
+      accountId: input.accountId ?? null,
+      source: input.source ?? 'operator_app',
+      status: input.status ?? 'locked',
       sourceRuleId: input.sourceRuleId ?? null,
       catalogItemId: input.catalogItemId ?? null,
       periodType: input.periodType,
       scope: input.scope ?? null,
       basePrice: input.basePrice,
       extrasTotal: input.extrasTotal,
+      discountsTotal: input.discountsTotal ?? 0,
       includedItems: input.includedItems,
+      lines: input.lines ?? [],
       calculatedTotal: input.calculatedTotal,
       manualOverride: input.manualOverride ?? null,
       createdAt: input.createdAt ?? now,
@@ -5162,6 +5706,73 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
 
   async getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null> {
     return this.pricingSnapshots.find((snapshot) => snapshot.id === snapshotId) ?? null
+  }
+
+  async listPricingSnapshotsForReservation(reservationId: string): Promise<PricingSnapshotRecord[]> {
+    return this.pricingSnapshots
+      .filter((snapshot) => snapshot.reservationId === reservationId)
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+  }
+
+  async getPricingSnapshotForReservation(reservationId: string): Promise<PricingSnapshotRecord | null> {
+    return (await this.listPricingSnapshotsForReservation(reservationId))
+      .find((snapshot) => snapshot.status !== 'voided') ?? null
+  }
+
+  async updatePricingSnapshotStatus(
+    snapshotId: string,
+    status: NonNullable<PricingSnapshotRecord['status']>,
+    metadata?: Record<string, unknown> | null,
+  ): Promise<PricingSnapshotRecord> {
+    const current = await this.getPricingSnapshotById(snapshotId)
+    if (!current) {
+      throw new Error('Snapshot prezzo non trovato.')
+    }
+    const updated: PricingSnapshotRecord = {
+      ...current,
+      status,
+      manualOverride: metadata
+        ? { ...(current.manualOverride ?? {}), statusMetadata: metadata, statusUpdatedAt: nowIso() }
+        : current.manualOverride,
+      updatedAt: nowIso(),
+    }
+    this.pricingSnapshots = this.pricingSnapshots.map((snapshot) =>
+      snapshot.id === snapshotId ? updated : snapshot,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async linkPricingSnapshotToReservation(
+    reservationId: string,
+    snapshotId: string,
+  ): Promise<PricingSnapshotRecord> {
+    const current = await this.getPricingSnapshotById(snapshotId)
+    if (!current) {
+      throw new Error('Snapshot prezzo non trovato.')
+    }
+    const updated = { ...current, reservationId, updatedAt: nowIso() }
+    this.pricingSnapshots = this.pricingSnapshots.map((snapshot) =>
+      snapshot.id === snapshotId ? updated : snapshot,
+    )
+    this.persistState()
+    return updated
+  }
+
+  async linkPricingSnapshotToAccount(
+    accountId: string,
+    snapshotId: string,
+  ): Promise<PricingSnapshotRecord> {
+    const current = await this.getPricingSnapshotById(snapshotId)
+    if (!current) {
+      throw new Error('Snapshot prezzo non trovato.')
+    }
+    const updated = { ...current, accountId, updatedAt: nowIso() }
+    this.pricingSnapshots = this.pricingSnapshots.map((snapshot) =>
+      snapshot.id === snapshotId ? updated : snapshot,
+    )
+    this.persistState()
+    return updated
   }
 
   async linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord> {
@@ -5198,6 +5809,100 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     this.bookingRegistryEventLinks = [link, ...this.bookingRegistryEventLinks]
     this.persistState()
     return link
+  }
+
+  async appendRegistryEvent(input: RegistryEventInput): Promise<RegistryEvent> {
+    if (input.dedupeKey) {
+      const existing = await this.findRegistryEventByDedupeKey(input.dedupeKey)
+      if (existing) return existing
+    }
+    const links = input.links ?? {}
+    const event: RegistryEvent = {
+      id: createEntityId('registry-event'),
+      workspaceId: input.workspaceId ?? null,
+      source: input.source,
+      type: input.type,
+      severity: input.severity ?? 'info',
+      status: 'active',
+      title: input.title,
+      description: input.description ?? null,
+      entityType: links.entityType ?? null,
+      entityId: links.entityId ?? null,
+      reservationId: links.reservationId ?? null,
+      requestId: links.requestId ?? null,
+      customerId: links.customerId ?? null,
+      accountId: links.accountId ?? null,
+      paymentId: links.paymentId ?? null,
+      itemId: links.itemId ?? null,
+      pricingSnapshotId: links.pricingSnapshotId ?? null,
+      amountCents: input.amountCents ?? null,
+      payload: input.payload ?? null,
+      dedupeKey: input.dedupeKey ?? null,
+      createdAt: input.createdAt ?? nowIso(),
+      createdBy: input.createdBy ?? null,
+      deviceId: input.deviceId ?? null,
+    }
+    this.registryEvents = [event, ...this.registryEvents]
+    this.persistState()
+    return event
+  }
+
+  async listRegistryEvents(filter: RegistryEventFilter = {}): Promise<RegistryEvent[]> {
+    const limit = Math.max(1, Math.min(500, Math.trunc(filter.limit ?? 100)))
+    return this.registryEvents
+      .filter((event) =>
+        (!filter.source || event.source === filter.source) &&
+        (!filter.type || event.type === filter.type) &&
+        (!filter.status || event.status === filter.status) &&
+        (!filter.reservationId || event.reservationId === filter.reservationId) &&
+        (!filter.requestId || event.requestId === filter.requestId) &&
+        (!filter.customerId || event.customerId === filter.customerId) &&
+        (!filter.accountId || event.accountId === filter.accountId) &&
+        (!filter.itemId || event.itemId === filter.itemId),
+      )
+      .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .slice(0, limit)
+  }
+
+  async getRegistryEventById(id: string): Promise<RegistryEvent | null> {
+    return this.registryEvents.find((event) => event.id === id) ?? null
+  }
+
+  async acknowledgeRegistryEvent(id: string): Promise<RegistryEvent> {
+    return this.updateMemoryRegistryEventStatus(id, 'acknowledged')
+  }
+
+  async resolveRegistryEvent(id: string): Promise<RegistryEvent> {
+    return this.updateMemoryRegistryEventStatus(id, 'resolved')
+  }
+
+  async voidRegistryEvent(id: string, reason?: string | null): Promise<RegistryEvent> {
+    const current = await this.getRegistryEventById(id)
+    if (!current) throw new Error('Evento registro non trovato.')
+    const updated: RegistryEvent = {
+      ...current,
+      status: 'voided',
+      payload: { ...(current.payload ?? {}), voidReason: reason ?? null, voidedAt: nowIso() },
+    }
+    this.registryEvents = this.registryEvents.map((event) => event.id === id ? updated : event)
+    this.persistState()
+    return updated
+  }
+
+  async findRegistryEventByDedupeKey(dedupeKey: string): Promise<RegistryEvent | null> {
+    return this.registryEvents.find((event) => event.dedupeKey === dedupeKey) ?? null
+  }
+
+  private updateMemoryRegistryEventStatus(
+    id: string,
+    status: RegistryEvent['status'],
+  ): RegistryEvent {
+    const current = this.registryEvents.find((event) => event.id === id)
+    if (!current) throw new Error('Evento registro non trovato.')
+    const updated = { ...current, status }
+    this.registryEvents = this.registryEvents.map((event) => event.id === id ? updated : event)
+    this.persistState()
+    return updated
   }
 
   async seedInitialTariffsIfMissing(): Promise<void> {
@@ -5571,11 +6276,13 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
     this.bookingRequests = []
     this.pairingCandidates = []
     this.bookingStatusEvents = []
+    this.bookingChangeRequests = []
     this.bookingConflicts = []
     this.availabilityLocks = []
     this.pricingSnapshots = []
     this.bookingFolioLinks = []
     this.bookingRegistryEventLinks = []
+    this.registryEvents = []
     this.tariffRules = []
     this.extraCatalog = []
     this.accountExtras = []
@@ -5708,6 +6415,8 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
         return toDiagnosticRows(this.pairingCandidates)
       case 'booking_status_events':
         return toDiagnosticRows(this.bookingStatusEvents)
+      case 'booking_change_requests':
+        return toDiagnosticRows(this.bookingChangeRequests)
       case 'booking_conflicts':
         return toDiagnosticRows(this.bookingConflicts)
       case 'availability_locks':
@@ -5716,6 +6425,8 @@ class BrowserMemoryAdapter implements BeachDatabaseAdapter {
         return toDiagnosticRows(this.pricingSnapshots)
       case 'booking_folio_links':
         return toDiagnosticRows(this.bookingFolioLinks)
+      case 'registry_events':
+        return toDiagnosticRows(this.registryEvents)
       case 'booking_registry_event_links':
         return toDiagnosticRows(this.bookingRegistryEventLinks)
       case 'tariff_rules':

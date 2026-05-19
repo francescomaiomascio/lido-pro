@@ -461,4 +461,71 @@ CREATE INDEX IF NOT EXISTS idx_beach_layout_asset_metrics_version ON beach_layou
       );
     `,
   },
+  {
+    version: 15,
+    sql: `
+      CREATE TABLE IF NOT EXISTS booking_change_requests (
+        id TEXT PRIMARY KEY,
+        reservation_id TEXT NOT NULL,
+        booking_request_id TEXT,
+        source TEXT NOT NULL,
+        type TEXT NOT NULL,
+        status TEXT NOT NULL,
+        payload_json TEXT NOT NULL,
+        availability_result_json TEXT,
+        account_impact_json TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        decided_at TEXT,
+        decided_by TEXT,
+        FOREIGN KEY(reservation_id) REFERENCES reservations(id),
+        FOREIGN KEY(booking_request_id) REFERENCES booking_requests(id)
+      );
+    `,
+  },
+  {
+    version: 16,
+    sql: `
+      -- Runtime-safe pricing snapshot ALTERs are also guarded in sqliteAdapter.ensureRuntimeColumns.
+    `,
+  },
+  {
+    version: 17,
+    sql: `
+      CREATE TABLE IF NOT EXISTS registry_events (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT,
+        source TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        severity TEXT NOT NULL,
+        status TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        entity_type TEXT,
+        entity_id TEXT,
+        reservation_id TEXT,
+        request_id TEXT,
+        customer_id TEXT,
+        account_id TEXT,
+        payment_id TEXT,
+        item_id TEXT,
+        pricing_snapshot_id TEXT,
+        amount_cents INTEGER,
+        payload_json TEXT,
+        dedupe_key TEXT,
+        created_at TEXT NOT NULL,
+        created_by TEXT,
+        device_id TEXT
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_registry_events_created_at ON registry_events(created_at);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_source ON registry_events(source);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_type ON registry_events(event_type);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_reservation ON registry_events(reservation_id);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_customer ON registry_events(customer_id);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_account ON registry_events(account_id);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_item ON registry_events(item_id);
+      CREATE INDEX IF NOT EXISTS idx_registry_events_dedupe ON registry_events(dedupe_key);
+    `,
+  },
 ] as const

@@ -54,8 +54,8 @@
   }
   const accountSource = $derived.by(() => {
     if (account?.notes?.toLowerCase().includes('manuale')) return 'Manuale'
-    if (account?.notes?.toLowerCase().includes('da listino')) return account.notes
-    if (priceSuggestion && priceSuggestion.confidence !== 'none') return `Da listino: ${priceSuggestion.tariffRule?.name ?? 'Tariffa'}`
+    if (account?.notes?.toLowerCase().includes('da listino')) return account.notes.replace(/da listino/i, 'Da Articoli')
+    if (priceSuggestion && priceSuggestion.confidence !== 'none') return `Da Articoli: ${priceSuggestion.tariffRule?.name ?? 'Tariffa'}`
     return 'Totale modificabile.'
   })
 </script>

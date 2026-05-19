@@ -2,7 +2,8 @@ import { getReservation, updateReservation } from '../db/reservationRepository'
 import type { SavePeriodAndEnsureAccountInput, SavePeriodAndEnsureAccountResult } from '../services/bookingFlowService'
 import { savePeriodAndEnsureAccount } from '../services/bookingFlowService'
 import { cancelReservationAndReload } from '../services/reservationService'
-import { loadBeachState } from '../services/beachLayoutService'
+import { loadActiveOperationalBeachState } from '../services/beachLayoutService'
+import { appendBookingEvent } from '../registry/registryEventService'
 import type { Account } from '../types/account'
 import type { BeachItem } from '../types/beach'
 import type { BeachItemAssignedCustomer } from '../types/customer'
@@ -11,6 +12,7 @@ import type { Reservation, ReservationInput, ReservationType } from '../types/re
 import type { PriceSuggestion } from '../types/tariff'
 import type { AvailabilityPeriod, ConfirmabilityResult, ItemAvailability } from './availability.types'
 import { canConfirmBooking, checkItemAvailability, detectBookingConflicts } from './availabilityService'
+import { periodToAvailabilityPeriod } from './bookingPeriodService'
 
 export type OperatorBookingErrorCode =
   | 'missing_item'
@@ -96,8 +98,8 @@ const toAvailabilityPeriod = (
   reservationType: ReservationType,
   startDate: string,
   endDate: string,
-): AvailabilityPeriod => ({
-  type: reservationType === 'daily' && startDate !== endDate ? 'multi_day' : reservationType,
+): AvailabilityPeriod => periodToAvailabilityPeriod({
+  type: reservationType,
   startDate,
   endDate,
   label: reservationType,
@@ -249,6 +251,20 @@ export const cancelOperatorBooking = async (
     throw new OperatorBookingError('reservation_save_failed', 'Prenotazione non trovata.')
   }
   const state = await cancelReservationAndReload(reservationId)
+  await appendBookingEvent({
+    type: 'booking_cancelled',
+    severity: 'info',
+    title: 'Prenotazione annullata',
+    links: {
+      entityType: 'reservation',
+      entityId: reservationId,
+      reservationId,
+      customerId: reservation.customerId,
+      accountId: reservation.accountId ?? null,
+      itemId: reservation.itemId,
+    },
+    dedupeKey: `booking_cancelled:${reservationId}:${new Date().toISOString().slice(0, 10)}`,
+  })
   return {
     state,
     reservation: { ...reservation, status: 'cancelled', active: false },
@@ -281,7 +297,7 @@ export const linkOperatorBookingAccount = async (input: {
       notes: reservation.notes,
     })
     return {
-      state: await loadBeachState(),
+      state: await loadActiveOperationalBeachState(),
       reservation: updated,
     }
   } catch (error) {

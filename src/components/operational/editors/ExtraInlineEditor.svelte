@@ -39,21 +39,27 @@
   }
 </script>
 
-<section class="inline-editor" aria-label="Extra">
+<section class="inline-editor" aria-label="Articoli extra">
   <header class="inline-editor__header">
-    <div><strong>Gestisci extra</strong><span>Articoli dal listino, con prezzo e quantita massima.</span></div>
+    <div><strong>Gestisci Articoli extra</strong><span>Catalogo Articoli, prezzo unitario e quantita massima.</span></div>
     <button type="button" onclick={onClose}>Chiudi</button>
   </header>
   <IncludedEquipmentSummary items={includedItems} />
-  <div class="inline-editor__subhead">A pagamento</div>
+  <div class="inline-editor__subhead">Articoli disponibili</div>
   <div class="inline-editor__results">
     {#each catalog.filter((entry) => entry.active) as entry}
       <div class="inline-editor__result-row inline-editor__result-row--extra">
         <strong>{entry.name}</strong>
-        <small>max {entry.maxQuantityPerBooking}</small>
+        <small>{formatEuroFromCents(entry.defaultAmountCents)} · max {entry.maxQuantityPerBooking}</small>
         <input type="number" min="1" max={entry.maxQuantityPerBooking} value={getQuantity(entry.id)} oninput={(event) => (quantityById[entry.id] = Number(event.currentTarget.value))} />
         <input value={getAmount(entry)} inputmode="decimal" oninput={(event) => (amountById[entry.id] = event.currentTarget.value)} />
-        <button type="button" disabled={saving} onclick={() => addCatalogItem(entry)}>Aggiungi</button>
+        <button
+          type="button"
+          aria-label={`Aggiungi ${entry.name}`}
+          title={`Aggiungi ${entry.name}`}
+          disabled={saving}
+          onclick={() => addCatalogItem(entry)}
+        >+</button>
         {#if errorById[entry.id]}
           <em>{errorById[entry.id]}</em>
         {/if}

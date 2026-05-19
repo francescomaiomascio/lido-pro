@@ -34,6 +34,11 @@ import type {
   TariffIncludedItem,
 } from './extraItem'
 import type {
+  RegistryEvent,
+  RegistryEventFilter,
+  RegistryEventInput,
+} from '../registry/registryEvent.types'
+import type {
   AvailabilityLockInput,
   AvailabilityLockRecord,
   BookingConflictInput,
@@ -50,6 +55,8 @@ import type {
   BookingRequestStatus,
   BookingStatusEventInput,
   BookingStatusEventRecord,
+  BookingChangeRequestInput,
+  BookingChangeRequestRecord,
   PricingSnapshotInput,
   PricingSnapshotRecord,
 } from '../booking/bookingPersistence.types'
@@ -179,6 +186,10 @@ export type BeachDatabaseAdapter = {
     requestId: string,
     status: BookingRequestStatus,
   ): Promise<BookingRequestRecord>
+  markBookingRequestConverted(
+    requestId: string,
+    reservationId: string,
+  ): Promise<BookingRequestRecord>
   listPairingCandidates(requestId: string): Promise<BookingCustomerPairingCandidateRecord[]>
   replacePairingCandidates(
     requestId: string,
@@ -196,6 +207,17 @@ export type BeachDatabaseAdapter = {
     requestId?: string
   }): Promise<BookingStatusEventRecord[]>
   appendBookingStatusEvent(input: BookingStatusEventInput): Promise<BookingStatusEventRecord>
+  listBookingChangeRequests(filters?: {
+    reservationId?: string
+    status?: BookingChangeRequestRecord['status']
+  }): Promise<BookingChangeRequestRecord[]>
+  createBookingChangeRequest(input: BookingChangeRequestInput): Promise<BookingChangeRequestRecord>
+  getBookingChangeRequestById(changeRequestId: string): Promise<BookingChangeRequestRecord | null>
+  updateBookingChangeRequestStatus(
+    changeRequestId: string,
+    status: BookingChangeRequestRecord['status'],
+    decidedBy?: string | null,
+  ): Promise<BookingChangeRequestRecord>
   listBookingConflicts(filters?: {
     reservationId?: string
     requestId?: string
@@ -211,10 +233,26 @@ export type BeachDatabaseAdapter = {
   releaseAvailabilityLock(lockId: string): Promise<AvailabilityLockRecord>
   createPricingSnapshot(input: PricingSnapshotInput): Promise<PricingSnapshotRecord>
   getPricingSnapshotById(snapshotId: string): Promise<PricingSnapshotRecord | null>
+  getPricingSnapshotForReservation(reservationId: string): Promise<PricingSnapshotRecord | null>
+  listPricingSnapshotsForReservation(reservationId: string): Promise<PricingSnapshotRecord[]>
+  updatePricingSnapshotStatus(
+    snapshotId: string,
+    status: NonNullable<PricingSnapshotRecord['status']>,
+    metadata?: Record<string, unknown> | null,
+  ): Promise<PricingSnapshotRecord>
+  linkPricingSnapshotToReservation(reservationId: string, snapshotId: string): Promise<PricingSnapshotRecord>
+  linkPricingSnapshotToAccount(accountId: string, snapshotId: string): Promise<PricingSnapshotRecord>
   linkBookingFolio(input: BookingFolioLinkInput): Promise<BookingFolioLinkRecord>
   linkBookingRegistryEvent(
     input: BookingRegistryEventLinkInput,
   ): Promise<BookingRegistryEventLinkRecord>
+  appendRegistryEvent(input: RegistryEventInput): Promise<RegistryEvent>
+  listRegistryEvents(filter?: RegistryEventFilter): Promise<RegistryEvent[]>
+  getRegistryEventById(id: string): Promise<RegistryEvent | null>
+  acknowledgeRegistryEvent(id: string): Promise<RegistryEvent>
+  resolveRegistryEvent(id: string): Promise<RegistryEvent>
+  voidRegistryEvent(id: string, reason?: string | null): Promise<RegistryEvent>
+  findRegistryEventByDedupeKey(dedupeKey: string): Promise<RegistryEvent | null>
   seedInitialTariffsIfMissing(): Promise<void>
   getActiveTariffRules(): Promise<TariffRule[]>
   getTariffRule(tariffRuleId: string): Promise<TariffRule | null>

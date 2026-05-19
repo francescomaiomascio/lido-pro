@@ -109,6 +109,7 @@
   let dragHeight: number | null = $state(null)
   let customPanelHeight: number | null = $state(null)
   let dragging = $state(false)
+  let lastPanelItemId: string | null = $state(null)
   let dragStartY = 0
   let dragStartHeight = 0
 
@@ -187,6 +188,14 @@
     customPanelHeight = null
     onToggleExpand()
   }
+
+  $effect(() => {
+    const nextItemId = item?.id ?? null
+    if (nextItemId === lastPanelItemId) return
+    lastPanelItemId = nextItemId
+    dragHeight = null
+    customPanelHeight = null
+  })
 </script>
 
 <section
@@ -245,6 +254,7 @@
       {onValidatePeriod}
       {onAddExtraItem}
       {onRemoveExtraItem}
+      {onCancelReservation}
     />
   {/if}
 </section>

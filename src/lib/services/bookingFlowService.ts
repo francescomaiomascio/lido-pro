@@ -2,13 +2,19 @@ import { createAccountForAssignment, getActiveAccountForItem, getPaymentsForAcco
 import { getIncludedItemsForTariffContext, recalculateAccountTotalWithExtras } from '../db/extraItemRepository'
 import { createReservation, updateReservation } from '../db/reservationRepository'
 import { suggestPriceForItem } from '../db/tariffRepository'
+import {
+  createPricingSnapshot,
+  getPricingSnapshotForReservation,
+} from '../booking/pricingSnapshotService'
+import type { PricingSnapshot } from '../booking/pricingSnapshot.types'
+import { appendBookingEvent, appendFolioEvent } from '../registry/registryEventService'
 import type { Account, PaymentScheduleInput } from '../types/account'
 import type { BeachItem } from '../types/beach'
 import type { BeachItemAssignedCustomer } from '../types/customer'
 import type { BeachState } from '../types/db'
 import type { TariffIncludedItem } from '../types/extraItem'
 import type { Reservation, ReservationInput, ReservationType } from '../types/reservation'
-import { loadBeachState } from './beachLayoutService'
+import { loadActiveOperationalBeachState } from './beachLayoutService'
 import { assignCustomerToItem } from './customerService'
 import { createOrUpdatePaymentSchedule } from './accountService'
 
@@ -26,6 +32,7 @@ export type SavePeriodAndEnsureAccountResult = {
   state: BeachState
   reservation: Reservation
   account: Account
+  pricingSnapshot: PricingSnapshot | null
   createdReservation: boolean
 }
 
@@ -35,7 +42,7 @@ export const assignCustomerAndAdvance = async (
   assignmentType: ReservationType = 'daily',
 ): Promise<BeachState> => {
   await assignCustomerToItem(itemId, customerId, assignmentType, '')
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const ensureAccountForReservation = async (
@@ -110,11 +117,71 @@ export const savePeriodAndEnsureAccount = async (
   if (reservation.accountId !== account.id) {
     await updateReservation(reservation.id, { ...reservationInput, accountId: account.id })
   }
+  const existingSnapshot = await getPricingSnapshotForReservation(reservation.id)
+  const pricingSnapshot = existingSnapshot ?? (await createPricingSnapshot({
+    reservationId: reservation.id,
+    accountId: account.id,
+    itemId: input.item.id,
+    customerId: input.assignedCustomer.customer.id,
+    source: 'operator_app',
+    manualOverride: input.manualAmountCents != null
+      ? {
+          enabled: true,
+          amountCents: input.manualAmountCents,
+          reason: 'Importo manuale conto',
+          source: 'operator_app',
+        }
+      : null,
+  })).snapshot
+  await appendBookingEvent({
+    type: createdReservation ? 'booking_created' : 'booking_confirmed',
+    severity: 'success',
+    title: createdReservation ? 'Prenotazione creata' : 'Prenotazione confermata',
+    links: {
+      entityType: 'reservation',
+      entityId: reservation.id,
+      reservationId: reservation.id,
+      customerId: reservation.customerId,
+      accountId: account.id,
+      itemId: reservation.itemId,
+      pricingSnapshotId: pricingSnapshot.id,
+    },
+    amountCents: account.totalAmountCents,
+    payload: {
+      reservationType: reservation.reservationType,
+      startDate: reservation.startDate,
+      endDate: reservation.endDate,
+      accountStatus: account.status,
+    },
+    dedupeKey: `${createdReservation ? 'booking_created' : 'booking_confirmed'}:${reservation.id}:${reservation.updatedAt}`,
+  })
+  await appendFolioEvent({
+    type: createdReservation ? 'folio_created' : 'folio_updated',
+    severity: 'success',
+    title: createdReservation ? 'Conto prenotazione preparato' : 'Conto prenotazione aggiornato',
+    links: {
+      entityType: 'account',
+      entityId: account.id,
+      reservationId: reservation.id,
+      customerId: account.customerId,
+      accountId: account.id,
+      itemId: account.itemId,
+      pricingSnapshotId: pricingSnapshot.id,
+    },
+    amountCents: account.totalAmountCents,
+    payload: {
+      status: account.status,
+      balanceAmountCents: account.balanceAmountCents,
+      pricingSnapshotId: pricingSnapshot.id,
+    },
+    dedupeKey: `${createdReservation ? 'folio_created' : 'folio_updated'}:${reservation.id}:${account.id}:${account.updatedAt}`,
+  })
 
   return {
-    state: await loadBeachState(),
+    state: await loadActiveOperationalBeachState(),
     reservation,
     account,
+    pricingSnapshot,
     createdReservation,
   }
 }
@@ -128,7 +195,7 @@ export const calculateIncludedEquipmentForItem = async (
 
 export const recalculateAccountWithExtras = async (accountId: string): Promise<BeachState> => {
   await recalculateAccountTotalWithExtras(accountId)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const createOrUpdatePaymentScheduleForAccount = async (

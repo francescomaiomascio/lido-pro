@@ -14,7 +14,7 @@
     account: 'Conti',
     bar: 'Bar',
     beach: 'Spiaggia',
-    catalog: 'Listino',
+    catalog: 'Articoli',
     employees: 'Dipendenti',
     reservation: 'Prenotazioni',
     studio: 'Studio',

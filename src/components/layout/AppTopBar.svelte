@@ -40,7 +40,11 @@
   }
 </script>
 
-<header class="app-topbar" class:search-expanded={searchExpanded}>
+<header
+  class="app-topbar"
+  class:search-expanded={searchExpanded}
+  class:active-layout-mode={activeModule === 'activeLayout'}
+>
   <button
     type="button"
     class="brand"

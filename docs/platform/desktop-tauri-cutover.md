@@ -23,7 +23,7 @@ Collected on macOS development machine during DESKTOP.R1.
 | --- | --- |
 | Default shell Node | `v14.18.1` |
 | Default shell npm | `6.14.15` |
-| Project npm via nvm | `10.8.1` with Node `v22.3.0` |
+| Project npm via nvm | `11.12.1` with Node `v24.15.0` |
 | Rust | `rustc 1.93.0 (254b59607 2026-01-19) (Homebrew)` |
 | Cargo | `cargo 1.93.0 (Homebrew)` |
 | Tauri CLI | `tauri-cli 2.11.2` |
@@ -34,7 +34,7 @@ Collected on macOS development machine during DESKTOP.R1.
 | Capacitor app id | `it.lidopro.app` |
 | Capacitor web dir | `dist` |
 
-Current frontend dependencies require a newer Node line than the default shell Node. Use the repository Node version from `.nvmrc` before running validation and packaging commands.
+Current frontend dependencies require Node 24. Use the repository Node version from `.nvmrc` before running validation and packaging commands.
 
 ## Tauri Configuration
 

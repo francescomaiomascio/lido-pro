@@ -12,7 +12,7 @@ import {
 } from '../db/reservationRepository'
 import type { BeachState } from '../types/db'
 import type { Reservation, ReservationInput } from '../types/reservation'
-import { loadBeachState } from './beachLayoutService'
+import { loadActiveOperationalBeachState } from './beachLayoutService'
 
 export const createReservation = async (input: ReservationInput): Promise<Reservation> => {
   return createReservationRecord(input)
@@ -20,7 +20,7 @@ export const createReservation = async (input: ReservationInput): Promise<Reserv
 
 export const createReservationAndReload = async (input: ReservationInput): Promise<BeachState> => {
   await createReservationRecord(input)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const updateReservationAndReload = async (
@@ -28,14 +28,14 @@ export const updateReservationAndReload = async (
   input: ReservationInput,
 ): Promise<BeachState> => {
   await updateReservationRecord(reservationId, input)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const cancelReservationAndReload = async (
   reservationId: string,
 ): Promise<BeachState> => {
   await cancelReservationRecord(reservationId)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export {

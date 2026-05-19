@@ -15,6 +15,8 @@ import {
 } from '../db/beachRepository'
 import type { BeachItem, BeachItemStatus, BeachItemUsageType } from '../types/beach'
 import type { BeachLayoutElement } from '../map-canvas/parametric/parametricLayoutTypes'
+import { createActiveLayoutProjection } from '../layout/layoutProjectionBoundary'
+import type { ActiveLayoutProjection } from '../layout/layoutProjectionBoundary'
 
 
 export type ParametricLayoutViewMode = 'active' | 'draft' | 'compare'
@@ -29,6 +31,10 @@ export const setParametricLayoutViewMode = (mode: ParametricLayoutViewMode) => {
 }
 
 export const getParametricLayoutViewMode = () => parametricLayoutViewMode
+
+export type BeachStateLoadOptions = {
+  viewMode?: ParametricLayoutViewMode
+}
 
 const toBeachItemType = (family: BeachLayoutElement['family']): BeachItem['type'] => {
   if (family === 'umbrella' || family === 'small_palm') return family
@@ -93,14 +99,30 @@ const mergeParametricElementsWithLegacyItems = (
     })
 }
 
-export const loadBeachState = async (): Promise<BeachState> => {
+export const loadActiveLayoutProjection = async (): Promise<ActiveLayoutProjection> => {
   await initializeBeachDatabase()
   await ensureParametricLayoutImported()
   const layout = await getActiveLayout()
   const legacyItems = await getBeachItems(layout.id)
   const activeParametricLayout = await getActiveParametricLayoutBundle()
-  const draftParametricLayout = parametricLayoutViewMode !== 'active' ? await getDraftParametricLayoutBundle() : null
-  const displayedParametricLayout = draftParametricLayout ?? activeParametricLayout
+  const items = activeParametricLayout
+    ? mergeParametricElementsWithLegacyItems(activeParametricLayout.elements, legacyItems)
+    : legacyItems
+
+  return createActiveLayoutProjection(layout, items)
+}
+
+export const loadBeachState = async (
+  options: BeachStateLoadOptions = {},
+): Promise<BeachState> => {
+  await initializeBeachDatabase()
+  await ensureParametricLayoutImported()
+  const layout = await getActiveLayout()
+  const legacyItems = await getBeachItems(layout.id)
+  const activeParametricLayout = await getActiveParametricLayoutBundle()
+  const viewMode = options.viewMode ?? parametricLayoutViewMode
+  const draftParametricLayout = viewMode !== 'active' ? await getDraftParametricLayoutBundle() : null
+  const displayedParametricLayout = viewMode !== 'active' ? (draftParametricLayout ?? activeParametricLayout) : activeParametricLayout
   const items = displayedParametricLayout
     ? mergeParametricElementsWithLegacyItems(displayedParametricLayout.elements, legacyItems)
     : legacyItems
@@ -112,12 +134,21 @@ export const loadBeachState = async (): Promise<BeachState> => {
   }
 }
 
+export const loadActiveOperationalBeachState = async (): Promise<BeachState> => {
+  const projection = await loadActiveLayoutProjection()
+  return {
+    layout: projection.layout,
+    items: projection.items,
+    runtime: getDatabaseRuntime(),
+  }
+}
+
 export const updateBeachItemStatusAndReload = async (
   itemId: string,
   status: BeachItemStatus,
 ): Promise<BeachState> => {
   await updateBeachItemStatus(itemId, status)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const updateBeachItemOperationalNoteAndReload = async (
@@ -125,7 +156,7 @@ export const updateBeachItemOperationalNoteAndReload = async (
   note: string,
 ): Promise<BeachState> => {
   await updateBeachItemOperationalNote(itemId, note)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const updateBeachItemUsageTypeAndReload = async (
@@ -133,7 +164,7 @@ export const updateBeachItemUsageTypeAndReload = async (
   usageType: BeachItemUsageType,
 ): Promise<BeachState> => {
   await updateBeachItemUsageType(itemId, usageType)
-  return loadBeachState()
+  return loadActiveOperationalBeachState()
 }
 
 export const loadBeachItemStatusEvents = async (itemId: string) => {

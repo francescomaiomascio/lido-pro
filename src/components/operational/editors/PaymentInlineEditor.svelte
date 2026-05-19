@@ -1,6 +1,6 @@
 <script lang="ts">
   import { paymentMethodLabels, paymentMethodOptions } from '../../../lib/format/accountLabels'
-  import { parseEuroToCents } from '../../../lib/format/money'
+  import { formatEuroFromCents, parseEuroToCents } from '../../../lib/format/money'
   import type { Account, PaymentMethod } from '../../../lib/types/account'
   import ActionActivity from '../../loading/ActionActivity.svelte'
 
@@ -14,6 +14,9 @@
   let paymentMethod: PaymentMethod = $state('cash')
   let note = $state('')
   let error: string | null = $state(null)
+  const suggestedAmount = $derived(
+    account.balanceAmountCents > 0 ? formatEuroFromCents(account.balanceAmountCents).replace('€', '').trim() : '',
+  )
   const submit = async () => {
     const cents = parseEuroToCents(amount)
     if (!Number.isFinite(cents) || cents <= 0) {
@@ -34,9 +37,10 @@
     <button type="button" onclick={onClose}>Annulla</button>
   </header>
   <div class="inline-editor__field-grid">
-    <label>Importo<input bind:value={amount} inputmode="decimal" placeholder="40,00" /></label>
+    <label>Importo<input bind:value={amount} inputmode="decimal" placeholder={suggestedAmount || '40,00'} /></label>
     <label>Nota<input bind:value={note} placeholder="Facoltativa" /></label>
   </div>
+  <p class="inline-editor__hint">Residuo disponibile: {formatEuroFromCents(account.balanceAmountCents)}.</p>
   <div class="inline-editor__segment">
     {#each paymentMethodOptions as method}
       <button type="button" class:active={paymentMethod === method} onclick={() => (paymentMethod = method)}>{paymentMethodLabels[method]}</button>

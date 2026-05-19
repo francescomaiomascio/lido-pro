@@ -61,9 +61,9 @@ export const lidoproPrimaryModules: Array<LidoProModule & { id: LidoProPrimaryMo
   },
   {
     id: 'priceList',
-    label: 'Listino',
-    shortLabel: 'Listino',
-    description: 'Tariffe, catalogo, dotazioni e articoli collegati ai conti.',
+    label: 'Articoli',
+    shortLabel: 'Articoli',
+    description: 'Catalogo, prezzi, dotazioni ed extra collegati a prenotazioni e conti.',
   },
   {
     id: 'studioProjects',
@@ -128,9 +128,9 @@ export const lidoproTopbarItems: LidoProTopbarItem[] = [
   },
   {
     id: 'priceList',
-    label: 'Listino',
-    shortLabel: 'Listino',
-    description: 'Tariffe, catalogo, dotazioni e articoli collegati ai conti.',
+    label: 'Articoli',
+    shortLabel: 'Articoli',
+    description: 'Catalogo, prezzi, dotazioni ed extra collegati a prenotazioni e conti.',
   },
   {
     id: 'studioProjects',

@@ -529,7 +529,7 @@
   {#if !hasSearchResults}
     <div class="settings-nav__empty">
       <strong>Nessun risultato</strong>
-      <span>Prova con clienti, registro, listino o spiaggia.</span>
+      <span>Prova con clienti, registro, articoli o spiaggia.</span>
     </div>
   {/if}
 

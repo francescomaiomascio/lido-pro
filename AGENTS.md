@@ -29,6 +29,43 @@ New tables, runtime models, and domain services must map explicitly to existing 
 
 Any wave that changes UI, layout, navigation, map, panels, forms, tables, modals, drawers, sheets, or typography must validate responsive behavior. Desktop-only validation is not sufficient.
 
+### Responsive layout policy
+
+Use these layout families:
+
+- Desktop and tablet landscape share the same base layout family.
+- Tablet landscape is desktop-compact, not full desktop: keep the main structure, but reduce density, avoid oversized side gutters, keep touch targets usable, and do not depend on hover-only interactions.
+- Tablet portrait is its own layout family. Do not treat it as a squeezed desktop. Prefer fewer columns, clearer vertical hierarchy, and panels that scroll internally.
+- Smartphone portrait is mobile-first: one-column flow, no persistent desktop sidebars in operational workspaces, no desktop panels compressed sideways, and primary actions must remain reachable.
+- Smartphone landscape is height-constrained: keep sheets/panels compact, preserve the core map/work area, and avoid header or toolbar stacks that consume the viewport.
+
+Rule:
+If a UI only works by shrinking desktop columns until text clips or overlaps, the responsive implementation is wrong.
+
+### Practical validation workflow
+
+During development, validate in this order:
+
+1. Desktop window at normal size for desktop landscape.
+2. Desktop window narrowed to tablet-landscape-like widths for desktop-compact/tablet landscape behavior.
+3. Browser responsive mode or emulator at tablet portrait sizes.
+4. Browser responsive mode or emulator at smartphone portrait sizes.
+5. Smartphone landscape or short-height viewport for bottom sheets, side panels, toolbars, and maps.
+
+The desktop-narrow check is useful for tablet landscape, but it does not replace tablet portrait or smartphone validation.
+
+## Avoid card-heavy UI
+
+Do not use cards as the default way to organize interface content.
+
+Cards are allowed only for repeated items, modals, and genuinely framed tools. Do not put cards inside sheets or panels just to separate content. Prefer clean hierarchy, spacing, dividers, columns, tables/lists, and task areas that sit directly in the surface.
+
+For operator workflows such as Spiaggia, Booking, Conti/Folio, Registro, Staff, and Servizi:
+- avoid card-in-card layouts;
+- avoid large bordered boxes around every task area;
+- avoid decorative shadows and rounded containers that make operational screens feel cheap or generic;
+- use compact structure, clear section rhythm, and direct controls instead.
+
 Browser responsive mode is acceptable for early checks. Tauri compressed windows are acceptable for desktop and tablet-like checks. Android Studio or a physical Android device, and Xcode Simulator or a physical iPad/iPhone, are required for final native validation when available. If native validation is not available, the completion message must explicitly say so.
 
 ### Canonical Responsive Matrix
@@ -66,7 +103,9 @@ For every touched screen or panel:
 - map remains visible and operable
 - primary actions remain reachable
 - touch targets remain usable
+- desktop and tablet landscape keep a coherent desktop-compact structure
 - tablet portrait is not treated as squeezed desktop
 - smartphone portrait has verticalized layout
+- smartphone portrait does not show persistent desktop sidebars in operational workspaces
 - smartphone landscape does not lose core navigation
 - browser fallback does not define product quality by itself

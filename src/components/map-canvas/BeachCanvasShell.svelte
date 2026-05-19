@@ -1,17 +1,15 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import BeachMapControls from '../beach/BeachMapControls.svelte'
   import {
     computeElementActionPanelPlacement,
     mapCanvasConfigStore,
     type ElementActionPlacementResult,
-    type MapCanvasStudioToolId,
   } from '../../lib/map-canvas'
   import { getBeachDisplayCode } from '../../lib/format/beachDisplayCodes'
   import type { BeachStatusFilter } from '../../lib/state/beachFilters'
   import type { BeachItem, BeachLayout } from '../../lib/types/beach'
   import BeachCanvasStage from './BeachCanvasStage.svelte'
-  import CanvasStudioFlyout from './CanvasStudioFlyout.svelte'
-  import CanvasStudioRail from './CanvasStudioRail.svelte'
   import SelectedElementActionPanel from './SelectedElementActionPanel.svelte'
 
   let {
@@ -40,10 +38,6 @@
   let fitSignal = $state(0)
   let resetSignal = $state(0)
   let centerSignal = $state(0)
-  let canvasStudio = $state<{ isOpen: boolean; activeToolId: MapCanvasStudioToolId | null }>({
-    isOpen: false,
-    activeToolId: null,
-  })
   let viewportElement: HTMLDivElement | null = $state(null)
   let viewportWidthPx = $state(0)
   let viewportHeightPx = $state(0)
@@ -73,42 +67,13 @@
     })
   })
 
-  const selectStudioTool = (toolId: MapCanvasStudioToolId) => {
-    if ($mapCanvasConfigStore.interaction.mode !== 'edit') {
-      mapCanvasConfigStore.updateConfig((config) => ({
-        ...config,
-        interaction: { ...config.interaction, mode: 'edit', snapPreviewEnabled: true },
-        grid: { ...config.grid, visible: true, opacity: Math.max(config.grid.opacity, 0.48) },
-      }))
-    }
-    canvasStudio.activeToolId = toolId
-    canvasStudio.isOpen = true
-  }
-
-  const closeCanvasStudio = () => {
-    canvasStudio.isOpen = false
-    canvasStudio.activeToolId = null
+  const enforceOperationalCanvas = () => {
     mapCanvasConfigStore.updateConfig((config) => ({
       ...config,
       interaction: { ...config.interaction, mode: 'work', snapPreviewEnabled: false },
       zones: { ...config.zones, visible: false },
       walkways: { ...config.walkways, visible: false },
     }))
-  }
-
-  const toggleCanvasStudio = () => {
-    if (canvasStudio.isOpen) {
-      closeCanvasStudio()
-      return
-    }
-
-    mapCanvasConfigStore.updateConfig((config) => ({
-      ...config,
-      interaction: { ...config.interaction, mode: 'edit', snapPreviewEnabled: true },
-      grid: { ...config.grid, visible: true, opacity: Math.max(config.grid.opacity, 0.48) },
-    }))
-    canvasStudio.isOpen = true
-    canvasStudio.activeToolId = null
   }
 
   $effect(() => {
@@ -129,10 +94,12 @@
   })
 
   $effect(() => {
-    if ($mapCanvasConfigStore.interaction.mode === 'work' && canvasStudio.isOpen) {
-      canvasStudio.isOpen = false
+    if ($mapCanvasConfigStore.interaction.mode !== 'work') {
+      enforceOperationalCanvas()
     }
   })
+
+  onMount(enforceOperationalCanvas)
 </script>
 
 <div
@@ -151,39 +118,6 @@
     onFit={() => (fitSignal += 1)}
     onReset={() => (resetSignal += 1)}
   />
-
-  {#if !canvasStudio.isOpen}
-    <button
-      type="button"
-      class="canvas-studio-toggle"
-      aria-label={$mapCanvasConfigStore.interaction.mode === 'edit'
-        ? 'Mostra Canvas Studio'
-        : 'Attiva modalità modifica e apri Canvas Studio'}
-      aria-pressed={canvasStudio.isOpen}
-      onclick={toggleCanvasStudio}
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="m15 4 5 5"></path>
-        <path d="M14 5 3 16l5 5L19 10"></path>
-        <path d="m9 4 .6 1.6L11 6.2l-1.4.6L9 8.4l-.6-1.6L7 6.2l1.4-.6L9 4Z"></path>
-        <path d="m19 14 .6 1.6 1.4.6-1.4.6-.6 1.6-.6-1.6-1.4-.6 1.4-.6L19 14Z"></path>
-      </svg>
-    </button>
-  {/if}
-
-  {#if canvasStudio.isOpen}
-    <CanvasStudioRail
-      activeToolId={canvasStudio.activeToolId}
-      onClose={toggleCanvasStudio}
-      onSelectTool={selectStudioTool}
-    />
-    {#if canvasStudio.activeToolId}
-      <CanvasStudioFlyout
-        activeToolId={canvasStudio.activeToolId}
-        {items}
-      />
-    {/if}
-  {/if}
 
   <SelectedElementActionPanel
     item={selectedItem}

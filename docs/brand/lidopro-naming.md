@@ -24,11 +24,11 @@ Canonical module-family naming:
 - **Studio Mappa**: allowed Italian UI/domain label for the map-design area.
 - **Lido Booking**: reservation and daily operational booking workflows.
 - **Lido Clienti**: customer registry, assignments, customer history, and profiles.
-- **Lido Listino**: pricing, catalog, extras, tariff rules, articles, and suggestions.
+- **Lido Articoli**: catalog, pricing rules, included equipment, paid extras, articles, and booking/account suggestions.
 - **Lido Pay**: future payment integrations, real transactions, and production payment processing. Not live unless explicitly implemented and released.
 - **Lido Cloud**: future sync, account/customer login, customer portal, hosted booking, and multi-device layer. Not live unless explicitly implemented and released.
 
-Allowed Italian or hybrid UI/domain labels include `Layout attivo`, `Registro`, `Studio`, `Booking`, `Clienti`, `Listino`, `Cassa`, and `Sistema` when they are used as canonical product terms or compact UI labels.
+Allowed Italian or hybrid UI/domain labels include `Layout attivo`, `Registro`, `Studio`, `Booking`, `Clienti`, `Articoli`, `Cassa`, and `Sistema` when they are used as canonical product terms or compact UI labels.
 
 ## Repository Language
 
@@ -78,7 +78,7 @@ Do not make `Sirena` the product name. Prefer an abstract mark: a mermaid silhou
 
 LidoPro is a reserved commercial product/platform name.
 
-Lido Studio is the layout/design module name. Lido Booking, Lido Clienti, Lido Listino, Lido Pay, and Lido Cloud are reserved product/module names unless explicitly released for external use.
+Lido Studio is the layout/design module name. Lido Booking, Lido Clienti, Lido Articoli, Lido Pay, and Lido Cloud are reserved product/module names unless explicitly released for external use.
 
 The siren/mermaid logo direction is part of the brand identity and visual homage. Brand assets, icons, wordmarks, screenshots, UI identity, product copy, and commercial positioning are reserved.
 
